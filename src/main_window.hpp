@@ -1,5 +1,5 @@
-#ifndef MAIN_WINDOW_H
-#define MAIN_WINDOW_H
+#ifndef MAIN_WINDOW_HPP
+#define MAIN_WINDOW_HPP
 
 #include <gtkmm/application.h>
 #include <gtkmm/box.h>
