@@ -9,11 +9,11 @@
 int main (int argc, char *argv[])
 {
     PostgresConnection pc("127.0.0.1", "", "", "", 5434);
-    std::vector<std::string> tables = pc.get_db_tables();
-
-    auto app = Gtk::Application::create(argc, argv, "Postgres Client");
+    auto app = Gtk::Application::create(argc, argv, "postgres.client");
 
     MainWindow main_window;
+
+    main_window.insert_tables(pc.get_db_tables());
 
     return app->run(main_window);
 }
