@@ -21,6 +21,8 @@ public:
     MainWindow();
     virtual ~MainWindow() {};
 
+    void insert_tables(const std::vector<std::string>& tables);
+
 protected:
   class BrowserModel : public Gtk::TreeModel::ColumnRecord
   {
@@ -41,7 +43,7 @@ protected:
 private:
     BrowserModel browser_model;
 
-    void on_tab_close_button_clicked(Glib::ustring);
+    void on_tab_close_button_clicked(const Glib::ustring&);
     void on_browser_row_activated(const Gtk::TreeModel::Path& path,
                                   Gtk::TreeViewColumn* column);
 
