@@ -14,6 +14,7 @@
 #include <gtkmm/scrolledwindow.h>
 #include <gtkmm/stock.h>
 
+#include <gtkmm.h>
 
 class MainWindow : public Gtk::Window
 {
@@ -46,7 +47,13 @@ private:
     void on_tab_close_button_clicked(const Glib::ustring&);
     void on_browser_row_activated(const Gtk::TreeModel::Path& path,
                                   Gtk::TreeViewColumn* column);
+    void on_action_file_new();
+    void on_action_file_quit();
 
+    Glib::RefPtr<Gtk::Builder> res_builder;
+    Glib::RefPtr<Gio::SimpleActionGroup> menu_group;
+
+    Gtk::Box main_box;
     Gtk::Box box;
     Gtk::TreeView browser;
     Glib::RefPtr<Gtk::TreeStore> browser_store;
