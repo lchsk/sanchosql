@@ -25,12 +25,26 @@ pkg_check_modules(PQXX libpqxx)
 message(STATUS "PQXX_VERSION               = ${PQXX_VERSION}")
 
 message(STATUS "All dependencies look ok")
+message(STATUS "Generating resources...")
+
+execute_process(
+  COMMAND glib-compile-resources --target=src/resources.c --generate-source res/resources.gresource.xml
+  )
 
 add_executable(${EXECUTABLE_NAME}
     src/pc.cpp
     src/main_window.cpp
     src/pg_conn.cpp
+
+    # Resources
+    src/resources.c
     )
+
+add_custom_target(resources
+  COMMAND glib-compile-resources --target=src/resources.c --generate-source res/resources.gresource.xml
+  )
+
+add_dependencies(${EXECUTABLE_NAME} resources)
 
 link_directories(${GTKMM_LIBRARY_DIRS} ${PQXX_LIBRARY_DIRS})
 include_directories(${GTKMM_INCLUDE_DIRS} ${PQXX_INCLUDE_DIRS})
