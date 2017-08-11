@@ -58,7 +58,7 @@ matrix:
       addons:
         apt:
           sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-precise-3.8']
-          packages: ['clang-3.8', 'libgtkmm-3.0-dev', 'libpqxx-dev']
+          packages: ['g++-6', 'clang-3.8', 'libgtkmm-3.0-dev', 'libpqxx-dev']
       env: COMPILER=clang++-3.8
     - os: linux
       compiler: clang++
@@ -67,17 +67,17 @@ matrix:
       addons:
         apt:
           sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-precise-3.9']
-          packages: ['clang-3.9', 'libgtkmm-3.0-dev', 'libpqxx-dev']
+          packages: ['g++-6', 'clang-3.9', 'libgtkmm-3.0-dev', 'libpqxx-dev']
       env: COMPILER=clang++-3.9
-    - os: linux
-      compiler: clang++
-      before_install:
-      install:
-      addons:
-        apt:
-          sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-precise-4.0']
-          packages: ['clang-4.0', 'libgtkmm-3.0-dev', 'libpqxx-dev']
-      env: COMPILER=clang++-4.0
+    # - os: linux
+      # compiler: clang++
+      # before_install:
+      # install:
+      # addons:
+        # apt:
+          # sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-precise-4.0']
+          # packages: ['clang-4.0', 'libgtkmm-3.0-dev', 'libpqxx-dev']
+      # env: COMPILER=clang++-4.0
 
 script:
   - uname -a
