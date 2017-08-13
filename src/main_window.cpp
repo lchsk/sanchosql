@@ -98,8 +98,9 @@ void MainWindow::insert_tables(const std::vector<std::string>& tables)
     }
 }
 
-void MainWindow::on_tab_close_button_clicked(const Glib::ustring& btn)
+void MainWindow::on_tab_close_button_clicked(Gtk::TreeView* tree)
 {
+    notebook.remove_page(*tree);
 }
 
 void MainWindow::on_browser_row_activated(const Gtk::TreeModel::Path& path,
@@ -116,13 +117,6 @@ void MainWindow::on_browser_row_activated(const Gtk::TreeModel::Path& path,
         Gtk::HBox* hb = Gtk::manage(new Gtk::HBox);
         Gtk::Button* b = Gtk::manage(new Gtk::Button);
         Gtk::Label* l = Gtk::manage(new Gtk::Label(table_name));
-
-        b->signal_clicked().connect
-            (sigc::bind<Glib::ustring>
-             (sigc::mem_fun(
-                            *this,
-                            &MainWindow::on_tab_close_button_clicked),
-              "table-name"));
 
         Gtk::Image* i = Gtk::manage
             (new Gtk::Image(Gtk::Stock::CLOSE, Gtk::ICON_SIZE_MENU));
@@ -149,6 +143,12 @@ void MainWindow::on_browser_row_activated(const Gtk::TreeModel::Path& path,
         tree->append_column("Column", col);
 
         notebook.append_page(*tree, *hb);
+
+        b->signal_clicked().connect
+            (sigc::bind<Gtk::TreeView*>
+             (sigc::mem_fun(*this, &MainWindow::on_tab_close_button_clicked),
+              tree));
+
 
         hb->show_all_children();
 

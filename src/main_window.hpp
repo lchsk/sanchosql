@@ -44,7 +44,7 @@ protected:
 private:
     BrowserModel browser_model;
 
-    void on_tab_close_button_clicked(const Glib::ustring&);
+    void on_tab_close_button_clicked(Gtk::TreeView*);
     void on_browser_row_activated(const Gtk::TreeModel::Path& path,
                                   Gtk::TreeViewColumn* column);
     void on_action_file_new();
