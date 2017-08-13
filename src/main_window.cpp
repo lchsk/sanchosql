@@ -153,5 +153,7 @@ void MainWindow::on_browser_row_activated(const Gtk::TreeModel::Path& path,
         hb->show_all_children();
 
         show_all_children();
+
+        notebook.next_page();
     }
 }
