@@ -42,6 +42,35 @@ public:
         return tables;
     }
 
+    std::vector<std::string> get_table_columns(const std::string& table_name)
+    {
+        std::vector<std::string> columns;
+
+        pqxx::work work(*conn);
+
+        const std::string sql = R"(
+            SELECT
+                *
+            FROM
+                information_schema.columns
+            WHERE
+                table_schema = 'public'
+                AND table_name = $1
+            ORDER BY
+                column_name ASC
+            )";
+
+        conn->prepare("get_columns", sql);
+        pqxx::result result = work.prepared("get_columns")(table_name).exec();
+
+        for (const auto& row : result) {
+            columns.push_back(row["column_name"].as<std::string>());
+        }
+
+        return columns;
+    }
+
+
 private:
     const std::string host;
     const std::string user;
