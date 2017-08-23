@@ -70,6 +70,30 @@ public:
         return columns;
     }
 
+    std::vector<std::map<std::string, std::string> >
+    get_table_data(const std::string& table_name,
+                   const std::vector<std::string>& columns)
+    {
+        std::vector<std::map<std::string, std::string> > data;
+
+        pqxx::work work(*conn);
+
+        const std::string sql = "select * from " + table_name;
+
+        pqxx::result result = work.exec(sql);
+
+        for (const auto& row : result) {
+            std::map<std::string, std::string> v;
+
+            for (const auto& col_name : columns) {
+                v[col_name] = row[col_name].as<std::string>();
+            }
+
+            data.push_back(v);
+        }
+
+        return data;
+    }
 
 private:
     const std::string host;
