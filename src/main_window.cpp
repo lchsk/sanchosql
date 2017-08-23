@@ -3,9 +3,10 @@
 #include "main_window.hpp"
 
 
-MainWindow::MainWindow()
+MainWindow::MainWindow(std::shared_ptr<PostgresConnection>& pc)
     : main_box(Gtk::ORIENTATION_VERTICAL),
-      box(Gtk::ORIENTATION_HORIZONTAL)
+      box(Gtk::ORIENTATION_HORIZONTAL),
+      pc(pc)
 {
     set_title("Postgres Client");
 
@@ -128,19 +129,34 @@ void MainWindow::on_browser_row_activated(const Gtk::TreeModel::Path& path,
 
         Gtk::TreeModel::ColumnRecord cr;
 
-        Gtk::TreeModelColumn<Glib::ustring> col;
+        std::vector<std::string> columns = pc->get_table_columns(table_name);
+        auto data = pc->get_table_data(table_name, columns);
 
-        cr.add(col);
+        Gtk::TreeView* tree = Gtk::manage(new Gtk::TreeView);
+
+        std::map<std::string, Gtk::TreeModelColumn<Glib::ustring>> cols;
+
+        for (const auto& column : columns) {
+            Gtk::TreeModelColumn<Glib::ustring> col;
+
+            cols[column] = col;
+
+            cr.add(cols[column]);
+
+            tree->append_column(column, cols[column]);
+        }
 
         Glib::RefPtr<Gtk::ListStore> list_store = Gtk::ListStore::create(cr);
 
-        Gtk::TreeView* tree = Gtk::manage(new Gtk::TreeView);
         tree->set_model(list_store);
 
-        Gtk::TreeModel::Row row = *(list_store->append());
+        for (auto& row : data) {
+            Gtk::TreeModel::Row r = *(list_store->append());
 
-        row[col] = "Cell";
-        tree->append_column("Column", col);
+            for (const auto& c : cols) {
+                r[c.second] = row[c.first];
+            }
+        }
 
         notebook.append_page(*tree, *hb);
 

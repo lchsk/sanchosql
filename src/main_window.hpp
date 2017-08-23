@@ -16,10 +16,12 @@
 
 #include <gtkmm.h>
 
+#include "pg_conn.hpp"
+
 class MainWindow : public Gtk::Window
 {
 public:
-    MainWindow();
+    MainWindow(std::shared_ptr<PostgresConnection>&);
     virtual ~MainWindow() {};
 
     void insert_tables(const std::vector<std::string>& tables);
@@ -43,6 +45,8 @@ protected:
 
 private:
     BrowserModel browser_model;
+
+    std::shared_ptr<PostgresConnection> pc;
 
     void on_tab_close_button_clicked(Gtk::TreeView*);
     void on_browser_row_activated(const Gtk::TreeModel::Path& path,
