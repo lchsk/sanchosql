@@ -86,7 +86,11 @@ public:
             std::map<std::string, std::string> v;
 
             for (const auto& col_name : columns) {
-                v[col_name] = row[col_name].as<std::string>();
+				try {
+					v[col_name] = row[col_name].as<std::string>();
+				} catch (const std::exception&) {
+					v[col_name] = "null";
+				}
             }
 
             data.push_back(v);
