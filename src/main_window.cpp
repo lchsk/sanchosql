@@ -1,6 +1,7 @@
 #include <iostream>
 
 #include "main_window.hpp"
+#include "util.hpp"
 
 
 MainWindow::MainWindow(std::shared_ptr<PostgresConnection>& pc)
@@ -148,7 +149,7 @@ void MainWindow::on_browser_row_activated(const Gtk::TreeModel::Path& path,
 
             cr.add(cols[column]);
 
-            tree->append_column(column, cols[column]);
+            tree->append_column(replace_all(column, "_", "__"), cols[column]);
         }
 
         Glib::RefPtr<Gtk::ListStore> list_store = Gtk::ListStore::create(cr);
