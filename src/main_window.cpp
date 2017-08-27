@@ -6,7 +6,6 @@
 
 MainWindow::MainWindow(std::shared_ptr<PostgresConnection>& pc)
     : main_box(Gtk::ORIENTATION_VERTICAL),
-      box(Gtk::ORIENTATION_HORIZONTAL),
       pc(pc)
 {
     set_title("Postgres Client");
@@ -16,14 +15,13 @@ MainWindow::MainWindow(std::shared_ptr<PostgresConnection>& pc)
 
     add(main_box);
 
-    box.set_border_width(2);
-
     browser_scrolled_window.add(browser);
     browser_scrolled_window.set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
-    box.pack_start(browser_scrolled_window);
 
-    notebook.set_border_width(10);
-    box.pack_start(notebook);
+    paned.pack1(browser_scrolled_window);
+
+    notebook_scrolled_window.add(notebook);
+    paned.pack2(notebook_scrolled_window);
 
     browser_store = Gtk::TreeStore::create(browser_model);
     browser.set_model(browser_store);
@@ -75,7 +73,8 @@ MainWindow::MainWindow(std::shared_ptr<PostgresConnection>& pc)
     else
         g_warning("Toolbar not found");
 
-    main_box.pack_start(box);
+    main_box.pack_start(paned);
+
     show_all_children();
 }
 

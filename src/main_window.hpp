@@ -58,10 +58,11 @@ private:
     Glib::RefPtr<Gio::SimpleActionGroup> menu_group;
 
     Gtk::Box main_box;
-    Gtk::Box box;
     Gtk::TreeView browser;
     Glib::RefPtr<Gtk::TreeStore> browser_store;
     Gtk::ScrolledWindow browser_scrolled_window;
+    Gtk::ScrolledWindow notebook_scrolled_window;
+    Gtk::HPaned paned;
     Gtk::Notebook notebook;
 };
 
