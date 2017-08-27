@@ -134,6 +134,11 @@ void MainWindow::on_browser_row_activated(const Gtk::TreeModel::Path& path,
 
         Gtk::TreeView* tree = Gtk::manage(new Gtk::TreeView);
 
+        Gtk::ScrolledWindow* tree_scrolled_window
+            = Gtk::manage(new Gtk::ScrolledWindow);
+        tree_scrolled_window->add(*tree);
+        tree_scrolled_window->set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
+
         std::map<std::string, Gtk::TreeModelColumn<Glib::ustring>> cols;
 
         for (const auto& column : columns) {
@@ -158,7 +163,7 @@ void MainWindow::on_browser_row_activated(const Gtk::TreeModel::Path& path,
             }
         }
 
-        notebook.append_page(*tree, *hb);
+        notebook.append_page(*tree_scrolled_window, *hb);
 
         b->signal_clicked().connect
             (sigc::bind<Gtk::TreeView*>
