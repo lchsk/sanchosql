@@ -27,8 +27,6 @@ MainWindow::MainWindow(std::shared_ptr<PostgresConnection>& pc)
     browser.set_model(browser_store);
 
     browser.append_column("Table", browser_model.table);
-    browser.append_column("Table Catalog", browser_model.table_catalog);
-    browser.append_column("Table Schema", browser_model.table_schema);
 
     browser.signal_row_activated().connect
         (sigc::mem_fun(*this, &MainWindow::on_browser_row_activated));
