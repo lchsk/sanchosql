@@ -59,7 +59,7 @@ public:
                 table_schema = 'public'
                 AND table_name = $1
             ORDER BY
-                column_name ASC
+                ordinal_position ASC
             )";
 
         conn->prepare("get_columns", sql);
