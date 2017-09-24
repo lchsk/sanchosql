@@ -165,6 +165,12 @@ void MainWindow::on_browser_row_activated(const Gtk::TreeModel::Path& path,
             }
         }
 
+        const std::vector<Gtk::TreeViewColumn*> tree_columns = tree->get_columns();
+
+        for (const auto column : tree_columns) {
+            column->set_resizable();
+        }
+
         notebook.append_page(*tree_scrolled_window, *hb);
 
         b->signal_clicked().connect
