@@ -74,6 +74,10 @@ MainWindow::MainWindow(std::shared_ptr<PostgresConnection>& pc)
     main_box.pack_start(paned);
 
     show_all_children();
+
+    int w, h;
+    get_size(w, h);
+    paned.set_position(0.21 * w);
 }
 
 void MainWindow::on_action_file_quit()
