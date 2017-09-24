@@ -129,7 +129,7 @@ void MainWindow::on_browser_row_activated(const Gtk::TreeModel::Path& path,
 
         Gtk::TreeModel::ColumnRecord cr;
 
-        std::vector<std::string> columns = pc->get_table_columns(table_name);
+        auto columns = pc->get_table_columns(table_name);
         auto data = pc->get_table_data(table_name, columns);
 
         Gtk::TreeView* tree = Gtk::manage(new Gtk::TreeView);
@@ -144,11 +144,11 @@ void MainWindow::on_browser_row_activated(const Gtk::TreeModel::Path& path,
         for (const auto& column : columns) {
             Gtk::TreeModelColumn<Glib::ustring> col;
 
-            cols[column] = col;
+            cols[column.first] = col;
 
-            cr.add(cols[column]);
+            cr.add(cols[column.first]);
 
-            tree->append_column(replace_all(column, "_", "__"), cols[column]);
+            tree->append_column(replace_all(column.first, "_", "__") + "\n" + column.second, cols[column.first]);
         }
 
         Glib::RefPtr<Gtk::ListStore> list_store = Gtk::ListStore::create(cr);

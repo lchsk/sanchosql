@@ -1,6 +1,6 @@
 #ifndef PG_CONN_HPP
 #define PG_CONN_HPP
-
+#include <iostream>
 #include <pqxx/pqxx>
 
 class PostgresConnection {
@@ -42,9 +42,11 @@ public:
         return tables;
     }
 
-    std::vector<std::string> get_table_columns(const std::string& table_name)
+    std::vector<std::pair<std::string, std::string>>
+    get_table_columns(const std::string& table_name)
     {
-        std::vector<std::string> columns;
+        // std::vector<std::string> columns;
+        std::vector<std::pair<std::string, std::string>> columns;
 
         pqxx::work work(*conn);
 
@@ -64,7 +66,11 @@ public:
         pqxx::result result = work.prepared("get_columns")(table_name).exec();
 
         for (const auto& row : result) {
-            columns.push_back(row["column_name"].as<std::string>());
+            // std::cout << row["data_type"];
+            // columns.push_back(row["column_name"].as<std::string>());
+            columns.push_back(std::make_pair<std::string, std::string>
+                              (row["column_name"].as<std::string>(),
+                               row["data_type"].as<std::string>()));
         }
 
         return columns;
@@ -72,7 +78,8 @@ public:
 
     std::vector<std::map<std::string, std::string> >
     get_table_data(const std::string& table_name,
-                   const std::vector<std::string>& columns)
+                   // const std::vector<std::string>& columns)
+                   const std::vector<std::pair<std::string, std::string>>& columns)
     {
         std::vector<std::map<std::string, std::string> > data;
 
@@ -87,9 +94,9 @@ public:
 
             for (const auto& col_name : columns) {
 				try {
-					v[col_name] = row[col_name].as<std::string>();
+					v[col_name.first] = row[col_name.first].as<std::string>();
 				} catch (const std::exception&) {
-					v[col_name] = "null";
+					v[col_name.first] = "null";
 				}
             }
 
