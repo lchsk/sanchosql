@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.18.3 -->
+<!-- Generated with glade 3.20.0 -->
 <interface>
   <requires lib="gtk+" version="3.8"/>
   <object class="GtkToolbar" id="toolbar">
@@ -12,6 +12,19 @@
         <property name="tooltip_text" translatable="yes">New</property>
         <property name="action_name">file.new_conn</property>
         <property name="icon_name">document-new</property>
+      </object>
+      <packing>
+        <property name="expand">False</property>
+        <property name="homogeneous">True</property>
+      </packing>
+    </child>
+    <child>
+      <object class="GtkToolButton" id="toolbutton_sql">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="tooltip_text" translatable="yes">New</property>
+        <property name="action_name">file.sql</property>
+        <property name="icon_name">accessories-text-editor</property>
       </object>
       <packing>
         <property name="expand">False</property>
