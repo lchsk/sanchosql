@@ -134,11 +134,22 @@ void MainWindow::on_browser_row_activated(const Gtk::TreeModel::Path& path,
         auto columns = pc->get_table_columns(table_name);
         auto data = pc->get_table_data(table_name, columns);
 
+        Gtk::Toolbar* toolbar = Gtk::manage(new Gtk::Toolbar);
+        Gtk::ToolButton* btn1 = Gtk::manage(new Gtk::ToolButton);
+        btn1->set_icon_name("document-save");
+
+        toolbar->append(*btn1);
+
         Gtk::TreeView* tree = Gtk::manage(new Gtk::TreeView);
 
         Gtk::ScrolledWindow* tree_scrolled_window
             = Gtk::manage(new Gtk::ScrolledWindow);
-        tree_scrolled_window->add(*tree);
+
+        Gtk::Box* box = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
+        box->pack_start(*toolbar, Gtk::PACK_SHRINK);
+        box->pack_start(*tree);
+
+        tree_scrolled_window->add(*box);
         tree_scrolled_window->set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
 
         std::map<std::string, Gtk::TreeModelColumn<Glib::ustring>> cols;
