@@ -1,5 +1,7 @@
 #include <iostream>
 
+#include <gtksourceviewmm.h>
+
 #include "main_window.hpp"
 #include "util.hpp"
 
@@ -14,6 +16,8 @@ MainWindow::MainWindow(std::shared_ptr<PostgresConnection>& pc)
     set_default_size(1200, 800);
 
     add(main_box);
+
+    Gsv::init();
 
     browser_scrolled_window.add(browser);
     browser_scrolled_window.set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
@@ -51,6 +55,12 @@ MainWindow::MainWindow(std::shared_ptr<PostgresConnection>& pc)
     } catch(const Glib::Error& e) {
         std::cerr << "Building menus and toolbar failed: " <<  e.what();
     }
+
+    Gtk::ToolButton* toolbutton_sql;
+    res_builder->get_widget("toolbutton_sql", toolbutton_sql);
+
+    toolbutton_sql->signal_clicked().connect
+        (sigc::mem_fun(*this, &MainWindow::on_open_sql_editor_clicked));
 
     auto object = res_builder->get_object("menubar");
     auto menu = Glib::RefPtr<Gio::Menu>::cast_dynamic(object);
@@ -104,6 +114,71 @@ void MainWindow::insert_tables(const std::vector<std::string>& tables)
 void MainWindow::on_tab_close_button_clicked(Gtk::TreeView* tree)
 {
     notebook.remove_page(*tree);
+}
+
+void MainWindow::on_open_sql_editor_clicked()
+{
+    Gtk::HBox* hb = Gtk::manage(new Gtk::HBox);
+    Gtk::Button* b = Gtk::manage(new Gtk::Button);
+    Gtk::Label* l = Gtk::manage(new Gtk::Label("SQL Editor"));
+
+    Gtk::Image* i = Gtk::manage
+        (new Gtk::Image(Gtk::Stock::CLOSE, Gtk::ICON_SIZE_MENU));
+    b->add(*i);
+    hb->pack_start(*l, Gtk::PACK_SHRINK);
+    hb->pack_start(*b, Gtk::PACK_SHRINK);
+
+    Gtk::TextView* tv = Gtk::manage(new Gtk::TextView);
+
+    Gtk::TreeModel::ColumnRecord cr;
+
+    Gtk::Toolbar* toolbar = Gtk::manage(new Gtk::Toolbar);
+    Gtk::ToolButton* btn1 = Gtk::manage(new Gtk::ToolButton);
+    btn1->set_icon_name("document-save");
+
+    toolbar->append(*btn1);
+
+    Gtk::TreeView* tree = Gtk::manage(new Gtk::TreeView);
+
+    Gtk::ScrolledWindow* tree_scrolled_window
+        = Gtk::manage(new Gtk::ScrolledWindow);
+
+    Gsv::View* source_view = Gtk::manage(new Gsv::View);
+
+    Glib::RefPtr<Gsv::Buffer> buffer = source_view->get_source_buffer() ;
+
+    if (! buffer) {
+        std::cerr << "Gsv::View::get_source_buffer () failed" << std::endl ;
+    }
+
+    Glib::RefPtr<Gsv::LanguageManager> lm = Gsv::LanguageManager::get_default();
+    Glib::RefPtr<Gsv::Language> lang = lm->get_language("sql");
+
+    Glib::RefPtr<Gsv::StyleSchemeManager> sm = Gsv::StyleSchemeManager::get_default();
+    Glib::RefPtr<Gsv::StyleScheme> style = sm->get_scheme("cobalt");
+
+    buffer->set_language(lang);
+    buffer->set_style_scheme(style);
+    buffer->set_text("update") ;
+
+    const std::string s = buffer->get_text();
+    std::cout << s << std::endl;
+
+    Gtk::Box* box = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
+    box->pack_start(*toolbar, Gtk::PACK_SHRINK);
+    box->pack_start(*source_view);
+    box->pack_start(*tree);
+
+    tree_scrolled_window->add(*box);
+    tree_scrolled_window->set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
+
+    notebook.append_page(*tree_scrolled_window, *hb);
+
+    hb->show_all_children();
+
+    show_all_children();
+
+    notebook.next_page();
 }
 
 void MainWindow::on_browser_row_activated(const Gtk::TreeModel::Path& path,

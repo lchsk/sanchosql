@@ -51,6 +51,8 @@ private:
     void on_tab_close_button_clicked(Gtk::TreeView*);
     void on_browser_row_activated(const Gtk::TreeModel::Path& path,
                                   Gtk::TreeViewColumn* column);
+    void on_open_sql_editor_clicked();
+
     void on_action_file_new();
     void on_action_file_quit();
 
