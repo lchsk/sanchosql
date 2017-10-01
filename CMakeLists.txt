@@ -14,9 +14,12 @@ message(STATUS "CMAKE_COMPILER_IS_GNUCXX   = ${CMAKE_COMPILER_IS_GNUCXX}"  )
 set(EXECUTABLE_NAME "postgres-client")
 
 set(CMAKE_CXX_STANDARD 14)
-add_definitions(-O2)
+add_definitions(-O0)
 
 find_package(PkgConfig)
+
+pkg_check_modules(GTKSOURCEVIEW gtksourceviewmm-3.0)
+message(STATUS "GTKSOURCEVIEWMM_VERSION    = ${GTKSOURCEVIEW_VERSION}")
 
 pkg_check_modules(GTKMM gtkmm-3.0)
 message(STATUS "GTKMM_VERSION              = ${GTKMM_VERSION}")
@@ -46,9 +49,14 @@ add_custom_target(resources
 
 add_dependencies(${EXECUTABLE_NAME} resources)
 
-link_directories(${GTKMM_LIBRARY_DIRS} ${PQXX_LIBRARY_DIRS})
-include_directories(${GTKMM_INCLUDE_DIRS} ${PQXX_INCLUDE_DIRS})
-target_link_libraries(${EXECUTABLE_NAME} ${GTKMM_LIBRARIES} ${PQXX_LIBRARIES})
+if ( CMAKE_COMPILER_IS_GNUCC )
+  message(STATUS "#warning extension is disabled")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wno-cpp")
+endif ( CMAKE_COMPILER_IS_GNUCC )
+
+link_directories(${GTKMM_LIBRARY_DIRS} ${PQXX_LIBRARY_DIRS} ${GTKSOURCEVIEW_LIBRARY_DIRS})
+include_directories(${GTKMM_INCLUDE_DIRS} ${PQXX_INCLUDE_DIRS} ${GTKSOURCEVIEW_INCLUDE_DIRS})
+target_link_libraries(${EXECUTABLE_NAME} ${GTKMM_LIBRARIES} ${PQXX_LIBRARIES} ${GTKSOURCEVIEW_LIBRARIES})
 
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
 
