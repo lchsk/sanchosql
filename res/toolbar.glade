@@ -22,8 +22,7 @@
       <object class="GtkToolButton" id="toolbutton_sql">
         <property name="visible">True</property>
         <property name="can_focus">False</property>
-        <property name="tooltip_text" translatable="yes">New</property>
-        <property name="action_name">file.sql</property>
+        <property name="label" translatable="yes">SQL</property>
         <property name="icon_name">accessories-text-editor</property>
       </object>
       <packing>
