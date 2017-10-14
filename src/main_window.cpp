@@ -121,7 +121,7 @@ void MainWindow::insert_tables(const std::vector<std::string>& tables)
     }
 }
 
-void MainWindow::on_tab_close_button_clicked(Gtk::TreeView* tree)
+void MainWindow::on_tab_close_button_clicked(Gtk::ScrolledWindow* tree)
 {
     notebook.remove_page(*tree);
 }
@@ -183,6 +183,11 @@ void MainWindow::on_open_sql_editor_clicked()
     tree_scrolled_window->set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
 
     notebook.append_page(*tree_scrolled_window, *hb);
+
+    b->signal_clicked().connect
+        (sigc::bind<Gtk::ScrolledWindow*>
+         (sigc::mem_fun(*this, &MainWindow::on_tab_close_button_clicked),
+          tree_scrolled_window));
 
     hb->show_all_children();
 
@@ -270,10 +275,9 @@ void MainWindow::on_browser_row_activated(const Gtk::TreeModel::Path& path,
         notebook.append_page(*tree_scrolled_window, *hb);
 
         b->signal_clicked().connect
-            (sigc::bind<Gtk::TreeView*>
+            (sigc::bind<Gtk::ScrolledWindow*>
              (sigc::mem_fun(*this, &MainWindow::on_tab_close_button_clicked),
-              tree));
-
+              tree_scrolled_window));
 
         hb->show_all_children();
 

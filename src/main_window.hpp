@@ -47,7 +47,7 @@ private:
 
     std::shared_ptr<PostgresConnection> pc;
 
-    void on_tab_close_button_clicked(Gtk::TreeView*);
+    void on_tab_close_button_clicked(Gtk::ScrolledWindow*);
     void on_browser_row_activated(const Gtk::TreeModel::Path& path,
                                   Gtk::TreeViewColumn* column);
     void on_open_sql_editor_clicked();
