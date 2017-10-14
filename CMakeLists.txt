@@ -36,8 +36,11 @@ execute_process(
 
 add_executable(${EXECUTABLE_NAME}
     src/pc.cpp
-    src/main_window.cpp
     src/pg_conn.cpp
+
+    # Windows
+    src/main_window.cpp
+    src/win_new_connection.cpp
 
     # Resources
     src/resources.c
