@@ -30,7 +30,6 @@ protected:
   class BrowserModel : public Gtk::TreeModel::ColumnRecord
   {
   public:
-
       BrowserModel()
       {
           add(table);

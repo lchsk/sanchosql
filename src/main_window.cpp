@@ -3,6 +3,7 @@
 #include <gtksourceviewmm.h>
 
 #include "main_window.hpp"
+#include "win_new_connection.hpp"
 #include "util.hpp"
 
 
@@ -52,6 +53,7 @@ MainWindow::MainWindow(std::shared_ptr<PostgresConnection>& pc)
     try {
         res_builder->add_from_resource("/res/toolbar.glade");
         res_builder->add_from_resource("/res/main_menu.glade");
+        res_builder->add_from_resource("/res/window_new_connection.glade");
     } catch(const Glib::Error& e) {
         std::cerr << "Building menus and toolbar failed: " <<  e.what();
     }
@@ -97,6 +99,14 @@ void MainWindow::on_action_file_quit()
 
 void MainWindow::on_action_file_new()
 {
+    NewConnectionWindow* win = nullptr;
+    res_builder->get_widget_derived("win_new_connection", win);
+
+    if (win) {
+        win->set_transient_for(*this);
+        win->set_modal();
+        win->show();
+    }
 }
 
 void MainWindow::insert_tables(const std::vector<std::string>& tables)
