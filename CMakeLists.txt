@@ -38,6 +38,9 @@ add_executable(${EXECUTABLE_NAME}
     src/pc.cpp
     src/pg_conn.cpp
 
+    # Models
+    src/model/tab_model.cpp
+
     # Windows
     src/main_window.cpp
     src/win_new_connection.cpp
