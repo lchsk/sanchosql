@@ -1,15 +1,37 @@
 #ifndef PG_CONN_HPP
 #define PG_CONN_HPP
+
 #include <iostream>
+#include <sstream>
+
 #include <pqxx/pqxx>
+
+struct ConnectionDetails
+{
+    const std::string postgres_string()
+    {
+        std::stringstream conn;
+
+        conn << "hostaddr = " << host
+          << " user = " << user
+          << " password = " << password
+          << " dbname = " << dbname
+          << " port = " << port;
+
+        return conn.str();
+    }
+
+    std::string name;
+    std::string host;
+    std::string user;
+    std::string password;
+    std::string dbname;
+    unsigned port;
+};
 
 class PostgresConnection {
 public:
-    PostgresConnection(const std::string host,
-                       const std::string user,
-                       const std::string password,
-                       const std::string dbname,
-                       const unsigned port);
+    PostgresConnection(const std::shared_ptr<ConnectionDetails>& conn_details);
 
     ~PostgresConnection()
     {
@@ -107,13 +129,34 @@ public:
     }
 
 private:
-    const std::string host;
-    const std::string user;
-    const std::string password;
-    const std::string dbname;
-    const unsigned port;
+    std::shared_ptr<ConnectionDetails> conn_details;
 
     std::unique_ptr<pqxx::connection> conn;
 };
+
+class Connections
+{
+public:
+    Connections() {
+        conn = std::make_shared<ConnectionDetails>();
+
+        conn->host = "127.0.0.1";
+        conn->user = "sancho";
+        conn->password = "sancho";
+        conn->dbname = "sancho";
+        conn->port = 5432;
+    }
+
+    std::shared_ptr<ConnectionDetails>& connection() {
+        return conn;
+    }
+
+    static Connections* instance() { return &ins; }
+
+private:
+    std::shared_ptr<ConnectionDetails> conn;
+    static Connections ins;
+};
+
 
 #endif

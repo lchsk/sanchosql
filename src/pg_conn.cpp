@@ -1,32 +1,19 @@
 #include "pg_conn.hpp"
 
 #include <iostream>
-#include <sstream>
 
+Connections Connections::ins;
 
-PostgresConnection::PostgresConnection(const std::string host,
-                                       const std::string user,
-                                       const std::string password,
-                                       const std::string dbname,
-                                       const unsigned port) :
-    host(host),
-    user(user),
-    password(password),
-    dbname(dbname),
-    port(port)
+PostgresConnection::PostgresConnection
+(const std::shared_ptr<ConnectionDetails>& conn_details) :
+    conn_details(conn_details)
 {
-    std::stringstream c;
-
-    c << "hostaddr = " << host
-      << " user = " << user
-      << " password = " << password
-      << " dbname = " << dbname
-      << " port = " << port;
-
     try {
-        conn = std::make_unique<pqxx::connection>(c.str());
+        conn = std::make_unique<pqxx::connection>(conn_details->postgres_string());
 
-        if (! conn->is_open()) {
+        if (conn->is_open()) {
+            std::cout << "Connection open" << std::endl;
+        } else {
             std::cerr << "Cannot open database" << std::endl;
 
             throw std::exception();
