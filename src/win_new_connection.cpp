@@ -6,6 +6,10 @@ NewConnectionWindow::NewConnectionWindow
 {
 	builder->get_widget("box_left", box_left);
 	builder->get_widget("paned_new_connections", paned_new_connections);
+	builder->get_widget("btn_close", btn_close);
+
+	btn_close->signal_clicked().connect
+        (sigc::mem_fun(*this, &NewConnectionWindow::on_btn_close_clicked));
 
 	tree_connections.set_headers_visible(false);
 
@@ -30,4 +34,9 @@ NewConnectionWindow::NewConnectionWindow
 	int w, h;
     get_size(w, h);
     paned_new_connections->set_position(0.35 * w);
+}
+
+void NewConnectionWindow::on_btn_close_clicked()
+{
+	hide();
 }
