@@ -8,17 +8,9 @@
 
 int main (int argc, char *argv[])
 {
-    std::shared_ptr<PostgresConnection> pc
-        = std::make_shared<PostgresConnection>("127.0.0.1",
-                                               "sancho",
-                                               "sancho",
-                                               "sancho",
-                                               5432);
     auto app = Gtk::Application::create(argc, argv, "postgres.client");
 
-    MainWindow main_window(pc);
-
-    main_window.insert_tables(pc->get_db_tables());
+    MainWindow main_window;
 
     return app->run(main_window);
 }

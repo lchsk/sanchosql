@@ -7,9 +7,8 @@
 #include "util.hpp"
 
 
-MainWindow::MainWindow(std::shared_ptr<PostgresConnection>& pc)
-    : main_box(Gtk::ORIENTATION_VERTICAL),
-      pc(pc)
+MainWindow::MainWindow()
+    : main_box(Gtk::ORIENTATION_VERTICAL)
 {
     set_title("Postgres Client");
 
@@ -90,6 +89,8 @@ MainWindow::MainWindow(std::shared_ptr<PostgresConnection>& pc)
     int w, h;
     get_size(w, h);
     paned.set_position(0.21 * w);
+
+    insert_tables();
 }
 
 void MainWindow::on_action_file_quit()
@@ -109,11 +110,15 @@ void MainWindow::on_action_file_new()
     }
 }
 
-void MainWindow::insert_tables(const std::vector<std::string>& tables)
+void MainWindow::insert_tables()
 {
+    std::shared_ptr<PostgresConnection> pc
+        = std::make_shared<PostgresConnection>(Connections::instance()->connection());
+
+    const std::vector<std::string>& tables = pc->get_db_tables();
+
     Gtk::TreeModel::Row row = *(browser_store->append());
     row[browser_model.table] = "Tables";
-
 
     for (const std::string& table_name : tables) {
         Gtk::TreeModel::Row table_row = *(browser_store->append(row.children()));
@@ -121,9 +126,27 @@ void MainWindow::insert_tables(const std::vector<std::string>& tables)
     }
 }
 
+TabModel& MainWindow::tab_model(Gtk::ScrolledWindow* win)
+{
+    return *(tab_models[win]);
+}
+
 void MainWindow::on_tab_close_button_clicked(Gtk::ScrolledWindow* tree)
 {
+    if (tab_models.find(tree) == tab_models.end()) {
+        std::cerr << "Could not find connection when closing a tab" << std::endl;
+    } else {
+        tab_models.erase(tab_models.find(tree));
+    }
+
     notebook.remove_page(*tree);
+
+    const unsigned models = tab_models.size();
+    const unsigned tabs = notebook.get_n_pages();
+
+    if (tabs != models) {
+        std::cerr << "Tabs != Models: " << tabs << " " << models << std::endl;
+    }
 }
 
 void MainWindow::on_open_sql_editor_clicked()
@@ -152,6 +175,9 @@ void MainWindow::on_open_sql_editor_clicked()
 
     Gtk::ScrolledWindow* tree_scrolled_window
         = Gtk::manage(new Gtk::ScrolledWindow);
+
+    tab_models[tree_scrolled_window]
+        = std::make_unique<TabModel>(Connections::instance()->connection());
 
     Gsv::View* source_view = Gtk::manage(new Gsv::View);
 
@@ -221,8 +247,17 @@ void MainWindow::on_browser_row_activated(const Gtk::TreeModel::Path& path,
 
         Gtk::TreeModel::ColumnRecord cr;
 
-        auto columns = pc->get_table_columns(table_name);
-        auto data = pc->get_table_data(table_name, columns);
+        Gtk::ScrolledWindow* tree_scrolled_window
+            = Gtk::manage(new Gtk::ScrolledWindow);
+
+        tab_models[tree_scrolled_window]
+            = std::make_unique<TabModel>(Connections::instance()->connection());
+
+        const TabModel& tab = tab_model(tree_scrolled_window);
+        auto& pc = tab.conn();
+
+        auto columns = pc.get_table_columns(table_name);
+        auto data = pc.get_table_data(table_name, columns);
 
         Gtk::Toolbar* toolbar = Gtk::manage(new Gtk::Toolbar);
         Gtk::ToolButton* btn1 = Gtk::manage(new Gtk::ToolButton);
@@ -231,9 +266,6 @@ void MainWindow::on_browser_row_activated(const Gtk::TreeModel::Path& path,
         toolbar->append(*btn1);
 
         Gtk::TreeView* tree = Gtk::manage(new Gtk::TreeView);
-
-        Gtk::ScrolledWindow* tree_scrolled_window
-            = Gtk::manage(new Gtk::ScrolledWindow);
 
         Gtk::Box* box = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
         box->pack_start(*toolbar, Gtk::PACK_SHRINK);
