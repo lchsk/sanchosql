@@ -12,6 +12,8 @@ public:
 
 private:
     void on_btn_close_clicked();
+    void on_btn_test_connection_clicked();
+    void on_win_show();
 
     Glib::RefPtr<Gtk::Builder> builder;
 
@@ -34,6 +36,15 @@ private:
     Gtk::Box* box_left;
     Gtk::Paned* paned_new_connections;
     Gtk::Button* btn_close;
+    Gtk::Button* btn_test_connection;
+
+    Gtk::Label* label_connection_status;
+
+    Gtk::Entry* text_host;
+    Gtk::Entry* text_port;
+    Gtk::Entry* text_db;
+    Gtk::Entry* text_user;
+    Gtk::Entry* text_password;
 };
 
 #endif

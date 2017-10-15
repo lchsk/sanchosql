@@ -21,12 +21,19 @@ struct ConnectionDetails
         return conn.str();
     }
 
+    void set_host(const std::string& hostname) {
+        if (hostname == "localhost")
+            host = "127.0.0.1";
+        else
+            host = hostname;
+    }
+
     std::string name;
     std::string host;
     std::string user;
     std::string password;
     std::string dbname;
-    unsigned port;
+    std::string port;
 };
 
 class PostgresConnection {
@@ -35,7 +42,14 @@ public:
 
     ~PostgresConnection()
     {
-        conn->disconnect();
+        if (! conn) return;
+
+        try {
+            if (conn->is_open())
+                conn->disconnect();
+        } catch (const std::exception& e) {
+            std::cerr << "Error when disconnecting: " << e.what() << std::endl;
+        }
     }
 
     std::vector<std::string> get_db_tables()
@@ -128,10 +142,23 @@ public:
         return data;
     }
 
+    void init_connection();
+
+    bool is_open() const {
+        return is_open_;
+    };
+
+    const std::string& error_message() const {
+        return error_message_;
+    };
+
 private:
     std::shared_ptr<ConnectionDetails> conn_details;
 
     std::unique_ptr<pqxx::connection> conn;
+
+    bool is_open_;
+    std::string error_message_;
 };
 
 class Connections
@@ -144,7 +171,7 @@ public:
         conn->user = "sancho";
         conn->password = "sancho";
         conn->dbname = "sancho";
-        conn->port = 5432;
+        conn->port = "5432";
     }
 
     std::shared_ptr<ConnectionDetails>& connection() {

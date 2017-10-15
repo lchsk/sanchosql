@@ -114,6 +114,7 @@ void MainWindow::insert_tables()
 {
     std::shared_ptr<PostgresConnection> pc
         = std::make_shared<PostgresConnection>(Connections::instance()->connection());
+    pc->init_connection();
 
     const std::vector<std::string>& tables = pc->get_db_tables();
 
