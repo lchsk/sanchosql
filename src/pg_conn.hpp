@@ -3,8 +3,16 @@
 
 #include <iostream>
 #include <sstream>
+#include <unordered_map>
 
 #include <pqxx/pqxx>
+
+struct OidMapping
+{
+    int oid;
+    std::string udt_name;
+    std::string data_type;
+};
 
 struct ConnectionDetails
 {
@@ -142,6 +150,8 @@ public:
         return data;
     }
 
+    const std::string get_data_type(int oid);
+
     void init_connection();
 
     bool is_open() const {
@@ -153,9 +163,13 @@ public:
     };
 
 private:
+    void load_oids();
+
     std::shared_ptr<ConnectionDetails> conn_details;
 
     std::unique_ptr<pqxx::connection> conn;
+
+    std::unordered_map<int, OidMapping> oid_names;
 
     bool is_open_;
     std::string error_message_;
