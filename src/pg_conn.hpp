@@ -41,25 +41,14 @@ struct QueryResult
         }
 
         for (const auto& row : result) {
-            // std::cout << row[0].table() << std::endl;
-
-            // std::map<std::string, std::string> v;
-
             std::vector<std::string> row_data;
 
             for (unsigned i = 0; i < result.columns(); i++) {
-                // std::cout << row[i].as<std::string>();
-
                 if (row[i].is_null()) {
                     row_data.push_back("null");
                 } else {
                     row_data.push_back(row[i].as<std::string>());
                 }
-                // try {
-                    // v[col_name.first] = row[col_name.first].as<std::string>();
-                // } catch (const std::exception&) {
-                    // v[col_name.first] = "null";
-                // }
             }
 
             data.push_back(row_data);
@@ -118,44 +107,7 @@ public:
 
     std::shared_ptr<QueryResult> run_query(const std::string& query)
     {
-        std::vector<std::map<std::string, std::string> > data;
-
-        try {
-            std::shared_ptr<QueryResult> res
-                = std::make_shared<QueryResult>(*conn, query, oid_names);
-
-            // pqxx::result result = work.exec(query);
-
-            // for (int i = 0; i < result.columns(); i++) {
-                // std::cout << "name: " << result.column_name(i)
-                          // << "\t type: " << result.column_type(i)
-                          // << "\t table: " << result.table(i)
-                          // << "\t col: " << result.table_column(i)
-                          // << std::endl;
-            // }
-
-            // for (const auto& row : result) {
-                // std::cout << row[0].table() << std::endl;
-                // std::map<std::string, std::string> v;
-
-                // for (const auto& col_name : columns) {
-                    // try {
-                        // v[col_name.first] = row[col_name.first].as<std::string>();
-                    // } catch (const std::exception&) {
-                        // v[col_name.first] = "null";
-                    // }
-                // }
-
-                // data.push_back(v);
-            // }
-
-            return res;
-
-            // std::cout << result.columns() << std::endl;
-            // std::cout << result.size() << std::endl;
-        } catch (const pqxx::pqxx_exception& e) {
-            std::cout << "EXCEPTION: " << e.base().what() << std::endl;
-        }
+        return std::make_shared<QueryResult>(*conn, query, oid_names);
     }
 
     std::vector<std::string> get_db_tables()
@@ -187,7 +139,6 @@ public:
     std::vector<std::pair<std::string, std::string>>
     get_table_columns(const std::string& table_name)
     {
-        // std::vector<std::string> columns;
         std::vector<std::pair<std::string, std::string>> columns;
 
         pqxx::work work(*conn);
@@ -220,7 +171,6 @@ public:
 
     std::vector<std::map<std::string, std::string> >
     get_table_data(const std::string& table_name,
-                   // const std::vector<std::string>& columns)
                    const std::vector<std::pair<std::string, std::string>>& columns)
     {
         std::vector<std::map<std::string, std::string> > data;
