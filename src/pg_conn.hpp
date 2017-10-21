@@ -9,30 +9,30 @@
 
 struct OidMapping
 {
-    int oid;
+    pqxx::oid oid;
     std::string udt_name;
     std::string data_type;
 };
 
 struct Column
 {
-    int oid;
+    pqxx::oid oid;
     std::string column_name;
     std::string data_type;
 };
 
-const std::string get_data_type(int oid, std::unordered_map<int, OidMapping>& oid_names);
+const std::string get_data_type(pqxx::oid oid, std::unordered_map<pqxx::oid, OidMapping>& oid_names);
 
 struct QueryResult
 {
     QueryResult(pqxx::connection& conn,
                 const std::string& query,
-                std::unordered_map<int, OidMapping>& oid_names)
+                std::unordered_map<pqxx::oid, OidMapping>& oid_names)
     {
         pqxx::work work(conn);
         pqxx::result result = work.exec(query);
 
-        for (int i = 0; i < result.columns(); i++) {
+        for (unsigned i = 0; i < result.columns(); i++) {
             columns.push_back(Column({
                         .oid = result.column_type(i),
                             .column_name = result.column_name(i),
@@ -47,7 +47,7 @@ struct QueryResult
 
             std::vector<std::string> row_data;
 
-            for (int i = 0; i < result.columns(); i++) {
+            for (unsigned i = 0; i < result.columns(); i++) {
                 // std::cout << row[i].as<std::string>();
 
                 if (row[i].is_null()) {
@@ -265,7 +265,7 @@ private:
 
     std::unique_ptr<pqxx::connection> conn;
 
-    std::unordered_map<int, OidMapping> oid_names;
+    std::unordered_map<pqxx::oid, OidMapping> oid_names;
 
     bool is_open_;
     std::string error_message_;

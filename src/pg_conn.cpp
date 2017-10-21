@@ -47,15 +47,15 @@ void PostgresConnection::load_oids()
     pqxx::result result = work.exec(sql);
 
     for (const auto& row : result) {
-        oid_names[row["oid"].as<int>()] = OidMapping({
-            .oid=row["oid"].as<int>(),
+        oid_names[row["oid"].as<pqxx::oid>()] = OidMapping({
+            .oid=row["oid"].as<pqxx::oid>(),
             .udt_name=row["udt_name"].as<std::string>(),
             .data_type=row["data_type"].as<std::string>(),
         });
     }
 }
 
-const std::string get_data_type(int oid, std::unordered_map<int, OidMapping>& oid_names)
+const std::string get_data_type(pqxx::oid oid, std::unordered_map<pqxx::oid, OidMapping>& oid_names)
 {
     if (oid_names.find(oid) == oid_names.end()) {
         return std::to_string(oid);
