@@ -1,7 +1,5 @@
 #include <iostream>
 
-#include <gtksourceviewmm.h>
-
 #include "main_window.hpp"
 #include "win_new_connection.hpp"
 #include "util.hpp"
@@ -132,91 +130,61 @@ TabModel& MainWindow::tab_model(Gtk::ScrolledWindow* win)
     return *(tab_models[win]);
 }
 
+Tab& MainWindow::get_tab(Gtk::ScrolledWindow* win)
+{
+    return *(tabs[win]);
+}
+
 void MainWindow::on_tab_close_button_clicked(Gtk::ScrolledWindow* tree)
 {
     if (tab_models.find(tree) == tab_models.end()) {
-        std::cerr << "Could not find connection when closing a tab" << std::endl;
+        std::cerr << "Could not find connection when closing a tab model" << std::endl;
     } else {
         tab_models.erase(tab_models.find(tree));
+    }
+
+    if (tabs.find(tree) == tabs.end()) {
+        std::cerr << "Could not find connection when closing a tab" << std::endl;
+    } else {
+        tabs.erase(tabs.find(tree));
     }
 
     notebook.remove_page(*tree);
 
     const unsigned models = tab_models.size();
-    const unsigned tabs = notebook.get_n_pages();
+    const unsigned tabs_n = tabs.size();
+    const unsigned notebook_tabs = notebook.get_n_pages();
 
-    if (tabs != models) {
-        std::cerr << "Tabs != Models: " << tabs << " " << models << std::endl;
+    if (tabs_n != models || tabs_n != notebook_tabs) {
+        std::cerr << "Tabs != Models != Notebook tabs: "
+                  << tabs_n << " "
+                  << models << " "
+                  << notebook_tabs << std::endl;
     }
 }
 
 void MainWindow::on_open_sql_editor_clicked()
 {
-    Gtk::HBox* hb = Gtk::manage(new Gtk::HBox);
-    Gtk::Button* b = Gtk::manage(new Gtk::Button);
-    Gtk::Label* l = Gtk::manage(new Gtk::Label("SQL Editor"));
+    auto tab = std::make_shared<Tab>();
 
-    Gtk::Image* i = Gtk::manage
-        (new Gtk::Image(Gtk::Stock::CLOSE, Gtk::ICON_SIZE_MENU));
-    b->add(*i);
-    hb->pack_start(*l, Gtk::PACK_SHRINK);
-    hb->pack_start(*b, Gtk::PACK_SHRINK);
+    Gtk::ScrolledWindow* window = tab->tree_scrolled_window;
 
-    Gtk::TextView* tv = Gtk::manage(new Gtk::TextView);
-
-    Gtk::TreeModel::ColumnRecord cr;
-
-    Gtk::Toolbar* toolbar = Gtk::manage(new Gtk::Toolbar);
-    Gtk::ToolButton* btn1 = Gtk::manage(new Gtk::ToolButton);
-    btn1->set_icon_name("document-save");
-
-    toolbar->append(*btn1);
-
-    Gtk::TreeView* tree = Gtk::manage(new Gtk::TreeView);
-
-    Gtk::ScrolledWindow* tree_scrolled_window
-        = Gtk::manage(new Gtk::ScrolledWindow);
-
-    tab_models[tree_scrolled_window]
-        = std::make_unique<TabModel>(Connections::instance()->connection());
-
-    Gsv::View* source_view = Gtk::manage(new Gsv::View);
-
-    Glib::RefPtr<Gsv::Buffer> buffer = source_view->get_source_buffer() ;
-
-    if (! buffer) {
-        std::cerr << "Gsv::View::get_source_buffer () failed" << std::endl ;
-    }
-
-    Glib::RefPtr<Gsv::LanguageManager> lm = Gsv::LanguageManager::get_default();
-    Glib::RefPtr<Gsv::Language> lang = lm->get_language("sql");
-
-    Glib::RefPtr<Gsv::StyleSchemeManager> sm = Gsv::StyleSchemeManager::get_default();
-    Glib::RefPtr<Gsv::StyleScheme> style = sm->get_scheme("cobalt");
-
-    buffer->set_language(lang);
-    buffer->set_style_scheme(style);
-    buffer->set_text("update") ;
-
-    const std::string s = buffer->get_text();
-    std::cout << s << std::endl;
-
-    Gtk::Box* box = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
-    box->pack_start(*toolbar, Gtk::PACK_SHRINK);
-    box->pack_start(*source_view);
-    box->pack_start(*tree);
-
-    tree_scrolled_window->add(*box);
-    tree_scrolled_window->set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
-
-    notebook.append_page(*tree_scrolled_window, *hb);
-
-    b->signal_clicked().connect
+    tab->b->signal_clicked().connect
         (sigc::bind<Gtk::ScrolledWindow*>
          (sigc::mem_fun(*this, &MainWindow::on_tab_close_button_clicked),
-          tree_scrolled_window));
+          window));
 
-    hb->show_all_children();
+    tab->btn1->signal_clicked().connect
+        (sigc::bind<Gtk::ScrolledWindow*, Glib::RefPtr<Gsv::Buffer> >
+         (sigc::mem_fun(*this, &MainWindow::on_submit_query_clicked),
+          window, tab->buffer));
+
+    tabs[window] = (tab);
+
+    tab_models[window]
+        = std::make_unique<TabModel>(Connections::instance()->connection());
+
+    notebook.append_page(*window, *(tab->hb));
 
     show_all_children();
 
@@ -317,5 +285,46 @@ void MainWindow::on_browser_row_activated(const Gtk::TreeModel::Path& path,
         show_all_children();
 
         notebook.next_page();
+    }
+}
+
+void MainWindow::on_submit_query_clicked
+(Gtk::ScrolledWindow* tree_scrolled_window, Glib::RefPtr<Gsv::Buffer>& buffer)
+{
+    const std::string query = buffer->get_text();
+
+    std::cout << query << std::endl;
+
+    const TabModel& tab = tab_model(tree_scrolled_window);
+    auto& pc = tab.conn();
+
+    std::shared_ptr<QueryResult> result = pc.run_query(query);
+
+    Tab& tab2 = get_tab(tree_scrolled_window);
+
+    std::map<std::string, Gtk::TreeModelColumn<Glib::ustring>> cols;
+
+    for (const auto& column : result->columns) {
+        Gtk::TreeModelColumn<Glib::ustring> col;
+
+        cols[column.column_name] = col;
+
+        tab2.cr.add(cols[column.column_name]);
+        tab2.tree->append_column(replace_all(column.column_name, "_", "__") + "\n" + column.data_type, cols[column.column_name]);
+    }
+
+    tab2.list_store = Gtk::ListStore::create(tab2.cr);
+    tab2.tree->set_model(tab2.list_store);
+
+    for (const auto& row : result->data) {
+        Gtk::TreeModel::Row r = *(tab2.list_store->append());
+
+        int i = 0;
+
+        for (const auto& c : result->columns) {
+            r[cols[c.column_name]] = row[i];
+
+            i++;
+        }
     }
 }
