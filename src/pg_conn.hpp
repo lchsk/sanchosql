@@ -21,9 +21,13 @@ struct Column
     std::string data_type;
 };
 
+const std::string get_data_type(int oid, std::unordered_map<int, OidMapping>& oid_names);
+
 struct QueryResult
 {
-    QueryResult(pqxx::connection& conn, const std::string& query)
+    QueryResult(pqxx::connection& conn,
+                const std::string& query,
+                std::unordered_map<int, OidMapping>& oid_names)
     {
         pqxx::work work(conn);
         pqxx::result result = work.exec(query);
@@ -32,7 +36,7 @@ struct QueryResult
             columns.push_back(Column({
                         .oid = result.column_type(i),
                             .column_name = result.column_name(i),
-                            .data_type = "hehe"
+                            .data_type = get_data_type(result.column_type(i), oid_names)
                             }));
         }
 
@@ -118,7 +122,7 @@ public:
 
         try {
             std::shared_ptr<QueryResult> res
-                = std::make_shared<QueryResult>(*conn, query);
+                = std::make_shared<QueryResult>(*conn, query, oid_names);
 
             // pqxx::result result = work.exec(query);
 
@@ -243,8 +247,6 @@ public:
 
         return data;
     }
-
-    const std::string get_data_type(int oid);
 
     void init_connection();
 

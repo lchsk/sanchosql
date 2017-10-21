@@ -55,7 +55,7 @@ void PostgresConnection::load_oids()
     }
 }
 
-const std::string PostgresConnection::get_data_type(int oid)
+const std::string get_data_type(int oid, std::unordered_map<int, OidMapping>& oid_names)
 {
     if (oid_names.find(oid) == oid_names.end()) {
         return std::to_string(oid);
