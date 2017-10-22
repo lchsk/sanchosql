@@ -9,36 +9,7 @@
 
 #include "conn_util.hpp"
 #include "query_result.hpp"
-
-struct ConnectionDetails
-{
-    const std::string postgres_string()
-    {
-        std::stringstream conn;
-
-        conn << "hostaddr = " << host
-          << " user = " << user
-          << " password = " << password
-          << " dbname = " << dbname
-          << " port = " << port;
-
-        return conn.str();
-    }
-
-    void set_host(const std::string& hostname) {
-        if (hostname == "localhost")
-            host = "127.0.0.1";
-        else
-            host = hostname;
-    }
-
-    std::string name;
-    std::string host;
-    std::string user;
-    std::string password;
-    std::string dbname;
-    std::string port;
-};
+#include "connection_details.hpp"
 
 class PostgresConnection {
 public:

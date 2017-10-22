@@ -39,6 +39,7 @@ add_executable(${EXECUTABLE_NAME}
     src/pg_conn.cpp
     src/conn_util.cpp
     src/query_result.cpp
+    src/connection_details.cpp
 
     # Models
     src/model/tab_model.cpp
