@@ -98,7 +98,7 @@ void MainWindow::on_action_file_quit()
 
 void MainWindow::on_action_file_new()
 {
-    NewConnectionWindow* win = nullptr;
+    san::NewConnectionWindow* win = nullptr;
     res_builder->get_widget_derived("win_new_connection", win);
 
     if (win) {
