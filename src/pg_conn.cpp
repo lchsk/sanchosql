@@ -2,41 +2,43 @@
 
 #include "pg_conn.hpp"
 
-san::Connections san::Connections::ins;
-
-PostgresConnection::PostgresConnection
-(const std::shared_ptr<san::ConnectionDetails>& conn_details) :
-    conn_details(conn_details),
-    is_open_(false),
-    error_message_("")
+namespace san
 {
-}
+    san::Connections san::Connections::ins;
 
-PostgresConnection::~PostgresConnection()
-{
-	if (! conn) return;
+    PostgresConnection::PostgresConnection
+    (const std::shared_ptr<san::ConnectionDetails>& conn_details) :
+        conn_details(conn_details),
+        is_open_(false),
+        error_message_("")
+    {
+    }
 
-	try {
-		if (conn->is_open())
-			conn->disconnect();
-	} catch (const std::exception& e) {
-		std::cerr << "Error when disconnecting: " << e.what() << std::endl;
-	}
-}
+    PostgresConnection::~PostgresConnection()
+    {
+        if (! conn) return;
 
-std::shared_ptr<san::QueryResult>
-PostgresConnection::run_query(const std::string& query)
-{
-    return std::make_shared<san::QueryResult>(*conn, query, oid_names);
-}
+        try {
+            if (conn->is_open())
+                conn->disconnect();
+        } catch (const std::exception& e) {
+            std::cerr << "Error when disconnecting: " << e.what() << std::endl;
+        }
+    }
 
-std::vector<std::string> PostgresConnection::get_db_tables()
-{
-    std::vector<std::string> tables;
+    std::shared_ptr<san::QueryResult>
+    PostgresConnection::run_query(const std::string& query)
+    {
+        return std::make_shared<san::QueryResult>(*conn, query, oid_names);
+    }
 
-    pqxx::work work(*conn);
+    std::vector<std::string> PostgresConnection::get_db_tables()
+    {
+        std::vector<std::string> tables;
 
-    const std::string sql = R"(
+        pqxx::work work(*conn);
+
+        const std::string sql = R"(
             SELECT
                 *
             FROM
@@ -47,23 +49,23 @@ std::vector<std::string> PostgresConnection::get_db_tables()
                 table_name ASC
             )";
 
-    pqxx::result result = work.exec(sql);
+        pqxx::result result = work.exec(sql);
 
-    for (const auto& row : result) {
-        tables.push_back(row["table_name"].as<std::string>());
+        for (const auto& row : result) {
+            tables.push_back(row["table_name"].as<std::string>());
+        }
+
+        return tables;
     }
 
-    return tables;
-}
+    std::vector<std::pair<std::string, std::string>>
+    PostgresConnection::get_table_columns(const std::string& table_name)
+    {
+        std::vector<std::pair<std::string, std::string>> columns;
 
-std::vector<std::pair<std::string, std::string>>
-PostgresConnection::get_table_columns(const std::string& table_name)
-{
-    std::vector<std::pair<std::string, std::string>> columns;
+        pqxx::work work(*conn);
 
-    pqxx::work work(*conn);
-
-    const std::string sql = R"(
+        const std::string sql = R"(
             SELECT
                 *
             FROM
@@ -75,72 +77,72 @@ PostgresConnection::get_table_columns(const std::string& table_name)
                 ordinal_position ASC
             )";
 
-    conn->prepare("get_columns", sql);
-    pqxx::result result = work.prepared("get_columns")(table_name).exec();
+        conn->prepare("get_columns", sql);
+        pqxx::result result = work.prepared("get_columns")(table_name).exec();
 
-    for (const auto& row : result) {
-        columns.push_back(std::make_pair<std::string, std::string>
-                          (row["column_name"].as<std::string>(),
-                           row["data_type"].as<std::string>()));
-    }
-
-    return columns;
-}
-
-std::vector<std::map<std::string, std::string> >
-PostgresConnection::get_table_data(
-    const std::string& table_name,
-    const std::vector<std::pair<std::string, std::string>>& columns)
-{
-    std::vector<std::map<std::string, std::string> > data;
-
-    pqxx::work work(*conn);
-
-    const std::string sql = "select * from " + table_name;
-
-    pqxx::result result = work.exec(sql);
-
-    for (const auto& row : result) {
-        std::map<std::string, std::string> v;
-
-        for (const auto& col_name : columns) {
-            try {
-                v[col_name.first] = row[col_name.first].as<std::string>();
-            } catch (const std::exception&) {
-                v[col_name.first] = "null";
-            }
+        for (const auto& row : result) {
+            columns.push_back(std::make_pair<std::string, std::string>
+                              (row["column_name"].as<std::string>(),
+                               row["data_type"].as<std::string>()));
         }
 
-        data.push_back(v);
+        return columns;
     }
 
-    return data;
-}
+    std::vector<std::map<std::string, std::string> >
+    PostgresConnection::get_table_data(
+                                       const std::string& table_name,
+                                       const std::vector<std::pair<std::string, std::string>>& columns)
+    {
+        std::vector<std::map<std::string, std::string> > data;
 
-void PostgresConnection::init_connection()
-{
-    std::cout << "Trying to connect to: " << conn_details->postgres_string() << std::endl;
+        pqxx::work work(*conn);
 
-    try {
-        conn = std::make_unique<pqxx::connection>(conn_details->postgres_string());
+        const std::string sql = "select * from " + table_name;
 
-        error_message_ = "";
-        is_open_ = conn->is_open();
+        pqxx::result result = work.exec(sql);
 
-        load_oids();
-    } catch (const std::exception& e) {
-        std::cerr << "Connection error: " << e.what() << std::endl;
+        for (const auto& row : result) {
+            std::map<std::string, std::string> v;
 
-        error_message_ = e.what();
-        is_open_ = false;
+            for (const auto& col_name : columns) {
+                try {
+                    v[col_name.first] = row[col_name.first].as<std::string>();
+                } catch (const std::exception&) {
+                    v[col_name.first] = "null";
+                }
+            }
+
+            data.push_back(v);
+        }
+
+        return data;
     }
-}
 
-void PostgresConnection::load_oids()
-{
-    pqxx::work work(*conn);
+    void PostgresConnection::init_connection()
+    {
+        std::cout << "Trying to connect to: " << conn_details->postgres_string() << std::endl;
 
-    const std::string sql = R"(
+        try {
+            conn = std::make_unique<pqxx::connection>(conn_details->postgres_string());
+
+            error_message_ = "";
+            is_open_ = conn->is_open();
+
+            load_oids();
+        } catch (const std::exception& e) {
+            std::cerr << "Connection error: " << e.what() << std::endl;
+
+            error_message_ = e.what();
+            is_open_ = false;
+        }
+    }
+
+    void PostgresConnection::load_oids()
+    {
+        pqxx::work work(*conn);
+
+        const std::string sql = R"(
         select
             distinct udt_name, data_type, t.oid
         from
@@ -149,13 +151,14 @@ void PostgresConnection::load_oids()
             on t.typname = c.udt_name
     )";
 
-    pqxx::result result = work.exec(sql);
+        pqxx::result result = work.exec(sql);
 
-    for (const auto& row : result) {
-        oid_names[row["oid"].as<pqxx::oid>()] = san::OidMapping({
-            .oid=row["oid"].as<pqxx::oid>(),
-            .udt_name=row["udt_name"].as<std::string>(),
-            .data_type=row["data_type"].as<std::string>(),
-        });
+        for (const auto& row : result) {
+            oid_names[row["oid"].as<pqxx::oid>()] = san::OidMapping({
+                    .oid=row["oid"].as<pqxx::oid>(),
+                        .udt_name=row["udt_name"].as<std::string>(),
+                        .data_type=row["data_type"].as<std::string>(),
+                        });
+        }
     }
 }

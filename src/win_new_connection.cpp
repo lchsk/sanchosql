@@ -72,7 +72,7 @@ namespace san
 		conn->dbname = text_db->get_text();
 		conn->port = text_port->get_text();;
 
-		PostgresConnection pg_conn(conn);
+		san::PostgresConnection pg_conn(conn);
 		pg_conn.init_connection();
 
 		if (pg_conn.is_open()) {

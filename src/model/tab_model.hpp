@@ -8,13 +8,13 @@ class TabModel
 public:
 	TabModel(const std::shared_ptr<san::ConnectionDetails>& conn_details);
 
-	PostgresConnection& conn() const {
+	san::PostgresConnection& conn() const {
 		return *connection;
 	}
 
 private:
 	std::shared_ptr<san::ConnectionDetails> conn_details;
-	std::unique_ptr<PostgresConnection> connection;
+	std::unique_ptr<san::PostgresConnection> connection;
 };
 
 #endif

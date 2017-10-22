@@ -111,8 +111,8 @@ namespace san
 
     void MainWindow::insert_tables()
     {
-        std::shared_ptr<PostgresConnection> pc
-            = std::make_shared<PostgresConnection>(san::Connections::instance()->connection());
+        std::shared_ptr<san::PostgresConnection> pc
+            = std::make_shared<san::PostgresConnection>(san::Connections::instance()->connection());
         pc->init_connection();
 
         const std::vector<std::string>& tables = pc->get_db_tables();
