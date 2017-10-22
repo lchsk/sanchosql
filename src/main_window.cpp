@@ -253,7 +253,7 @@ namespace san
 
                 cr.add(cols[column.first]);
 
-                tree->append_column(replace_all(column.first, "_", "__") + "\n" + column.second, cols[column.first]);
+                tree->append_column(san::util::replace_all(column.first, "_", "__") + "\n" + column.second, cols[column.first]);
             }
 
             Glib::RefPtr<Gtk::ListStore> list_store = Gtk::ListStore::create(cr);
@@ -311,7 +311,7 @@ namespace san
             cols[column.column_name] = col;
 
             tab2.cr.add(cols[column.column_name]);
-            tab2.tree->append_column(replace_all(column.column_name, "_", "__") + "\n" + column.data_type, cols[column.column_name]);
+            tab2.tree->append_column(san::util::replace_all(column.column_name, "_", "__") + "\n" + column.data_type, cols[column.column_name]);
         }
 
         tab2.list_store = Gtk::ListStore::create(tab2.cr);
