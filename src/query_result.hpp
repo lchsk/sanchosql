@@ -11,9 +11,9 @@ struct QueryResult
 {
     QueryResult(pqxx::connection& conn,
                 const std::string& query,
-                std::unordered_map<pqxx::oid, OidMapping>& oid_names);
+                std::unordered_map<pqxx::oid, san::OidMapping>& oid_names);
 
-    std::vector<Column> columns;
+    std::vector<san::Column> columns;
     std::vector<std::vector<std::string> > data;
 };
 

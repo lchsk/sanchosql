@@ -2,16 +2,16 @@
 
 QueryResult::QueryResult(pqxx::connection& conn,
                 const std::string& query,
-                std::unordered_map<pqxx::oid, OidMapping>& oid_names)
+                std::unordered_map<pqxx::oid, san::OidMapping>& oid_names)
     {
         pqxx::work work(conn);
         pqxx::result result = work.exec(query);
 
         for (unsigned i = 0; i < result.columns(); i++) {
-            columns.push_back(Column({
+            columns.push_back(san::Column({
                         .oid = result.column_type(i),
                             .column_name = result.column_name(i),
-                            .data_type = get_data_type(result.column_type(i), oid_names)
+                            .data_type = san::get_data_type(result.column_type(i), oid_names)
                             }));
         }
 

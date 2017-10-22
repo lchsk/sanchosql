@@ -152,7 +152,7 @@ void PostgresConnection::load_oids()
     pqxx::result result = work.exec(sql);
 
     for (const auto& row : result) {
-        oid_names[row["oid"].as<pqxx::oid>()] = OidMapping({
+        oid_names[row["oid"].as<pqxx::oid>()] = san::OidMapping({
             .oid=row["oid"].as<pqxx::oid>(),
             .udt_name=row["udt_name"].as<std::string>(),
             .data_type=row["data_type"].as<std::string>(),

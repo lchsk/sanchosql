@@ -5,22 +5,26 @@
 
 #include <unordered_map>
 
-struct OidMapping
+namespace san
 {
-    pqxx::oid oid;
-    std::string udt_name;
-    std::string data_type;
-};
+    struct OidMapping
+    {
+        pqxx::oid oid;
+        std::string udt_name;
+        std::string data_type;
+    };
 
-struct Column
-{
-    pqxx::oid oid;
-    std::string column_name;
-    std::string data_type;
-};
+    struct Column
+    {
+        pqxx::oid oid;
+        std::string column_name;
+        std::string data_type;
+    };
 
-const std::string get_data_type(
-    const pqxx::oid oid,
-    std::unordered_map<pqxx::oid, OidMapping>& oid_names);
+
+    const std::string get_data_type(
+        const pqxx::oid oid,
+        std::unordered_map<pqxx::oid, san::OidMapping>& oid_names);
+}
 
 #endif

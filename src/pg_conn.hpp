@@ -45,7 +45,7 @@ private:
 
     std::unique_ptr<pqxx::connection> conn;
 
-    std::unordered_map<pqxx::oid, OidMapping> oid_names;
+    std::unordered_map<pqxx::oid, san::OidMapping> oid_names;
 
     bool is_open_;
     std::string error_message_;
