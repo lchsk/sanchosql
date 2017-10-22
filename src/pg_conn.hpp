@@ -10,6 +10,7 @@
 #include "conn_util.hpp"
 #include "query_result.hpp"
 #include "connection_details.hpp"
+#include "connections.hpp"
 
 class PostgresConnection {
 public:
@@ -49,30 +50,5 @@ private:
     bool is_open_;
     std::string error_message_;
 };
-
-class Connections
-{
-public:
-    Connections() {
-        conn = std::make_shared<ConnectionDetails>();
-
-        conn->host = "127.0.0.1";
-        conn->user = "sancho";
-        conn->password = "sancho";
-        conn->dbname = "sancho";
-        conn->port = "5432";
-    }
-
-    std::shared_ptr<ConnectionDetails>& connection() {
-        return conn;
-    }
-
-    static Connections* instance() { return &ins; }
-
-private:
-    std::shared_ptr<ConnectionDetails> conn;
-    static Connections ins;
-};
-
 
 #endif

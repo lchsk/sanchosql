@@ -40,6 +40,7 @@ add_executable(${EXECUTABLE_NAME}
     src/conn_util.cpp
     src/query_result.cpp
     src/connection_details.cpp
+    src/connections.cpp
 
     # Models
     src/model/tab_model.cpp
