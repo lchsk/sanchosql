@@ -111,7 +111,7 @@ void MainWindow::on_action_file_new()
 void MainWindow::insert_tables()
 {
     std::shared_ptr<PostgresConnection> pc
-        = std::make_shared<PostgresConnection>(Connections::instance()->connection());
+        = std::make_shared<PostgresConnection>(san::Connections::instance()->connection());
     pc->init_connection();
 
     const std::vector<std::string>& tables = pc->get_db_tables();
@@ -182,7 +182,7 @@ void MainWindow::on_open_sql_editor_clicked()
     tabs[window] = (tab);
 
     tab_models[window]
-        = std::make_unique<TabModel>(Connections::instance()->connection());
+        = std::make_unique<TabModel>(san::Connections::instance()->connection());
 
     notebook.append_page(*window, *(tab->hb));
 
@@ -220,7 +220,7 @@ void MainWindow::on_browser_row_activated(const Gtk::TreeModel::Path& path,
             = Gtk::manage(new Gtk::ScrolledWindow);
 
         tab_models[tree_scrolled_window]
-            = std::make_unique<TabModel>(Connections::instance()->connection());
+            = std::make_unique<TabModel>(san::Connections::instance()->connection());
 
         const TabModel& tab = tab_model(tree_scrolled_window);
         auto& pc = tab.conn();

@@ -2,7 +2,7 @@
 
 #include "pg_conn.hpp"
 
-Connections Connections::ins;
+san::Connections san::Connections::ins;
 
 PostgresConnection::PostgresConnection
 (const std::shared_ptr<san::ConnectionDetails>& conn_details) :
