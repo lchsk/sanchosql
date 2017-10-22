@@ -61,7 +61,8 @@ void NewConnectionWindow::on_btn_close_clicked()
 
 void NewConnectionWindow::on_btn_test_connection_clicked()
 {
-	std::shared_ptr<ConnectionDetails> conn = std::make_shared<ConnectionDetails>();
+	std::shared_ptr<san::ConnectionDetails> conn
+		= std::make_shared<san::ConnectionDetails>();
 
 	conn->set_host(text_host->get_text());
 	conn->user = text_user->get_text();

@@ -1,22 +1,25 @@
 #include "connection_details.hpp"
 
-void ConnectionDetails::set_host(const std::string& hostname)
+namespace san
 {
-    if (hostname == "localhost")
-        host = "127.0.0.1";
-    else
-        host = hostname;
-}
+    void ConnectionDetails::set_host(const std::string& hostname)
+    {
+        if (hostname == "localhost")
+            host = "127.0.0.1";
+        else
+            host = hostname;
+    }
 
-const std::string ConnectionDetails::postgres_string()
-{
-    std::stringstream conn;
+    const std::string ConnectionDetails::postgres_string()
+    {
+        std::stringstream conn;
 
-    conn << "hostaddr = " << host
-         << " user = " << user
-         << " password = " << password
-         << " dbname = " << dbname
-         << " port = " << port;
+        conn << "hostaddr = " << host
+             << " user = " << user
+             << " password = " << password
+             << " dbname = " << dbname
+             << " port = " << port;
 
-    return conn.str();
+        return conn.str();
+    }
 }

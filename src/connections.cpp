@@ -2,7 +2,7 @@
 
 Connections::Connections()
 {
-    conn = std::make_shared<ConnectionDetails>();
+    conn = std::make_shared<san::ConnectionDetails>();
 
     conn->host = "127.0.0.1";
     conn->user = "sancho";

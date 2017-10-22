@@ -10,14 +10,14 @@ class Connections
 public:
     Connections();
 
-    std::shared_ptr<ConnectionDetails>& connection() {
+    std::shared_ptr<san::ConnectionDetails>& connection() {
         return conn;
     }
 
     static Connections* instance() { return &ins; }
 
 private:
-    std::shared_ptr<ConnectionDetails> conn;
+    std::shared_ptr<san::ConnectionDetails> conn;
     static Connections ins;
 };
 

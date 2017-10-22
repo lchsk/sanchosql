@@ -5,7 +5,7 @@
 Connections Connections::ins;
 
 PostgresConnection::PostgresConnection
-(const std::shared_ptr<ConnectionDetails>& conn_details) :
+(const std::shared_ptr<san::ConnectionDetails>& conn_details) :
     conn_details(conn_details),
     is_open_(false),
     error_message_("")

@@ -3,18 +3,21 @@
 
 #include <sstream>
 
-struct ConnectionDetails
+namespace san
 {
-    const std::string postgres_string();
+    struct ConnectionDetails
+    {
+        const std::string postgres_string();
 
-    void set_host(const std::string& hostname);
+        void set_host(const std::string& hostname);
 
-    std::string name;
-    std::string host;
-    std::string user;
-    std::string password;
-    std::string dbname;
-    std::string port;
-};
+        std::string name;
+        std::string host;
+        std::string user;
+        std::string password;
+        std::string dbname;
+        std::string port;
+    };
+}
 
 #endif

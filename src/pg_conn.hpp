@@ -14,7 +14,7 @@
 
 class PostgresConnection {
 public:
-    PostgresConnection(const std::shared_ptr<ConnectionDetails>& conn_details);
+    PostgresConnection(const std::shared_ptr<san::ConnectionDetails>& conn_details);
     ~PostgresConnection();
 
     std::shared_ptr<QueryResult> run_query(const std::string& query);
@@ -41,7 +41,7 @@ public:
 private:
     void load_oids();
 
-    std::shared_ptr<ConnectionDetails> conn_details;
+    std::shared_ptr<san::ConnectionDetails> conn_details;
 
     std::unique_ptr<pqxx::connection> conn;
 
