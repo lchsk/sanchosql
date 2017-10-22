@@ -6,34 +6,37 @@
 #include <gtkmm.h>
 #include <gtksourceviewmm.h>
 
-class Tab
+namespace san
 {
-public:
-    Tab();
+    class Tab
+    {
+    public:
+        Tab();
 
-    Glib::RefPtr<Gsv::Buffer> buffer;
+        Glib::RefPtr<Gsv::Buffer> buffer;
 
-    Gtk::HBox* hb;
-    Gtk::Button* b;
-    Gtk::Label* l;
+        Gtk::HBox* hb;
+        Gtk::Button* b;
+        Gtk::Label* l;
 
-    Gtk::Image* i;
+        Gtk::Image* i;
 
-    Gtk::TextView* tv;
+        Gtk::TextView* tv;
 
-    Gtk::TreeModel::ColumnRecord cr;
+        Gtk::TreeModel::ColumnRecord cr;
 
-    Gtk::Toolbar* toolbar;
-    Gtk::ToolButton* btn1;
+        Gtk::Toolbar* toolbar;
+        Gtk::ToolButton* btn1;
 
-    Gtk::TreeView* tree;
-    Glib::RefPtr<Gtk::ListStore> list_store;
+        Gtk::TreeView* tree;
+        Glib::RefPtr<Gtk::ListStore> list_store;
 
-    Gtk::ScrolledWindow* tree_scrolled_window;
+        Gtk::ScrolledWindow* tree_scrolled_window;
 
-    Gsv::View* source_view;
+        Gsv::View* source_view;
 
-    Gtk::Box* box;
-};
+        Gtk::Box* box;
+    };
+}
 
 #endif

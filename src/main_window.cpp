@@ -130,7 +130,7 @@ TabModel& MainWindow::tab_model(Gtk::ScrolledWindow* win)
     return *(tab_models[win]);
 }
 
-Tab& MainWindow::get_tab(Gtk::ScrolledWindow* win)
+san::Tab& MainWindow::get_tab(Gtk::ScrolledWindow* win)
 {
     return *(tabs[win]);
 }
@@ -165,7 +165,7 @@ void MainWindow::on_tab_close_button_clicked(Gtk::ScrolledWindow* tree)
 
 void MainWindow::on_open_sql_editor_clicked()
 {
-    auto tab = std::make_shared<Tab>();
+    auto tab = std::make_shared<san::Tab>();
 
     Gtk::ScrolledWindow* window = tab->tree_scrolled_window;
 
@@ -300,7 +300,7 @@ void MainWindow::on_submit_query_clicked
 
     std::shared_ptr<QueryResult> result = pc.run_query(query);
 
-    Tab& tab2 = get_tab(tree_scrolled_window);
+    san::Tab& tab2 = get_tab(tree_scrolled_window);
 
     std::map<std::string, Gtk::TreeModelColumn<Glib::ustring>> cols;
 

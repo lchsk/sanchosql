@@ -37,7 +37,7 @@ private:
     BrowserModel browser_model;
 
     TabModel& tab_model(Gtk::ScrolledWindow*);
-    Tab& get_tab(Gtk::ScrolledWindow*);
+    san::Tab& get_tab(Gtk::ScrolledWindow*);
 
     void on_tab_close_button_clicked(Gtk::ScrolledWindow*);
     void on_browser_row_activated(const Gtk::TreeModel::Path& path,
@@ -63,7 +63,7 @@ private:
     <Gtk::ScrolledWindow*, std::unique_ptr<TabModel> > tab_models;
 
     std::unordered_map
-    <Gtk::ScrolledWindow*, std::shared_ptr<Tab> > tabs;
+    <Gtk::ScrolledWindow*, std::shared_ptr<san::Tab> > tabs;
 };
 
 #endif
