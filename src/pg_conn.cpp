@@ -1,6 +1,6 @@
-#include "pg_conn.hpp"
-
 #include <iostream>
+
+#include "pg_conn.hpp"
 
 Connections Connections::ins;
 
@@ -157,14 +157,5 @@ void PostgresConnection::load_oids()
             .udt_name=row["udt_name"].as<std::string>(),
             .data_type=row["data_type"].as<std::string>(),
         });
-    }
-}
-
-const std::string get_data_type(pqxx::oid oid, std::unordered_map<pqxx::oid, OidMapping>& oid_names)
-{
-    if (oid_names.find(oid) == oid_names.end()) {
-        return std::to_string(oid);
-    } else {
-        return oid_names[oid].data_type;
     }
 }
