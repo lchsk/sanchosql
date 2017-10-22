@@ -1,8 +1,10 @@
 #include "query_result.hpp"
 
-QueryResult::QueryResult(pqxx::connection& conn,
-                const std::string& query,
-                std::unordered_map<pqxx::oid, san::OidMapping>& oid_names)
+namespace san
+{
+    QueryResult::QueryResult(pqxx::connection& conn,
+                             const std::string& query,
+                             std::unordered_map<pqxx::oid, san::OidMapping>& oid_names)
     {
         pqxx::work work(conn);
         pqxx::result result = work.exec(query);
@@ -29,3 +31,4 @@ QueryResult::QueryResult(pqxx::connection& conn,
             data.push_back(row_data);
         }
     }
+}

@@ -24,10 +24,10 @@ PostgresConnection::~PostgresConnection()
 	}
 }
 
-std::shared_ptr<QueryResult>
+std::shared_ptr<san::QueryResult>
 PostgresConnection::run_query(const std::string& query)
 {
-    return std::make_shared<QueryResult>(*conn, query, oid_names);
+    return std::make_shared<san::QueryResult>(*conn, query, oid_names);
 }
 
 std::vector<std::string> PostgresConnection::get_db_tables()

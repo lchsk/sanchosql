@@ -298,7 +298,7 @@ void MainWindow::on_submit_query_clicked
     const TabModel& tab = tab_model(tree_scrolled_window);
     auto& pc = tab.conn();
 
-    std::shared_ptr<QueryResult> result = pc.run_query(query);
+    std::shared_ptr<san::QueryResult> result = pc.run_query(query);
 
     san::Tab& tab2 = get_tab(tree_scrolled_window);
 

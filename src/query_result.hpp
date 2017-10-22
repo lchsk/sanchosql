@@ -7,14 +7,17 @@
 
 #include "conn_util.hpp"
 
-struct QueryResult
+namespace san
 {
-    QueryResult(pqxx::connection& conn,
-                const std::string& query,
-                std::unordered_map<pqxx::oid, san::OidMapping>& oid_names);
+    struct QueryResult
+    {
+        QueryResult(pqxx::connection& conn,
+                    const std::string& query,
+                    std::unordered_map<pqxx::oid, san::OidMapping>& oid_names);
 
-    std::vector<san::Column> columns;
-    std::vector<std::vector<std::string> > data;
-};
+        std::vector<san::Column> columns;
+        std::vector<std::vector<std::string> > data;
+    };
+}
 
 #endif

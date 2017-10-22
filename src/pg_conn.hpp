@@ -17,7 +17,7 @@ public:
     PostgresConnection(const std::shared_ptr<san::ConnectionDetails>& conn_details);
     ~PostgresConnection();
 
-    std::shared_ptr<QueryResult> run_query(const std::string& query);
+    std::shared_ptr<san::QueryResult> run_query(const std::string& query);
 
     std::vector<std::string> get_db_tables();
 
