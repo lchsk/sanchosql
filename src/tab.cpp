@@ -61,4 +61,65 @@ namespace san
 
         hb->show_all_children();
     }
+
+    EasyTab::EasyTab()
+    {
+        hb = Gtk::manage(new Gtk::HBox);
+        b = Gtk::manage(new Gtk::Button);
+        l = Gtk::manage(new Gtk::Label("SQL Editor"));
+
+        i = Gtk::manage(new Gtk::Image(Gtk::Stock::CLOSE, Gtk::ICON_SIZE_MENU));
+
+        b->add(*i);
+        hb->pack_start(*l, Gtk::PACK_SHRINK);
+        hb->pack_start(*b, Gtk::PACK_SHRINK);
+
+        tv = Gtk::manage(new Gtk::TextView);
+
+        toolbar = Gtk::manage(new Gtk::Toolbar);
+        btn1 = Gtk::manage(new Gtk::ToolButton);
+        btn1->set_icon_name("document-save");
+
+        toolbar->append(*btn1);
+
+        tree = Gtk::manage(new Gtk::TreeView);
+
+        list_store = Gtk::ListStore::create(cr);
+
+        tree->set_model(list_store);
+
+        tree_scrolled_window = Gtk::manage(new Gtk::ScrolledWindow);
+
+        box = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
+
+        btn_reload = Gtk::manage(new Gtk::Button);
+        btn_reload->set_label("Reload");
+
+        label_from = Gtk::manage(new Gtk::Label);
+        label_from->set_text("From:");
+
+        label_limit = Gtk::manage(new Gtk::Label);
+        label_limit->set_text("Show Results:");
+
+        number_from = Gtk::manage(new san::NumberEntry);
+        number_to = Gtk::manage(new san::NumberEntry);
+        browse_box = Gtk::manage(new Gtk::Box);
+
+        browse_box->pack_start(*btn_reload);
+
+        browse_box->pack_start(*label_from);
+        browse_box->pack_start(*number_from);
+
+        browse_box->pack_start(*label_limit);
+        browse_box->pack_start(*number_to);
+
+        box->pack_start(*toolbar, Gtk::PACK_SHRINK);
+        box->pack_start(*tree);
+        box->pack_start(*browse_box, Gtk::PACK_SHRINK);
+
+        tree_scrolled_window->add(*box);
+        tree_scrolled_window->set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
+
+        hb->show_all_children();
+    }
 }
