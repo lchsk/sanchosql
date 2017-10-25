@@ -131,7 +131,7 @@ namespace san
         return *(tab_models[win]);
     }
 
-    san::Tab& MainWindow::get_tab(Gtk::ScrolledWindow* win)
+    san::AbstractTab& MainWindow::get_tab(Gtk::ScrolledWindow* win)
     {
         return *(tabs[win]);
     }
@@ -203,89 +203,63 @@ namespace san
 
             Glib::ustring table_name = current_row[browser_model.table];
 
-            Gtk::HBox* hb = Gtk::manage(new Gtk::HBox);
-            Gtk::Button* b = Gtk::manage(new Gtk::Button);
-            Gtk::Label* l = Gtk::manage(new Gtk::Label(table_name));
+            auto tab = std::make_shared<san::EasyTab>();
 
-            Gtk::Image* i = Gtk::manage
-                (new Gtk::Image(Gtk::Stock::CLOSE, Gtk::ICON_SIZE_MENU));
-            b->add(*i);
-            hb->pack_start(*l, Gtk::PACK_SHRINK);
-            hb->pack_start(*b, Gtk::PACK_SHRINK);
+            Gtk::ScrolledWindow* window = tab->tree_scrolled_window;
 
-            Gtk::TextView* tv = Gtk::manage(new Gtk::TextView);
+            tabs[window] = (tab);
 
-            Gtk::TreeModel::ColumnRecord cr;
-
-            Gtk::ScrolledWindow* tree_scrolled_window
-                = Gtk::manage(new Gtk::ScrolledWindow);
-
-            tab_models[tree_scrolled_window]
+            tab_models[window]
                 = std::make_unique<TabModel>(san::Connections::instance()->connection());
 
-            const TabModel& tab = tab_model(tree_scrolled_window);
-            auto& pc = tab.conn();
+            tab_models[window]->table_name = table_name;
 
-            auto columns = pc.get_table_columns(table_name);
-            auto data = pc.get_table_data(table_name, columns);
+            auto& pc = tab_models[window]->conn();
 
-            Gtk::Toolbar* toolbar = Gtk::manage(new Gtk::Toolbar);
-            Gtk::ToolButton* btn1 = Gtk::manage(new Gtk::ToolButton);
-            btn1->set_icon_name("document-save");
+            tab->b->signal_clicked().connect
+            (sigc::bind<Gtk::ScrolledWindow*>
+             (sigc::mem_fun(*this, &MainWindow::on_tab_close_button_clicked),
+              window));
 
-            toolbar->append(*btn1);
-
-            Gtk::TreeView* tree = Gtk::manage(new Gtk::TreeView);
-
-            Gtk::Box* box = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
-            box->pack_start(*toolbar, Gtk::PACK_SHRINK);
-            box->pack_start(*tree);
-
-            tree_scrolled_window->add(*box);
-            tree_scrolled_window->set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
+            std::shared_ptr<san::QueryResult> result = pc.run_query(tab_models[window]->get_query());
 
             std::map<std::string, Gtk::TreeModelColumn<Glib::ustring>> cols;
 
-            for (const auto& column : columns) {
+            for (const auto& column : result->columns) {
                 Gtk::TreeModelColumn<Glib::ustring> col;
 
-                cols[column.first] = col;
+                cols[column.column_name] = col;
 
-                cr.add(cols[column.first]);
-
-                tree->append_column(san::util::replace_all(column.first, "_", "__") + "\n" + column.second, cols[column.first]);
+                tab->cr.add(cols[column.column_name]);
+                tab->tree->append_column(san::util::replace_all(column.column_name, "_", "__") + "\n" + column.data_type, cols[column.column_name]);
             }
 
-            Glib::RefPtr<Gtk::ListStore> list_store = Gtk::ListStore::create(cr);
+            tab->list_store = Gtk::ListStore::create(tab->cr);
+            tab->tree->set_model(tab->list_store);
 
-            tree->set_model(list_store);
+            for (const auto& row : result->data) {
+                Gtk::TreeModel::Row r = *(tab->list_store->append());
 
-            for (auto& row : data) {
-                Gtk::TreeModel::Row r = *(list_store->append());
+                int i = 0;
 
-                for (const auto& c : cols) {
-                    r[c.second] = row[c.first];
+                for (const auto& c : result->columns) {
+                    r[cols[c.column_name]] = row[i];
+
+                    i++;
                 }
             }
 
-            const std::vector<Gtk::TreeViewColumn*> tree_columns = tree->get_columns();
-
-            for (const auto column : tree_columns) {
-                column->set_resizable();
-            }
-
-            notebook.append_page(*tree_scrolled_window, *hb);
-
-            b->signal_clicked().connect
-                (sigc::bind<Gtk::ScrolledWindow*>
-                 (sigc::mem_fun(*this, &MainWindow::on_tab_close_button_clicked),
-                  tree_scrolled_window));
-
-            hb->show_all_children();
+            notebook.append_page(*window, *(tab->hb));
 
             show_all_children();
 
             notebook.next_page();
+
+            const std::vector<Gtk::TreeViewColumn*> tree_columns = tab->tree->get_columns();
+
+            for (const auto column : tree_columns) {
+                column->set_resizable();
+            }
         }
     }
 
@@ -301,7 +275,8 @@ namespace san
 
         std::shared_ptr<san::QueryResult> result = pc.run_query(query);
 
-        san::Tab& tab2 = get_tab(tree_scrolled_window);
+        san::AbstractTab& at = get_tab(tree_scrolled_window);
+        san::Tab& tab2 = static_cast<san::Tab&>(at);
 
         std::map<std::string, Gtk::TreeModelColumn<Glib::ustring>> cols;
 
