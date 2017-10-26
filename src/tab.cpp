@@ -95,23 +95,23 @@ namespace san
         btn_reload = Gtk::manage(new Gtk::Button);
         btn_reload->set_label("Reload");
 
-        label_from = Gtk::manage(new Gtk::Label);
-        label_from->set_text("From:");
+        label_offset = Gtk::manage(new Gtk::Label);
+        label_offset->set_text("From:");
 
         label_limit = Gtk::manage(new Gtk::Label);
         label_limit->set_text("Show Results:");
 
-        number_from = Gtk::manage(new san::NumberEntry);
-        number_to = Gtk::manage(new san::NumberEntry);
+        number_offset = Gtk::manage(new san::NumberEntry);
+        number_limit = Gtk::manage(new san::NumberEntry);
         browse_box = Gtk::manage(new Gtk::Box);
 
         browse_box->pack_start(*btn_reload);
 
-        browse_box->pack_start(*label_from);
-        browse_box->pack_start(*number_from);
+        browse_box->pack_start(*label_offset);
+        browse_box->pack_start(*number_offset);
 
         browse_box->pack_start(*label_limit);
-        browse_box->pack_start(*number_to);
+        browse_box->pack_start(*number_limit);
 
         box->pack_start(*toolbar, Gtk::PACK_SHRINK);
         box->pack_start(*tree);

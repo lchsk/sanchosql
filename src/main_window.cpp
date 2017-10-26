@@ -136,6 +136,49 @@ namespace san
         return *(tabs[win]);
     }
 
+    void MainWindow::on_reload_table_clicked(Gtk::ScrolledWindow* window)
+    {
+        auto& pc = tab_models[window]->conn();
+
+        san::AbstractTab& at = get_tab(window);
+        san::EasyTab& tab = static_cast<san::EasyTab&>(at);
+
+        tab_models[window]->set_offset(tab.number_offset->get_text());
+        tab_models[window]->set_limit(tab.number_limit->get_text());
+
+        tab.number_offset->set_text(tab_models[window]->get_offset());
+        tab.number_limit->set_text(tab_models[window]->get_limit());
+
+        std::shared_ptr<san::QueryResult> result
+            = pc.run_query(tab_models[window]->get_query());
+
+        std::map<std::string, Gtk::TreeModelColumn<Glib::ustring>> cols;
+
+        for (const auto& column : result->columns) {
+            Gtk::TreeModelColumn<Glib::ustring> col;
+
+            cols[column.column_name] = col;
+
+            tab.cr.add(cols[column.column_name]);
+            tab.tree->append_column(san::util::replace_all(column.column_name, "_", "__") + "\n" + column.data_type, cols[column.column_name]);
+        }
+
+        tab.list_store = Gtk::ListStore::create(tab.cr);
+        tab.tree->set_model(tab.list_store);
+
+        for (const auto& row : result->data) {
+            Gtk::TreeModel::Row r = *(tab.list_store->append());
+
+            int i = 0;
+
+            for (const auto& c : result->columns) {
+                r[cols[c.column_name]] = row[i];
+
+                i++;
+            }
+        }
+    }
+
     void MainWindow::on_tab_close_button_clicked(Gtk::ScrolledWindow* tree)
     {
         if (tab_models.find(tree) == tab_models.end()) {
@@ -219,6 +262,11 @@ namespace san
             tab->b->signal_clicked().connect
             (sigc::bind<Gtk::ScrolledWindow*>
              (sigc::mem_fun(*this, &MainWindow::on_tab_close_button_clicked),
+              window));
+
+            tab->btn_reload->signal_clicked().connect
+            (sigc::bind<Gtk::ScrolledWindow*>
+             (sigc::mem_fun(*this, &MainWindow::on_reload_table_clicked),
               window));
 
             std::shared_ptr<san::QueryResult> result = pc.run_query(tab_models[window]->get_query());

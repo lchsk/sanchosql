@@ -16,6 +16,30 @@ public:
 		return "select * from " + table_name + " offset " + std::to_string(offset) + " limit " + std::to_string(limit);
 	}
 
+	void set_limit(const std::string& p_limit) {
+		try {
+			limit = std::stoul(p_limit);
+		} catch (const std::invalid_argument&) {
+			limit = DEFAULT_LIMIT;
+		}
+	}
+
+	void set_offset(const std::string& p_offset) {
+		try {
+			offset = std::stoul(p_offset);
+		} catch (const std::invalid_argument&) {
+			offset = 0;
+		}
+	}
+
+	std::string get_limit() const {
+		return std::to_string(limit);
+	}
+
+	std::string get_offset() const {
+		return std::to_string(offset);
+	}
+
 	std::string table_name;
 
 	unsigned limit;
@@ -24,6 +48,8 @@ public:
 private:
 	std::shared_ptr<san::ConnectionDetails> conn_details;
 	std::unique_ptr<san::PostgresConnection> connection;
+
+	static const unsigned DEFAULT_LIMIT = 30;
 };
 
 #endif
