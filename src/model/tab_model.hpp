@@ -28,8 +28,16 @@ public:
 		try {
 			offset = std::stoul(p_offset);
 		} catch (const std::invalid_argument&) {
-			offset = 0;
+			offset = DEFAULT_OFFSET;
 		}
+	}
+
+	void next_page() {
+		offset += limit;
+	}
+
+	void prev_page() {
+		offset -= std::min(offset, limit);;
 	}
 
 	std::string get_limit() const {
@@ -50,6 +58,7 @@ private:
 	std::unique_ptr<san::PostgresConnection> connection;
 
 	static const unsigned DEFAULT_LIMIT = 30;
+	static const unsigned DEFAULT_OFFSET = 0;
 };
 
 #endif

@@ -43,10 +43,14 @@ namespace san
 
         void on_tab_close_button_clicked(Gtk::ScrolledWindow*);
         void on_reload_table_clicked(Gtk::ScrolledWindow*);
+        void on_prev_results_page_clicked(Gtk::ScrolledWindow*);
+        void on_next_results_page_clicked(Gtk::ScrolledWindow*);
         void on_browser_row_activated(const Gtk::TreeModel::Path& path,
                                       Gtk::TreeViewColumn* column);
         void on_open_sql_editor_clicked();
         void on_submit_query_clicked(Gtk::ScrolledWindow*, Glib::RefPtr<Gsv::Buffer>&);
+
+        void load_results(Gtk::ScrolledWindow*);
 
         void on_action_file_new();
         void on_action_file_quit();

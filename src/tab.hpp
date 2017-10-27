@@ -87,6 +87,8 @@ namespace san
         // Browse box
         Gtk::Box* browse_box;
         Gtk::Button* btn_reload;
+        Gtk::Button* btn_prev;
+        Gtk::Button* btn_next;
         Gtk::Label* label_offset;
         Gtk::Label* label_limit;
         san::NumberEntry* number_offset;

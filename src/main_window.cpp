@@ -136,18 +136,12 @@ namespace san
         return *(tabs[win]);
     }
 
-    void MainWindow::on_reload_table_clicked(Gtk::ScrolledWindow* window)
+    void MainWindow::load_results(Gtk::ScrolledWindow* window)
     {
         auto& pc = tab_models[window]->conn();
 
         san::AbstractTab& at = get_tab(window);
         san::EasyTab& tab = static_cast<san::EasyTab&>(at);
-
-        tab_models[window]->set_offset(tab.number_offset->get_text());
-        tab_models[window]->set_limit(tab.number_limit->get_text());
-
-        tab.number_offset->set_text(tab_models[window]->get_offset());
-        tab.number_limit->set_text(tab_models[window]->get_limit());
 
         std::shared_ptr<san::QueryResult> result
             = pc.run_query(tab_models[window]->get_query());
@@ -177,6 +171,46 @@ namespace san
                 i++;
             }
         }
+    }
+
+    void MainWindow::on_prev_results_page_clicked(Gtk::ScrolledWindow* window)
+    {
+        tab_models[window]->prev_page();
+
+        san::AbstractTab& at = get_tab(window);
+        san::EasyTab& tab = static_cast<san::EasyTab&>(at);
+
+        tab.number_offset->set_text(tab_models[window]->get_offset());
+        tab.number_limit->set_text(tab_models[window]->get_limit());
+
+        load_results(window);
+    }
+
+    void MainWindow::on_next_results_page_clicked(Gtk::ScrolledWindow* window)
+    {
+        tab_models[window]->next_page();
+
+        san::AbstractTab& at = get_tab(window);
+        san::EasyTab& tab = static_cast<san::EasyTab&>(at);
+
+        tab.number_offset->set_text(tab_models[window]->get_offset());
+        tab.number_limit->set_text(tab_models[window]->get_limit());
+
+        load_results(window);
+    }
+
+    void MainWindow::on_reload_table_clicked(Gtk::ScrolledWindow* window)
+    {
+        san::AbstractTab& at = get_tab(window);
+        san::EasyTab& tab = static_cast<san::EasyTab&>(at);
+
+        tab_models[window]->set_offset(tab.number_offset->get_text());
+        tab_models[window]->set_limit(tab.number_limit->get_text());
+
+        tab.number_offset->set_text(tab_models[window]->get_offset());
+        tab.number_limit->set_text(tab_models[window]->get_limit());
+
+        load_results(window);
     }
 
     void MainWindow::on_tab_close_button_clicked(Gtk::ScrolledWindow* tree)
@@ -267,6 +301,16 @@ namespace san
             tab->btn_reload->signal_clicked().connect
             (sigc::bind<Gtk::ScrolledWindow*>
              (sigc::mem_fun(*this, &MainWindow::on_reload_table_clicked),
+              window));
+
+            tab->btn_prev->signal_clicked().connect
+            (sigc::bind<Gtk::ScrolledWindow*>
+             (sigc::mem_fun(*this, &MainWindow::on_prev_results_page_clicked),
+              window));
+
+            tab->btn_next->signal_clicked().connect
+            (sigc::bind<Gtk::ScrolledWindow*>
+             (sigc::mem_fun(*this, &MainWindow::on_next_results_page_clicked),
               window));
 
             std::shared_ptr<san::QueryResult> result = pc.run_query(tab_models[window]->get_query());

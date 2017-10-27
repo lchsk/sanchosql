@@ -94,6 +94,10 @@ namespace san
 
         btn_reload = Gtk::manage(new Gtk::Button);
         btn_reload->set_label("Reload");
+        btn_prev = Gtk::manage(new Gtk::Button);
+        btn_prev->set_label("<");
+        btn_next = Gtk::manage(new Gtk::Button);
+        btn_next->set_label(">");
 
         label_offset = Gtk::manage(new Gtk::Label);
         label_offset->set_text("From:");
@@ -106,6 +110,8 @@ namespace san
         browse_box = Gtk::manage(new Gtk::Box);
 
         browse_box->pack_start(*btn_reload);
+        browse_box->pack_start(*btn_prev);
+        browse_box->pack_start(*btn_next);
 
         browse_box->pack_start(*label_offset);
         browse_box->pack_start(*number_offset);
