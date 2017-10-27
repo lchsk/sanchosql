@@ -301,6 +301,9 @@ namespace san
 
             tab_models[window]->table_name = table_name;
 
+            tab->number_offset->set_text(tab_models[window]->get_offset());
+            tab->number_limit->set_text(tab_models[window]->get_limit());
+
             auto& pc = tab_models[window]->conn();
 
             tab->b->signal_clicked().connect
