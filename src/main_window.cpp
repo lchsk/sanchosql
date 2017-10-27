@@ -179,10 +179,13 @@ namespace san
 
     void MainWindow::on_prev_results_page_clicked(Gtk::ScrolledWindow* window)
     {
-        tab_models[window]->prev_page();
-
         san::AbstractTab& at = get_tab(window);
         san::EasyTab& tab = static_cast<san::EasyTab&>(at);
+
+        tab_models[window]->set_offset(tab.number_offset->get_text());
+        tab_models[window]->set_limit(tab.number_limit->get_text());
+
+        tab_models[window]->prev_page();
 
         tab.number_offset->set_text(tab_models[window]->get_offset());
         tab.number_limit->set_text(tab_models[window]->get_limit());
@@ -192,10 +195,13 @@ namespace san
 
     void MainWindow::on_next_results_page_clicked(Gtk::ScrolledWindow* window)
     {
-        tab_models[window]->next_page();
-
         san::AbstractTab& at = get_tab(window);
         san::EasyTab& tab = static_cast<san::EasyTab&>(at);
+
+        tab_models[window]->set_offset(tab.number_offset->get_text());
+        tab_models[window]->set_limit(tab.number_limit->get_text());
+
+        tab_models[window]->next_page();
 
         tab.number_offset->set_text(tab_models[window]->get_offset());
         tab.number_limit->set_text(tab_models[window]->get_limit());
