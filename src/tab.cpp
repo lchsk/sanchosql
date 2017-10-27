@@ -84,7 +84,8 @@ namespace san
 
         tree = Gtk::manage(new Gtk::TreeView);
 
-        list_store = Gtk::ListStore::create(cr);
+        cr = std::make_shared<Gtk::TreeModel::ColumnRecord>();
+        list_store = Gtk::ListStore::create(*cr);
 
         tree->set_model(list_store);
 

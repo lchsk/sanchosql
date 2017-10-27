@@ -72,7 +72,7 @@ namespace san
 
         Gtk::TextView* tv;
 
-        Gtk::TreeModel::ColumnRecord cr;
+        std::shared_ptr<Gtk::TreeModel::ColumnRecord> cr;
 
         Gtk::Toolbar* toolbar;
         Gtk::ToolButton* btn1;

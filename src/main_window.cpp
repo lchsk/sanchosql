@@ -148,16 +148,20 @@ namespace san
 
         std::map<std::string, Gtk::TreeModelColumn<Glib::ustring>> cols;
 
+        tab.tree->remove_all_columns();
+
+        tab.cr = std::make_shared<Gtk::TreeModel::ColumnRecord>();
+
         for (const auto& column : result->columns) {
             Gtk::TreeModelColumn<Glib::ustring> col;
 
             cols[column.column_name] = col;
 
-            tab.cr.add(cols[column.column_name]);
+            tab.cr->add(cols[column.column_name]);
             tab.tree->append_column(san::util::replace_all(column.column_name, "_", "__") + "\n" + column.data_type, cols[column.column_name]);
         }
 
-        tab.list_store = Gtk::ListStore::create(tab.cr);
+        tab.list_store = Gtk::ListStore::create(*(tab.cr));
         tab.tree->set_model(tab.list_store);
 
         for (const auto& row : result->data) {
@@ -322,11 +326,11 @@ namespace san
 
                 cols[column.column_name] = col;
 
-                tab->cr.add(cols[column.column_name]);
+                tab->cr->add(cols[column.column_name]);
                 tab->tree->append_column(san::util::replace_all(column.column_name, "_", "__") + "\n" + column.data_type, cols[column.column_name]);
             }
 
-            tab->list_store = Gtk::ListStore::create(tab->cr);
+            tab->list_store = Gtk::ListStore::create(*tab->cr);
             tab->tree->set_model(tab->list_store);
 
             for (const auto& row : result->data) {
