@@ -41,6 +41,7 @@ namespace san
         TabModel& tab_model(Gtk::ScrolledWindow*);
         san::AbstractTab& get_tab(Gtk::ScrolledWindow*);
 
+        void on_results_column_clicked(Gtk::ScrolledWindow*, Gtk::TreeViewColumn*);
         void on_tab_close_button_clicked(Gtk::ScrolledWindow*);
         void on_reload_table_clicked(Gtk::ScrolledWindow*);
         void on_prev_results_page_clicked(Gtk::ScrolledWindow*);

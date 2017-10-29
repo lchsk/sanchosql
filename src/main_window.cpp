@@ -3,6 +3,7 @@
 #include "main_window.hpp"
 #include "win_new_connection.hpp"
 #include "util.hpp"
+#include "model/tab_model.hpp"
 
 namespace san
 {
@@ -136,6 +137,20 @@ namespace san
         return *(tabs[win]);
     }
 
+    void MainWindow::on_results_column_clicked(
+        Gtk::ScrolledWindow* window,
+        Gtk::TreeViewColumn* col
+    )
+    {
+        san::AbstractTab& at = get_tab(window);
+        san::EasyTab& tab = static_cast<san::EasyTab&>(at);
+        auto& model = tab_model(window);
+
+        model.set_sort(tab.col_names[col]);
+
+        load_results(window);
+    }
+
     void MainWindow::load_results(Gtk::ScrolledWindow* window)
     {
         auto& pc = tab_models[window]->conn();
@@ -148,9 +163,12 @@ namespace san
 
         std::map<std::string, Gtk::TreeModelColumn<Glib::ustring>> cols;
 
+        tab.col_names.clear();
         tab.tree->remove_all_columns();
 
         tab.cr = std::make_shared<Gtk::TreeModel::ColumnRecord>();
+
+        Gtk::TreeViewColumn* sorted_col = nullptr;
 
         for (const auto& column : result->columns) {
             Gtk::TreeModelColumn<Glib::ustring> col;
@@ -158,11 +176,39 @@ namespace san
             cols[column.column_name] = col;
 
             tab.cr->add(cols[column.column_name]);
-            tab.tree->append_column(san::util::replace_all(column.column_name, "_", "__") + "\n" + column.data_type, cols[column.column_name]);
+
+            const std::string escaped_column_name
+                = san::util::replace_all(column.column_name, "_", "__");
+            const std::string data_type = column.data_type;
+            const std::string column_name = escaped_column_name + "\n" + data_type;
+
+            Gtk::TreeViewColumn* tree_view_column
+                = Gtk::manage(new Gtk::TreeViewColumn(column_name,
+                                                      cols[column.column_name]));
+
+            tab.tree->append_column(*tree_view_column);
+
+            tree_view_column->signal_clicked().connect
+                (sigc::bind<Gtk::ScrolledWindow*, Gtk::TreeViewColumn*>
+                 (sigc::mem_fun(*this, &MainWindow::on_results_column_clicked),
+                  window, tree_view_column));
+
+            if (column.column_name == tab_models[window]->get_sort_column()) {
+                sorted_col = tree_view_column;
+            }
+
+            tab.col_names[tree_view_column] = column.column_name;
         }
+
+        tab.tree->set_headers_clickable();
 
         tab.list_store = Gtk::ListStore::create(*(tab.cr));
         tab.tree->set_model(tab.list_store);
+
+        if (tab_models[window]->is_sorted() && sorted_col) {
+            sorted_col->set_sort_indicator(true);
+            sorted_col->set_sort_order(tab_models[window]->get_sort_type());
+        }
 
         for (const auto& row : result->data) {
             Gtk::TreeModel::Row r = *(tab.list_store->append());
@@ -297,9 +343,9 @@ namespace san
             tabs[window] = (tab);
 
             tab_models[window]
-                = std::make_unique<TabModel>(san::Connections::instance()->connection());
-
-            tab_models[window]->table_name = table_name;
+                = std::make_unique<TabModel>(
+                    san::Connections::instance()->connection(),
+                    table_name);
 
             tab->number_offset->set_text(tab_models[window]->get_offset());
             tab->number_limit->set_text(tab_models[window]->get_limit());

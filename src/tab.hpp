@@ -2,6 +2,7 @@
 #define TAB_HPP
 
 #include <iostream>
+#include <unordered_map>
 
 #include <gtkmm.h>
 #include <gtksourceviewmm.h>
@@ -73,6 +74,8 @@ namespace san
         Gtk::TextView* tv;
 
         std::shared_ptr<Gtk::TreeModel::ColumnRecord> cr;
+
+        std::unordered_map<Gtk::TreeViewColumn*, std::string> col_names;
 
         Gtk::Toolbar* toolbar;
         Gtk::ToolButton* btn1;
