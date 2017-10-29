@@ -1,35 +1,37 @@
 #ifndef TAB_MODEL_HPP
 #define TAB_MODEL_HPP
 
+#include <gtkmm.h>
+
 #include "../pg_conn.hpp"
 
 class TabModel
 {
 public:
+	enum class ColumnSortType {
+		None,
+		Asc,
+		Desc,
+	};
+
+	TabModel(const std::shared_ptr<san::ConnectionDetails>& conn_details,
+			 const Glib::ustring& p_table_name);
 	TabModel(const std::shared_ptr<san::ConnectionDetails>& conn_details);
 
 	san::PostgresConnection& conn() const {
 		return *connection;
 	}
 
-	std::string get_query() const {
-		return "select * from " + table_name + " offset " + std::to_string(offset) + " limit " + std::to_string(limit);
-	}
+	const std::string get_query() const;
 
-	void set_limit(const std::string& p_limit) {
-		try {
-			limit = std::stoul(p_limit);
-		} catch (const std::invalid_argument&) {
-			limit = DEFAULT_LIMIT;
-		}
-	}
+	void set_limit(const std::string& p_limit);
+	void set_offset(const std::string& p_offset);
+	void set_sort(const std::string& p_sort_column);
 
-	void set_offset(const std::string& p_offset) {
-		try {
-			offset = std::stoul(p_offset);
-		} catch (const std::invalid_argument&) {
-			offset = DEFAULT_OFFSET;
-		}
+	Gtk::SortType get_sort_type() const;
+
+	bool is_sorted() const {
+		return sort_type != ColumnSortType::None;
 	}
 
 	void next_page() {
@@ -48,14 +50,25 @@ public:
 		return std::to_string(offset);
 	}
 
-	std::string table_name;
+	const std::string& get_sort_column() const {
+		return sort_column;
+	}
+
+private:
+	const std::string get_order_by_query() const;
+
+	// EasyTab
+	const Glib::ustring table_name;
 
 	unsigned limit;
 	unsigned offset;
 
-private:
 	std::shared_ptr<san::ConnectionDetails> conn_details;
 	std::unique_ptr<san::PostgresConnection> connection;
+
+	// EasyTab
+	std::string sort_column;
+	ColumnSortType sort_type;
 
 	static const unsigned DEFAULT_LIMIT = 30;
 	static const unsigned DEFAULT_OFFSET = 0;
