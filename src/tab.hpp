@@ -13,7 +13,7 @@ namespace san
     {
         bool contains_only_numbers(const Glib::ustring& text)
         {
-            for (int i = 0; i < text.length(); i++) {
+            for (unsigned i = 0; i < text.length(); i++) {
                 if (! Glib::Unicode::isdigit(text[i]))
                     return false;
             }
