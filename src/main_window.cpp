@@ -186,6 +186,8 @@ namespace san
                 = Gtk::manage(new Gtk::TreeViewColumn(column_name,
                                                       cols[column.column_name]));
 
+            tree_view_column->set_resizable();
+
             tab.tree->append_column(*tree_view_column);
 
             tree_view_column->signal_clicked().connect
@@ -347,11 +349,6 @@ namespace san
                     san::Connections::instance()->connection(),
                     table_name);
 
-            tab->number_offset->set_text(tab_models[window]->get_offset());
-            tab->number_limit->set_text(tab_models[window]->get_limit());
-
-            auto& pc = tab_models[window]->conn();
-
             tab->b->signal_clicked().connect
             (sigc::bind<Gtk::ScrolledWindow*>
              (sigc::mem_fun(*this, &MainWindow::on_tab_close_button_clicked),
@@ -372,45 +369,13 @@ namespace san
              (sigc::mem_fun(*this, &MainWindow::on_next_results_page_clicked),
               window));
 
-            std::shared_ptr<san::QueryResult> result = pc.run_query(tab_models[window]->get_query());
-
-            std::map<std::string, Gtk::TreeModelColumn<Glib::ustring>> cols;
-
-            for (const auto& column : result->columns) {
-                Gtk::TreeModelColumn<Glib::ustring> col;
-
-                cols[column.column_name] = col;
-
-                tab->cr->add(cols[column.column_name]);
-                tab->tree->append_column(san::util::replace_all(column.column_name, "_", "__") + "\n" + column.data_type, cols[column.column_name]);
-            }
-
-            tab->list_store = Gtk::ListStore::create(*tab->cr);
-            tab->tree->set_model(tab->list_store);
-
-            for (const auto& row : result->data) {
-                Gtk::TreeModel::Row r = *(tab->list_store->append());
-
-                int i = 0;
-
-                for (const auto& c : result->columns) {
-                    r[cols[c.column_name]] = row[i];
-
-                    i++;
-                }
-            }
+            load_results(window);
 
             notebook.append_page(*window, *(tab->hb));
 
             show_all_children();
 
             notebook.next_page();
-
-            const std::vector<Gtk::TreeViewColumn*> tree_columns = tab->tree->get_columns();
-
-            for (const auto column : tree_columns) {
-                column->set_resizable();
-            }
         }
     }
 
