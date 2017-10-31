@@ -38,8 +38,10 @@ namespace san
     private:
         BrowserModel browser_model;
 
-        TabModel& tab_model(Gtk::ScrolledWindow*);
+        AbstractTabModel& tab_model(Gtk::ScrolledWindow*);
         san::AbstractTab& get_tab(Gtk::ScrolledWindow*);
+
+        SimpleTabModel& get_simple_tab_model(Gtk::ScrolledWindow*);
 
         void on_results_column_clicked(Gtk::ScrolledWindow*, Gtk::TreeViewColumn*);
         void on_tab_close_button_clicked(Gtk::ScrolledWindow*);
@@ -68,7 +70,7 @@ namespace san
         Gtk::Notebook notebook;
 
         std::unordered_map
-        <Gtk::ScrolledWindow*, std::unique_ptr<TabModel> > tab_models;
+        <Gtk::ScrolledWindow*, std::shared_ptr<AbstractTabModel> > tab_models;
 
         std::unordered_map
         <Gtk::ScrolledWindow*, std::shared_ptr<san::AbstractTab> > tabs;

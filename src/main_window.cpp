@@ -127,9 +127,14 @@ namespace san
         }
     }
 
-    TabModel& MainWindow::tab_model(Gtk::ScrolledWindow* win)
+    AbstractTabModel& MainWindow::tab_model(Gtk::ScrolledWindow* win)
     {
         return *(tab_models[win]);
+    }
+
+    SimpleTabModel& MainWindow::get_simple_tab_model(Gtk::ScrolledWindow* win)
+    {
+        return static_cast<SimpleTabModel&>(*(tab_models[win]));
     }
 
     san::AbstractTab& MainWindow::get_tab(Gtk::ScrolledWindow* win)
@@ -144,7 +149,8 @@ namespace san
     {
         san::AbstractTab& at = get_tab(window);
         san::EasyTab& tab = static_cast<san::EasyTab&>(at);
-        auto& model = tab_model(window);
+
+        auto& model = get_simple_tab_model(window);
 
         model.set_sort(tab.col_names[col]);
 
@@ -158,8 +164,10 @@ namespace san
         san::AbstractTab& at = get_tab(window);
         san::EasyTab& tab = static_cast<san::EasyTab&>(at);
 
+        auto& model = get_simple_tab_model(window);
+
         std::shared_ptr<san::QueryResult> result
-            = pc.run_query(tab_models[window]->get_query());
+            = pc.run_query(model.get_query());
 
         std::map<std::string, Gtk::TreeModelColumn<Glib::ustring>> cols;
 
@@ -195,7 +203,7 @@ namespace san
                  (sigc::mem_fun(*this, &MainWindow::on_results_column_clicked),
                   window, tree_view_column));
 
-            if (column.column_name == tab_models[window]->get_sort_column()) {
+            if (column.column_name == model.get_sort_column()) {
                 sorted_col = tree_view_column;
             }
 
@@ -207,9 +215,9 @@ namespace san
         tab.list_store = Gtk::ListStore::create(*(tab.cr));
         tab.tree->set_model(tab.list_store);
 
-        if (tab_models[window]->is_sorted() && sorted_col) {
+        if (model.is_sorted() && sorted_col) {
             sorted_col->set_sort_indicator(true);
-            sorted_col->set_sort_order(tab_models[window]->get_sort_type());
+            sorted_col->set_sort_order(model.get_sort_type());
         }
 
         for (const auto& row : result->data) {
@@ -230,13 +238,15 @@ namespace san
         san::AbstractTab& at = get_tab(window);
         san::EasyTab& tab = static_cast<san::EasyTab&>(at);
 
-        tab_models[window]->set_offset(tab.number_offset->get_text());
-        tab_models[window]->set_limit(tab.number_limit->get_text());
+        auto& tab_model = get_simple_tab_model(window);
 
-        tab_models[window]->prev_page();
+        tab_model.set_offset(tab.number_offset->get_text());
+        tab_model.set_limit(tab.number_limit->get_text());
 
-        tab.number_offset->set_text(tab_models[window]->get_offset());
-        tab.number_limit->set_text(tab_models[window]->get_limit());
+        tab_model.prev_page();
+
+        tab.number_offset->set_text(tab_model.get_offset());
+        tab.number_limit->set_text(tab_model.get_limit());
 
         load_results(window);
     }
@@ -246,13 +256,15 @@ namespace san
         san::AbstractTab& at = get_tab(window);
         san::EasyTab& tab = static_cast<san::EasyTab&>(at);
 
-        tab_models[window]->set_offset(tab.number_offset->get_text());
-        tab_models[window]->set_limit(tab.number_limit->get_text());
+        auto& tab_model = get_simple_tab_model(window);
 
-        tab_models[window]->next_page();
+        tab_model.set_offset(tab.number_offset->get_text());
+        tab_model.set_limit(tab.number_limit->get_text());
 
-        tab.number_offset->set_text(tab_models[window]->get_offset());
-        tab.number_limit->set_text(tab_models[window]->get_limit());
+        tab_model.next_page();
+
+        tab.number_offset->set_text(tab_model.get_offset());
+        tab.number_limit->set_text(tab_model.get_limit());
 
         load_results(window);
     }
@@ -262,11 +274,13 @@ namespace san
         san::AbstractTab& at = get_tab(window);
         san::EasyTab& tab = static_cast<san::EasyTab&>(at);
 
-        tab_models[window]->set_offset(tab.number_offset->get_text());
-        tab_models[window]->set_limit(tab.number_limit->get_text());
+        auto& tab_model = get_simple_tab_model(window);
 
-        tab.number_offset->set_text(tab_models[window]->get_offset());
-        tab.number_limit->set_text(tab_models[window]->get_limit());
+        tab_model.set_offset(tab.number_offset->get_text());
+        tab_model.set_limit(tab.number_limit->get_text());
+
+        tab.number_offset->set_text(tab_model.get_offset());
+        tab.number_limit->set_text(tab_model.get_limit());
 
         load_results(window);
     }
@@ -315,10 +329,10 @@ namespace san
              (sigc::mem_fun(*this, &MainWindow::on_submit_query_clicked),
               window, tab->buffer));
 
-        tabs[window] = (tab);
+        tabs[window] = tab;
 
-        tab_models[window]
-            = std::make_unique<TabModel>(san::Connections::instance()->connection());
+        tab_models[window] = std::make_shared<QueryTabModel>(
+            san::Connections::instance()->connection());
 
         notebook.append_page(*window, *(tab->hb));
 
@@ -345,7 +359,7 @@ namespace san
             tabs[window] = (tab);
 
             tab_models[window]
-                = std::make_unique<TabModel>(
+                = std::make_shared<SimpleTabModel>(
                     san::Connections::instance()->connection(),
                     table_name);
 
@@ -386,7 +400,8 @@ namespace san
 
         std::cout << query << std::endl;
 
-        const TabModel& tab = tab_model(tree_scrolled_window);
+        const AbstractTabModel& atab = tab_model(tree_scrolled_window);
+        const SimpleTabModel& tab = static_cast<const SimpleTabModel&>(atab);
         auto& pc = tab.conn();
 
         std::shared_ptr<san::QueryResult> result = pc.run_query(query);

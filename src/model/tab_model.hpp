@@ -15,6 +15,8 @@ public:
 		connection->init_connection();
 	}
 
+	virtual ~AbstractTabModel() {}
+
 	san::PostgresConnection& conn() const {
 		return *connection;
 	}
