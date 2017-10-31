@@ -11,12 +11,14 @@
 
 namespace san
 {
-    class AbstractTab {};
+    class AbstractTab
+    {
+    };
 
-    class Tab : public AbstractTab
+    class QueryTab : public AbstractTab
     {
     public:
-        Tab();
+        QueryTab();
 
         Glib::RefPtr<Gsv::Buffer> buffer;
 
@@ -43,10 +45,10 @@ namespace san
         Gtk::Box* box;
     };
 
-    class EasyTab : public AbstractTab
+    class SimpleTab : public AbstractTab
     {
     public:
-        EasyTab();
+        SimpleTab();
 
         Gtk::HBox* hb;
         Gtk::Button* b;

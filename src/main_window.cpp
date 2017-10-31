@@ -148,7 +148,7 @@ namespace san
     )
     {
         san::AbstractTab& at = get_tab(window);
-        san::EasyTab& tab = static_cast<san::EasyTab&>(at);
+        san::SimpleTab& tab = static_cast<san::SimpleTab&>(at);
 
         auto& model = get_simple_tab_model(window);
 
@@ -162,7 +162,7 @@ namespace san
         auto& pc = tab_models[window]->conn();
 
         san::AbstractTab& at = get_tab(window);
-        san::EasyTab& tab = static_cast<san::EasyTab&>(at);
+        san::SimpleTab& tab = static_cast<san::SimpleTab&>(at);
 
         auto& model = get_simple_tab_model(window);
 
@@ -236,7 +236,7 @@ namespace san
     void MainWindow::on_prev_results_page_clicked(Gtk::ScrolledWindow* window)
     {
         san::AbstractTab& at = get_tab(window);
-        san::EasyTab& tab = static_cast<san::EasyTab&>(at);
+        san::SimpleTab& tab = static_cast<san::SimpleTab&>(at);
 
         auto& tab_model = get_simple_tab_model(window);
 
@@ -254,7 +254,7 @@ namespace san
     void MainWindow::on_next_results_page_clicked(Gtk::ScrolledWindow* window)
     {
         san::AbstractTab& at = get_tab(window);
-        san::EasyTab& tab = static_cast<san::EasyTab&>(at);
+        san::SimpleTab& tab = static_cast<san::SimpleTab&>(at);
 
         auto& tab_model = get_simple_tab_model(window);
 
@@ -272,7 +272,7 @@ namespace san
     void MainWindow::on_reload_table_clicked(Gtk::ScrolledWindow* window)
     {
         san::AbstractTab& at = get_tab(window);
-        san::EasyTab& tab = static_cast<san::EasyTab&>(at);
+        san::SimpleTab& tab = static_cast<san::SimpleTab&>(at);
 
         auto& tab_model = get_simple_tab_model(window);
 
@@ -315,7 +315,7 @@ namespace san
 
     void MainWindow::on_open_sql_editor_clicked()
     {
-        auto tab = std::make_shared<san::Tab>();
+        auto tab = std::make_shared<san::QueryTab>();
 
         Gtk::ScrolledWindow* window = tab->tree_scrolled_window;
 
@@ -352,7 +352,7 @@ namespace san
 
             Glib::ustring table_name = current_row[browser_model.table];
 
-            auto tab = std::make_shared<san::EasyTab>();
+            auto tab = std::make_shared<san::SimpleTab>();
 
             Gtk::ScrolledWindow* window = tab->tree_scrolled_window;
 
@@ -407,7 +407,7 @@ namespace san
         std::shared_ptr<san::QueryResult> result = pc.run_query(query);
 
         san::AbstractTab& at = get_tab(tree_scrolled_window);
-        san::Tab& tab2 = static_cast<san::Tab&>(at);
+        san::QueryTab& tab2 = static_cast<san::QueryTab&>(at);
 
         std::map<std::string, Gtk::TreeModelColumn<Glib::ustring>> cols;
 

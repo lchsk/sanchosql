@@ -2,7 +2,7 @@
 
 namespace san
 {
-    Tab::Tab()
+    QueryTab::QueryTab()
     {
         hb = Gtk::manage(new Gtk::HBox);
         b = Gtk::manage(new Gtk::Button);
@@ -62,7 +62,7 @@ namespace san
         hb->show_all_children();
     }
 
-    EasyTab::EasyTab()
+    SimpleTab::SimpleTab()
     {
         hb = Gtk::manage(new Gtk::HBox);
         b = Gtk::manage(new Gtk::Button);
