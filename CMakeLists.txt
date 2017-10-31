@@ -41,8 +41,8 @@ add_executable(${EXECUTABLE_NAME}
     src/query_result.cpp
     src/connection_details.cpp
     src/connections.cpp
-
     src/tab.cpp
+    src/util.cpp
 
     # Models
     src/model/tab_model.cpp
