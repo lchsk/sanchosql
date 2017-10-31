@@ -174,7 +174,7 @@ namespace san
         tab.col_names.clear();
         tab.tree->remove_all_columns();
 
-        tab.cr = std::make_shared<Gtk::TreeModel::ColumnRecord>();
+        tab.cr = std::make_unique<Gtk::TreeModel::ColumnRecord>();
 
         Gtk::TreeViewColumn* sorted_col = nullptr;
 
@@ -416,11 +416,11 @@ namespace san
 
             cols[column.column_name] = col;
 
-            tab2.cr.add(cols[column.column_name]);
+            tab2.cr->add(cols[column.column_name]);
             tab2.tree->append_column(san::util::replace_all(column.column_name, "_", "__") + "\n" + column.data_type, cols[column.column_name]);
         }
 
-        tab2.list_store = Gtk::ListStore::create(tab2.cr);
+        tab2.list_store = Gtk::ListStore::create(*tab2.cr);
         tab2.tree->set_model(tab2.list_store);
 
         for (const auto& row : result->data) {

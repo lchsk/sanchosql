@@ -26,6 +26,7 @@ namespace san
 
         Gtk::TreeView* tree;
         Glib::RefPtr<Gtk::ListStore> list_store;
+        std::unique_ptr<Gtk::TreeModel::ColumnRecord> cr;
 
         Gtk::ScrolledWindow* tree_scrolled_window;
 
@@ -38,7 +39,6 @@ namespace san
         QueryTab();
 
         Glib::RefPtr<Gsv::Buffer> buffer;
-        Gtk::TreeModel::ColumnRecord cr;
         Gsv::View* source_view;
     };
 
@@ -48,8 +48,6 @@ namespace san
         SimpleTab();
 
         std::unordered_map<Gtk::TreeViewColumn*, std::string> col_names;
-
-        std::shared_ptr<Gtk::TreeModel::ColumnRecord> cr;
 
         // Browse box
         Gtk::Box* browse_box;
