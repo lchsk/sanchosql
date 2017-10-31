@@ -1,22 +1,22 @@
 #include "tab_model.hpp"
 
-TabModel::TabModel(const std::shared_ptr<san::ConnectionDetails>& conn_details,
-				   const Glib::ustring& p_table_name) :
+SimpleTabModel::SimpleTabModel(const std::shared_ptr<san::ConnectionDetails>& conn_details,
+							   const Glib::ustring& p_table_name) :
+	AbstractTabModel(conn_details),
 	table_name(p_table_name),
 	limit(DEFAULT_LIMIT),
 	offset(DEFAULT_OFFSET),
-	conn_details(conn_details),
-	connection(std::make_unique<san::PostgresConnection>(conn_details)),
 	sort_column(""),
 	sort_type(ColumnSortType::None)
 {
-	connection->init_connection();
 }
 
-TabModel::TabModel(const std::shared_ptr<san::ConnectionDetails>& conn_details) :
-	TabModel(conn_details, "") {}
+QueryTabModel::QueryTabModel(const std::shared_ptr<san::ConnectionDetails>& conn_details)
+	: AbstractTabModel(conn_details)
+{
+}
 
-void TabModel::set_sort(const std::string& p_sort_column)
+void SimpleTabModel::set_sort(const std::string& p_sort_column)
 {
 	switch (sort_type) {
 	case ColumnSortType::None:
@@ -34,7 +34,7 @@ void TabModel::set_sort(const std::string& p_sort_column)
 	}
 }
 
-void TabModel::set_limit(const std::string& p_limit) {
+void SimpleTabModel::set_limit(const std::string& p_limit) {
 	try {
 		limit = std::stoul(p_limit);
 	} catch (const std::invalid_argument&) {
@@ -42,7 +42,7 @@ void TabModel::set_limit(const std::string& p_limit) {
 	}
 }
 
-void TabModel::set_offset(const std::string& p_offset) {
+void SimpleTabModel::set_offset(const std::string& p_offset) {
 	try {
 		offset = std::stoul(p_offset);
 	} catch (const std::invalid_argument&) {
@@ -50,7 +50,7 @@ void TabModel::set_offset(const std::string& p_offset) {
 	}
 }
 
-Gtk::SortType TabModel::get_sort_type() const
+Gtk::SortType SimpleTabModel::get_sort_type() const
 {
 	if (sort_type == ColumnSortType::Asc)
 		return Gtk::SortType::SORT_ASCENDING;
@@ -60,7 +60,7 @@ Gtk::SortType TabModel::get_sort_type() const
 	return Gtk::SortType::SORT_ASCENDING;
 }
 
-const std::string TabModel::get_query() const
+const std::string SimpleTabModel::get_query() const
 {
 	std::stringstream query;
 
@@ -75,7 +75,7 @@ const std::string TabModel::get_query() const
 	return query.str();
 }
 
-const std::string TabModel::get_order_by_query() const
+const std::string SimpleTabModel::get_order_by_query() const
 {
 	std::stringstream order_by;
 

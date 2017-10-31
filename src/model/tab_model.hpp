@@ -5,24 +5,32 @@
 
 #include "../pg_conn.hpp"
 
-class TabModel
+class AbstractTabModel
 {
 public:
-	enum class ColumnSortType {
-		None,
-		Asc,
-		Desc,
-	};
-
-	TabModel(const std::shared_ptr<san::ConnectionDetails>& conn_details,
-			 const Glib::ustring& p_table_name);
-	TabModel(const std::shared_ptr<san::ConnectionDetails>& conn_details);
+	AbstractTabModel(const std::shared_ptr<san::ConnectionDetails>& conn_details)
+		: conn_details(conn_details),
+		  connection(std::make_unique<san::PostgresConnection>(conn_details))
+	{
+		connection->init_connection();
+	}
 
 	san::PostgresConnection& conn() const {
 		return *connection;
 	}
 
-	const std::string get_query() const;
+private:
+	std::shared_ptr<san::ConnectionDetails> conn_details;
+	std::unique_ptr<san::PostgresConnection> connection;
+};
+
+class SimpleTabModel : public AbstractTabModel
+{
+public:
+	enum class ColumnSortType { None, Asc, Desc };
+
+	SimpleTabModel(const std::shared_ptr<san::ConnectionDetails>& conn_details,
+				   const Glib::ustring& p_table_name);
 
 	void set_limit(const std::string& p_limit);
 	void set_offset(const std::string& p_offset);
@@ -54,24 +62,27 @@ public:
 		return sort_column;
 	}
 
+	const std::string get_query() const;
+
 private:
 	const std::string get_order_by_query() const;
 
-	// EasyTab
 	const Glib::ustring table_name;
 
 	unsigned limit;
 	unsigned offset;
 
-	std::shared_ptr<san::ConnectionDetails> conn_details;
-	std::unique_ptr<san::PostgresConnection> connection;
-
-	// EasyTab
 	std::string sort_column;
 	ColumnSortType sort_type;
 
 	static const unsigned DEFAULT_LIMIT = 30;
 	static const unsigned DEFAULT_OFFSET = 0;
+};
+
+class QueryTabModel : public AbstractTabModel
+{
+public:
+	QueryTabModel(const std::shared_ptr<san::ConnectionDetails>& conn_details);
 };
 
 #endif
