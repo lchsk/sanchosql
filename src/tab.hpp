@@ -13,6 +13,23 @@ namespace san
 {
     class AbstractTab
     {
+    public:
+        Gtk::HBox* hb;
+        Gtk::Button* b;
+        Gtk::Label* l;
+
+        Gtk::Image* i;
+        Gtk::TextView* tv;
+
+        Gtk::Toolbar* toolbar;
+        Gtk::ToolButton* btn1;
+
+        Gtk::TreeView* tree;
+        Glib::RefPtr<Gtk::ListStore> list_store;
+
+        Gtk::ScrolledWindow* tree_scrolled_window;
+
+        Gtk::Box* box;
     };
 
     class QueryTab : public AbstractTab
@@ -21,28 +38,8 @@ namespace san
         QueryTab();
 
         Glib::RefPtr<Gsv::Buffer> buffer;
-
-        Gtk::HBox* hb;
-        Gtk::Button* b;
-        Gtk::Label* l;
-
-        Gtk::Image* i;
-
-        Gtk::TextView* tv;
-
         Gtk::TreeModel::ColumnRecord cr;
-
-        Gtk::Toolbar* toolbar;
-        Gtk::ToolButton* btn1;
-
-        Gtk::TreeView* tree;
-        Glib::RefPtr<Gtk::ListStore> list_store;
-
-        Gtk::ScrolledWindow* tree_scrolled_window;
-
         Gsv::View* source_view;
-
-        Gtk::Box* box;
     };
 
     class SimpleTab : public AbstractTab
@@ -50,27 +47,9 @@ namespace san
     public:
         SimpleTab();
 
-        Gtk::HBox* hb;
-        Gtk::Button* b;
-        Gtk::Label* l;
-
-        Gtk::Image* i;
-
-        Gtk::TextView* tv;
-
-        std::shared_ptr<Gtk::TreeModel::ColumnRecord> cr;
-
         std::unordered_map<Gtk::TreeViewColumn*, std::string> col_names;
 
-        Gtk::Toolbar* toolbar;
-        Gtk::ToolButton* btn1;
-
-        Gtk::TreeView* tree;
-        Glib::RefPtr<Gtk::ListStore> list_store;
-
-        Gtk::ScrolledWindow* tree_scrolled_window;
-
-        Gtk::Box* box;
+        std::shared_ptr<Gtk::TreeModel::ColumnRecord> cr;
 
         // Browse box
         Gtk::Box* browse_box;
