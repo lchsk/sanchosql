@@ -132,9 +132,9 @@ namespace san
         return *(tab_models[win]);
     }
 
-    SimpleTabModel& MainWindow::get_simple_tab_model(Gtk::ScrolledWindow* win)
+    san::SimpleTabModel& MainWindow::get_simple_tab_model(Gtk::ScrolledWindow* win)
     {
-        return static_cast<SimpleTabModel&>(*(tab_models[win]));
+        return static_cast<san::SimpleTabModel&>(*(tab_models[win]));
     }
 
     san::AbstractTab& MainWindow::get_tab(Gtk::ScrolledWindow* win)
@@ -331,7 +331,7 @@ namespace san
 
         tabs[window] = tab;
 
-        tab_models[window] = std::make_shared<QueryTabModel>(
+        tab_models[window] = std::make_shared<san::QueryTabModel>(
             san::Connections::instance()->connection());
 
         notebook.append_page(*window, *(tab->hb));
@@ -359,7 +359,7 @@ namespace san
             tabs[window] = (tab);
 
             tab_models[window]
-                = std::make_shared<SimpleTabModel>(
+                = std::make_shared<san::SimpleTabModel>(
                     san::Connections::instance()->connection(),
                     table_name);
 
@@ -401,7 +401,7 @@ namespace san
         std::cout << query << std::endl;
 
         const AbstractTabModel& atab = tab_model(tree_scrolled_window);
-        const SimpleTabModel& tab = static_cast<const SimpleTabModel&>(atab);
+        const san::SimpleTabModel& tab = static_cast<const san::SimpleTabModel&>(atab);
         auto& pc = tab.conn();
 
         std::shared_ptr<san::QueryResult> result = pc.run_query(query);

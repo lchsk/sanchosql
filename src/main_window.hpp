@@ -41,7 +41,7 @@ namespace san
         AbstractTabModel& tab_model(Gtk::ScrolledWindow*);
         san::AbstractTab& get_tab(Gtk::ScrolledWindow*);
 
-        SimpleTabModel& get_simple_tab_model(Gtk::ScrolledWindow*);
+        san::SimpleTabModel& get_simple_tab_model(Gtk::ScrolledWindow*);
 
         void on_results_column_clicked(Gtk::ScrolledWindow*, Gtk::TreeViewColumn*);
         void on_tab_close_button_clicked(Gtk::ScrolledWindow*);
