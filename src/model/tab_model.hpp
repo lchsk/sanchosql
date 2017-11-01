@@ -7,6 +7,8 @@
 
 namespace san
 {
+	enum class TabType { Simple, Query };
+
 	class AbstractTabModel
 	{
 	public:
@@ -23,9 +25,17 @@ namespace san
 			return *connection;
 		}
 
+		virtual const std::string get_query() const = 0;
+
+		virtual const std::string& get_sort_column() const {
+			return EMPTY_SORT_COLUMN;
+		};
+
 	private:
 		std::shared_ptr<san::ConnectionDetails> conn_details;
 		std::unique_ptr<san::PostgresConnection> connection;
+
+		const std::string EMPTY_SORT_COLUMN = "";
 	};
 
 	class SimpleTabModel : public AbstractTabModel
@@ -87,6 +97,12 @@ namespace san
 	{
 	public:
 		QueryTabModel(const std::shared_ptr<san::ConnectionDetails>& conn_details);
+
+		std::string query;
+
+		const std::string get_query() const {
+			return query;
+		}
 	};
 }
 

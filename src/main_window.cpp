@@ -137,6 +137,11 @@ namespace san
         return static_cast<san::SimpleTabModel&>(*(tab_models[win]));
     }
 
+    san::QueryTabModel& MainWindow::get_query_tab_model(Gtk::ScrolledWindow* win)
+    {
+        return static_cast<san::QueryTabModel&>(*(tab_models[win]));
+    }
+
     san::AbstractTab& MainWindow::get_tab(Gtk::ScrolledWindow* win)
     {
         return *(tabs[win]);
@@ -154,27 +159,45 @@ namespace san
 
         model.set_sort(tab.col_names[col]);
 
-        load_results(window);
+        load_results(window, san::TabType::Simple);
     }
 
-    void MainWindow::load_results(Gtk::ScrolledWindow* window)
+    void MainWindow::load_results(Gtk::ScrolledWindow* window,
+                                  const san::TabType tab_type)
     {
         auto& pc = tab_models[window]->conn();
 
+        san::AbstractTab* tab = nullptr;
         san::AbstractTab& at = get_tab(window);
-        san::SimpleTab& tab = static_cast<san::SimpleTab&>(at);
 
-        auto& model = get_simple_tab_model(window);
+        san::AbstractTabModel* model = nullptr;
+        san::AbstractTabModel& atm = tab_model(window);
+
+        if (tab_type == san::TabType::Simple) {
+            tab = &static_cast<san::SimpleTab&>(at);
+            model = &static_cast<san::SimpleTabModel&>(atm);
+        } else if (tab_type == san::TabType::Query) {
+            tab = &static_cast<san::QueryTab&>(at);
+            model = &static_cast<san::QueryTabModel&>(atm);
+        }
+
+        if (! tab) {
+            throw std::runtime_error("Invalid tab pointer");
+        }
+
+        if (! model) {
+            throw std::runtime_error("Invalid tab model pointer");
+        }
 
         std::shared_ptr<san::QueryResult> result
-            = pc.run_query(model.get_query());
+            = pc.run_query(model->get_query());
 
         std::map<std::string, Gtk::TreeModelColumn<Glib::ustring>> cols;
 
-        tab.col_names.clear();
-        tab.tree->remove_all_columns();
+        tab->col_names.clear();
+        tab->tree->remove_all_columns();
 
-        tab.cr = std::make_unique<Gtk::TreeModel::ColumnRecord>();
+        tab->cr = std::make_unique<Gtk::TreeModel::ColumnRecord>();
 
         Gtk::TreeViewColumn* sorted_col = nullptr;
 
@@ -183,7 +206,7 @@ namespace san
 
             cols[column.column_name] = col;
 
-            tab.cr->add(cols[column.column_name]);
+            tab->cr->add(cols[column.column_name]);
 
             const std::string escaped_column_name
                 = san::util::replace_all(column.column_name, "_", "__");
@@ -196,32 +219,33 @@ namespace san
 
             tree_view_column->set_resizable();
 
-            tab.tree->append_column(*tree_view_column);
+            tab->tree->append_column(*tree_view_column);
 
             tree_view_column->signal_clicked().connect
                 (sigc::bind<Gtk::ScrolledWindow*, Gtk::TreeViewColumn*>
                  (sigc::mem_fun(*this, &MainWindow::on_results_column_clicked),
                   window, tree_view_column));
 
-            if (column.column_name == model.get_sort_column()) {
+            if (tab_type == san::TabType::Simple &&
+                column.column_name == model->get_sort_column()) {
                 sorted_col = tree_view_column;
             }
 
-            tab.col_names[tree_view_column] = column.column_name;
+            tab->col_names[tree_view_column] = column.column_name;
         }
 
-        tab.tree->set_headers_clickable();
+        tab->list_store = Gtk::ListStore::create(*(tab->cr));
+        tab->tree->set_model(tab->list_store);
 
-        tab.list_store = Gtk::ListStore::create(*(tab.cr));
-        tab.tree->set_model(tab.list_store);
+        if (tab_type == san::TabType::Simple) {
+            tab->tree->set_headers_clickable();
 
-        if (model.is_sorted() && sorted_col) {
-            sorted_col->set_sort_indicator(true);
-            sorted_col->set_sort_order(model.get_sort_type());
+            handle_results_sort(static_cast<const san::SimpleTabModel*>(model),
+                                sorted_col);
         }
 
         for (const auto& row : result->data) {
-            Gtk::TreeModel::Row r = *(tab.list_store->append());
+            Gtk::TreeModel::Row r = *(tab->list_store->append());
 
             int i = 0;
 
@@ -248,7 +272,7 @@ namespace san
         tab.number_offset->set_text(tab_model.get_offset());
         tab.number_limit->set_text(tab_model.get_limit());
 
-        load_results(window);
+        load_results(window, san::TabType::Simple);
     }
 
     void MainWindow::on_next_results_page_clicked(Gtk::ScrolledWindow* window)
@@ -266,7 +290,7 @@ namespace san
         tab.number_offset->set_text(tab_model.get_offset());
         tab.number_limit->set_text(tab_model.get_limit());
 
-        load_results(window);
+        load_results(window, san::TabType::Simple);
     }
 
     void MainWindow::on_reload_table_clicked(Gtk::ScrolledWindow* window)
@@ -282,7 +306,7 @@ namespace san
         tab.number_offset->set_text(tab_model.get_offset());
         tab.number_limit->set_text(tab_model.get_limit());
 
-        load_results(window);
+        load_results(window, san::TabType::Simple);
     }
 
     void MainWindow::on_tab_close_button_clicked(Gtk::ScrolledWindow* tree)
@@ -383,7 +407,7 @@ namespace san
              (sigc::mem_fun(*this, &MainWindow::on_next_results_page_clicked),
               window));
 
-            load_results(window);
+            load_results(window, san::TabType::Simple);
 
             notebook.append_page(*window, *(tab->hb));
 
@@ -400,39 +424,18 @@ namespace san
 
         std::cout << query << std::endl;
 
-        const AbstractTabModel& atab = tab_model(tree_scrolled_window);
-        const san::SimpleTabModel& tab = static_cast<const san::SimpleTabModel&>(atab);
-        auto& pc = tab.conn();
+        auto& model = get_query_tab_model(tree_scrolled_window);
+        model.query = query;
 
-        std::shared_ptr<san::QueryResult> result = pc.run_query(query);
+        load_results(tree_scrolled_window, san::TabType::Query);
+    }
 
-        san::AbstractTab& at = get_tab(tree_scrolled_window);
-        san::QueryTab& tab2 = static_cast<san::QueryTab&>(at);
-
-        std::map<std::string, Gtk::TreeModelColumn<Glib::ustring>> cols;
-
-        for (const auto& column : result->columns) {
-            Gtk::TreeModelColumn<Glib::ustring> col;
-
-            cols[column.column_name] = col;
-
-            tab2.cr->add(cols[column.column_name]);
-            tab2.tree->append_column(san::util::replace_all(column.column_name, "_", "__") + "\n" + column.data_type, cols[column.column_name]);
-        }
-
-        tab2.list_store = Gtk::ListStore::create(*tab2.cr);
-        tab2.tree->set_model(tab2.list_store);
-
-        for (const auto& row : result->data) {
-            Gtk::TreeModel::Row r = *(tab2.list_store->append());
-
-            int i = 0;
-
-            for (const auto& c : result->columns) {
-                r[cols[c.column_name]] = row[i];
-
-                i++;
-            }
+    void MainWindow::handle_results_sort(const san::SimpleTabModel* model,
+                                         Gtk::TreeViewColumn* sorted_col)
+    {
+        if (sorted_col && model->is_sorted()) {
+            sorted_col->set_sort_indicator(true);
+            sorted_col->set_sort_order(model->get_sort_type());
         }
     }
 }

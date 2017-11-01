@@ -42,6 +42,7 @@ namespace san
         san::AbstractTab& get_tab(Gtk::ScrolledWindow*);
 
         san::SimpleTabModel& get_simple_tab_model(Gtk::ScrolledWindow*);
+        san::QueryTabModel& get_query_tab_model(Gtk::ScrolledWindow*);
 
         void on_results_column_clicked(Gtk::ScrolledWindow*, Gtk::TreeViewColumn*);
         void on_tab_close_button_clicked(Gtk::ScrolledWindow*);
@@ -53,7 +54,10 @@ namespace san
         void on_open_sql_editor_clicked();
         void on_submit_query_clicked(Gtk::ScrolledWindow*, Glib::RefPtr<Gsv::Buffer>&);
 
-        void load_results(Gtk::ScrolledWindow*);
+        void load_results(Gtk::ScrolledWindow*, const san::TabType);
+
+        void handle_results_sort(const san::SimpleTabModel* model,
+                                 Gtk::TreeViewColumn* sorted_col);
 
         void on_action_file_new();
         void on_action_file_quit();

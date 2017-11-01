@@ -30,6 +30,9 @@ namespace san
 
         Gtk::ScrolledWindow* tree_scrolled_window;
 
+        // Temp
+        std::unordered_map<Gtk::TreeViewColumn*, std::string> col_names;
+
         Gtk::Box* box;
     };
 
@@ -46,8 +49,6 @@ namespace san
     {
     public:
         SimpleTab();
-
-        std::unordered_map<Gtk::TreeViewColumn*, std::string> col_names;
 
         // Browse box
         Gtk::Box* browse_box;
