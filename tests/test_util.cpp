@@ -24,6 +24,14 @@ TEST(Util, trim)
     EXPECT_EQ(san::util::trim(""), "");
 }
 
+TEST(Util, is_empty)
+{
+    EXPECT_TRUE(san::util::is_empty(""));
+    EXPECT_TRUE(san::util::is_empty("  "));
+    EXPECT_FALSE(san::util::is_empty("abc"));
+    EXPECT_FALSE(san::util::is_empty("    abc "));
+}
+
 int main (int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);
 

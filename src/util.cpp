@@ -30,8 +30,8 @@ namespace san
             return true;
         }
 
-        std::string trim(const std::string& input) {
-            std::string s(input);
+        Glib::ustring trim(const Glib::ustring& input) {
+            Glib::ustring s(input);
 
             s.erase(s.begin(), std::find_if(s.begin(), s.end(), [](int ch) {
                 return !std::isspace(ch);
@@ -42,6 +42,11 @@ namespace san
             }).base(), s.end());
 
             return s;
+        }
+
+        bool is_empty(const Glib::ustring& input)
+        {
+            return trim(input) == "";
         }
     }
 }
