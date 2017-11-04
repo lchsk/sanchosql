@@ -11,6 +11,8 @@ namespace san
                                 const std::string& from,
                                 const std::string& to);
         bool contains_only_numbers(const Glib::ustring& text);
+
+        std::string trim(const std::string& input);
     }
 }
 

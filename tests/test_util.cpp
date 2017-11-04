@@ -15,6 +15,15 @@ TEST(Util, replace_all)
     EXPECT_EQ(san::util::replace_all("abc def", "def", "abc"), "abc abc");
 }
 
+TEST(Util, trim)
+{
+    EXPECT_EQ(san::util::trim("abc"), "abc");
+    EXPECT_EQ(san::util::trim(" abc "), "abc");
+    EXPECT_EQ(san::util::trim(" a b c "), "a b c");
+    EXPECT_EQ(san::util::trim("  "), "");
+    EXPECT_EQ(san::util::trim(""), "");
+}
+
 int main (int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);
 
