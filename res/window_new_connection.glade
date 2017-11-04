@@ -86,6 +86,7 @@
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">True</property>
+                        <property name="margin_right">2</property>
                       </object>
                       <packing>
                         <property name="expand">True</property>
@@ -99,6 +100,7 @@
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">True</property>
+                        <property name="margin_left">2</property>
                       </object>
                       <packing>
                         <property name="expand">True</property>
@@ -110,6 +112,7 @@
                   <packing>
                     <property name="expand">False</property>
                     <property name="fill">True</property>
+                    <property name="padding">2</property>
                     <property name="pack_type">end</property>
                     <property name="position">1</property>
                   </packing>
@@ -134,6 +137,30 @@
                     <property name="margin_bottom">8</property>
                     <property name="orientation">vertical</property>
                     <child>
+                      <object class="GtkLabel" id="label_conn_name">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="halign">start</property>
+                        <property name="label" translatable="yes">Connection name</property>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">0</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkEntry" id="text_connection_name">
+                        <property name="visible">True</property>
+                        <property name="can_focus">True</property>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">1</property>
+                      </packing>
+                    </child>
+                    <child>
                       <object class="GtkLabel" id="label_host">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
@@ -143,7 +170,7 @@
                       <packing>
                         <property name="expand">False</property>
                         <property name="fill">True</property>
-                        <property name="position">0</property>
+                        <property name="position">2</property>
                       </packing>
                     </child>
                     <child>
@@ -151,32 +178,6 @@
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="buffer">buffer_host</property>
-                      </object>
-                      <packing>
-                        <property name="expand">False</property>
-                        <property name="fill">True</property>
-                        <property name="position">1</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <object class="GtkLabel" id="label_port">
-                        <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="halign">start</property>
-                        <property name="label" translatable="yes">Port</property>
-                      </object>
-                      <packing>
-                        <property name="expand">False</property>
-                        <property name="fill">True</property>
-                        <property name="position">2</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <object class="GtkEntry" id="text_port">
-                        <property name="visible">True</property>
-                        <property name="can_focus">True</property>
-                        <property name="buffer">buffer_port</property>
-                        <property name="input_purpose">digits</property>
                       </object>
                       <packing>
                         <property name="expand">False</property>
@@ -209,6 +210,32 @@
                       </packing>
                     </child>
                     <child>
+                      <object class="GtkLabel" id="label_port">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="halign">start</property>
+                        <property name="label" translatable="yes">Port</property>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">6</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkEntry" id="text_port">
+                        <property name="visible">True</property>
+                        <property name="can_focus">True</property>
+                        <property name="buffer">buffer_port</property>
+                        <property name="input_purpose">digits</property>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">7</property>
+                      </packing>
+                    </child>
+                    <child>
                       <object class="GtkLabel" id="label_username">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
@@ -218,7 +245,7 @@
                       <packing>
                         <property name="expand">False</property>
                         <property name="fill">True</property>
-                        <property name="position">6</property>
+                        <property name="position">8</property>
                       </packing>
                     </child>
                     <child>
@@ -229,7 +256,7 @@
                       <packing>
                         <property name="expand">False</property>
                         <property name="fill">True</property>
-                        <property name="position">7</property>
+                        <property name="position">9</property>
                       </packing>
                     </child>
                     <child>
@@ -242,7 +269,7 @@
                       <packing>
                         <property name="expand">False</property>
                         <property name="fill">True</property>
-                        <property name="position">8</property>
+                        <property name="position">10</property>
                       </packing>
                     </child>
                     <child>
@@ -257,7 +284,7 @@
                       <packing>
                         <property name="expand">False</property>
                         <property name="fill">True</property>
-                        <property name="position">9</property>
+                        <property name="position">11</property>
                       </packing>
                     </child>
                     <child>
@@ -272,7 +299,7 @@
                       <packing>
                         <property name="expand">False</property>
                         <property name="fill">True</property>
-                        <property name="position">10</property>
+                        <property name="position">12</property>
                       </packing>
                     </child>
                     <child>
@@ -285,7 +312,7 @@
                       <packing>
                         <property name="expand">False</property>
                         <property name="fill">False</property>
-                        <property name="position">11</property>
+                        <property name="position">13</property>
                       </packing>
                     </child>
                   </object>
