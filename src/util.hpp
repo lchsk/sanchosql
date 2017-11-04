@@ -3,6 +3,8 @@
 
 #include <glibmm.h>
 
+#define IN_MAP(map, item) (map.find(item) != map.end())
+
 namespace san
 {
     namespace util

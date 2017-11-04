@@ -1,3 +1,5 @@
+#include <map>
+
 #include "gtest/gtest.h"
 
 #include "../src/util.hpp"
@@ -30,6 +32,14 @@ TEST(Util, is_empty)
     EXPECT_TRUE(san::util::is_empty("  "));
     EXPECT_FALSE(san::util::is_empty("abc"));
     EXPECT_FALSE(san::util::is_empty("    abc "));
+}
+
+TEST(Util, in_map_macro)
+{
+    std::map<std::string, int> m { {"abc", 1} };
+
+    EXPECT_TRUE(IN_MAP(m, "abc"));
+    EXPECT_FALSE(IN_MAP(m, "test"));
 }
 
 int main (int argc, char** argv) {
