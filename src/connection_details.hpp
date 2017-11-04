@@ -3,6 +3,8 @@
 
 #include <sstream>
 
+#include <glibmm.h>
+
 namespace san
 {
     struct ConnectionDetails
@@ -11,7 +13,7 @@ namespace san
 
         void set_host(const std::string& hostname);
 
-        std::string name;
+        Glib::ustring name;
         std::string host;
         std::string user;
         std::string password;
