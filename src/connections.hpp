@@ -34,9 +34,21 @@ namespace san
             return connections;
         };
 
+        std::shared_ptr<san::ConnectionDetails>&
+        get(const Glib::ustring& conn_name) {
+            return connections.at(conn_name);
+        }
+
         bool exists(const Glib::ustring& conn_name) const {
             return IN_MAP(connections, conn_name);
         };
+
+        void remove(const Glib::ustring& conn_name) {
+            if (! exists(conn_name))
+                return;
+
+            connections.erase(connections.find(conn_name));
+        }
 
     private:
         std::shared_ptr<san::ConnectionDetails> conn;
