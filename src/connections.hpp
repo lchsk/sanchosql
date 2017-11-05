@@ -34,10 +34,12 @@ namespace san
             return connections;
         };
 
-        std::shared_ptr<san::ConnectionDetails>&
-        get(const Glib::ustring& conn_name) {
-            return connections.at(conn_name);
+        const unsigned size() const {
+            return connections.size();
         }
+
+        std::shared_ptr<san::ConnectionDetails>&
+        get(const Glib::ustring& conn_name);
 
         bool exists(const Glib::ustring& conn_name) const {
             return IN_MAP(connections, conn_name);
@@ -49,6 +51,31 @@ namespace san
 
             connections.erase(connections.find(conn_name));
         }
+
+        bool can_update_conn_details(
+            const Glib::ustring& old_conn_name,
+            const Glib::ustring& new_conn_name,
+            const std::string& host,
+            const std::string& user,
+            const std::string& password,
+            const std::string& dbname,
+            const std::string& port);
+
+        void update_conn(
+            const Glib::ustring& old_conn_name,
+            const Glib::ustring& new_conn_name,
+            const std::string& host,
+            const std::string& user,
+            const std::string& password,
+            const std::string& dbname,
+            const std::string& port);
+
+        bool any_fields_empty(
+            const Glib::ustring& host,
+            const Glib::ustring& port,
+            const Glib::ustring& db,
+            const Glib::ustring& user,
+            const Glib::ustring& connection_name) const;
 
     private:
         std::shared_ptr<san::ConnectionDetails> conn;
