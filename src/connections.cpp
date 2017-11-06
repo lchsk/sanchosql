@@ -1,9 +1,13 @@
+#include <iostream>
+
 #include "connections.hpp"
 
 namespace san
 {
     Connections::Connections()
     {
+        open_conn_file();
+
         conn = std::make_shared<san::ConnectionDetails>();
 
         conn->host = "127.0.0.1";
@@ -11,6 +15,54 @@ namespace san
         conn->password = "sancho";
         conn->dbname = "sancho";
         conn->port = "5432";
+    }
+
+    void Connections::open_conn_file()
+    {
+        try {
+            conn_file.load_from_file(CONN_PATH);
+        } catch (const Glib::Error& ex) {
+            std::cerr << "Unable to load connections file: " << ex.what() << std::endl;
+
+            return;
+        }
+
+        load_connections();
+    }
+
+    const Glib::ustring Connections::get_conn_value(const Glib::ustring& group,
+                                                    const Glib::ustring& key) const
+    {
+        try {
+            return conn_file.get_value(group, key);
+        } catch (const Glib::KeyFileError& ex) {
+            // Pass
+        }
+
+        return "";
+    }
+
+    void Connections::load_connections()
+    {
+        connections.clear();
+
+        for (int i = 1; i <= 1000; i++) {
+            const Glib::ustring group = Glib::ustring::compose("conn_%1", i);
+
+            if (! conn_file.has_group(group))
+                return;
+
+            const Glib::ustring name = get_conn_value(group, "name");
+            const Glib::ustring host = get_conn_value(group, "host");
+            const Glib::ustring user = get_conn_value(group, "user");
+            const Glib::ustring password = get_conn_value(group, "password");
+            const Glib::ustring dbname = get_conn_value(group, "dbname");
+            const Glib::ustring port = get_conn_value(group, "port");
+
+            if (san::util::is_empty(name)) continue;
+
+            add(name, host, user, password, dbname, port);
+        }
     }
 
     void Connections::add(const Glib::ustring& name,

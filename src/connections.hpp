@@ -78,11 +78,20 @@ namespace san
             const Glib::ustring& connection_name) const;
 
     private:
+        void open_conn_file();
+        void load_connections();
+        const Glib::ustring get_conn_value(const Glib::ustring&,
+                                           const Glib::ustring&) const;
+
         std::shared_ptr<san::ConnectionDetails> conn;
         std::map<Glib::ustring,
                  std::shared_ptr<san::ConnectionDetails>> connections;
 
         static Connections ins;
+
+        const std::string CONN_PATH = "./sancho_connections";
+
+        Glib::KeyFile conn_file;
     };
 }
 
