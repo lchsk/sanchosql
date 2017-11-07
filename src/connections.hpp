@@ -79,6 +79,8 @@ namespace san
 
         void save_connections();
 
+        Glib::ustring CONN_PATH = "connections";
+
     private:
         void open_conn_file();
         void load_connections();
@@ -90,8 +92,6 @@ namespace san
                  std::shared_ptr<san::ConnectionDetails>> connections;
 
         static Connections ins;
-
-        const std::string CONN_PATH = "./sancho_connections";
 
         Glib::KeyFile conn_file;
     };

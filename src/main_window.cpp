@@ -5,12 +5,36 @@
 #include "util.hpp"
 #include "model/tab_model.hpp"
 
+#include <glib.h>
+
 namespace san
 {
     MainWindow::MainWindow()
         : main_box(Gtk::ORIENTATION_VERTICAL)
     {
+        Glib::init();
+
         set_title("Postgres Client");
+
+        const Glib::ustring config_home = Glib::get_user_config_dir();
+
+        gchar* tmp = g_build_filename(config_home.c_str(), "sancho", NULL);
+
+        std::string path = tmp;
+
+        gint r = g_mkdir_with_parents(path.c_str(), 0755);
+
+        if (r == 0) {
+            std::cout << "Created\n";
+        }
+
+        g_free(tmp);
+
+        tmp = g_build_filename(path.c_str(), "connections", NULL);
+
+        san::Connections::instance()->CONN_PATH = tmp;
+
+        g_free(tmp);
 
         set_border_width(0);
         set_default_size(1200, 800);
