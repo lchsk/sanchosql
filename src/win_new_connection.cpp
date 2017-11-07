@@ -53,6 +53,7 @@ namespace san
 			 (*this, &NewConnectionWindow::on_btn_del_connection_clicked));
 
 		signal_show().connect(sigc::mem_fun(*this, &NewConnectionWindow::on_win_show));
+		signal_hide().connect(sigc::mem_fun(*this, &NewConnectionWindow::on_win_hide));
 
 		text_connection_name->signal_changed().connect
 			(sigc::mem_fun(*this, &NewConnectionWindow::update_save_btn));
@@ -186,6 +187,11 @@ namespace san
 		}
 
 		prepare_adding();
+	}
+
+	void NewConnectionWindow::on_win_hide()
+	{
+		san::Connections::instance()->save_connections();
 	}
 
 	void NewConnectionWindow::on_selected_connection_changed()

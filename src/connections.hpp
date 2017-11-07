@@ -77,6 +77,8 @@ namespace san
             const Glib::ustring& user,
             const Glib::ustring& connection_name) const;
 
+        void save_connections();
+
     private:
         void open_conn_file();
         void load_connections();

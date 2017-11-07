@@ -29,6 +29,7 @@ namespace san
         void reset_widgets();
 
         void on_win_show();
+        void on_win_hide();
 
         void on_btn_save_clicked();
         void on_btn_close_clicked();
