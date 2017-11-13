@@ -73,6 +73,10 @@ namespace san
         Gtk::HPaned paned;
         Gtk::Notebook notebook;
 
+        Gtk::Box box_browser;
+        // List of connections
+        Gtk::ComboBoxText combo_connections;
+
         std::unordered_map
         <Gtk::ScrolledWindow*, std::shared_ptr<AbstractTabModel> > tab_models;
 

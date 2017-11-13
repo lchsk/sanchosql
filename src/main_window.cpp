@@ -10,7 +10,8 @@
 namespace san
 {
     MainWindow::MainWindow()
-        : main_box(Gtk::ORIENTATION_VERTICAL)
+        : main_box(Gtk::ORIENTATION_VERTICAL),
+          box_browser(Gtk::ORIENTATION_VERTICAL)
     {
         Glib::init();
 
@@ -42,12 +43,25 @@ namespace san
 
         add(main_box);
 
+        for (const auto& details : san::Connections::instance()->get_connections()) {
+            combo_connections.append(details.second->name);
+        }
+
+        if (san::Connections::instance()->size())
+            combo_connections.set_active(0);
+
         Gsv::init();
 
         browser_scrolled_window.add(browser);
         browser_scrolled_window.set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
 
-        paned.pack1(browser_scrolled_window);
+        combo_connections.set_title("Active connection");
+
+        // expand, fill, padding
+        box_browser.pack_start(combo_connections, false, false, 4);
+        box_browser.pack_start(browser_scrolled_window);
+
+        paned.pack1(box_browser);
 
         notebook_scrolled_window.add(notebook);
         paned.pack2(notebook_scrolled_window);
