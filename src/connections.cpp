@@ -6,8 +6,6 @@ namespace san
 {
     Connections::Connections()
     {
-        open_conn_file();
-
         conn = std::make_shared<san::ConnectionDetails>();
 
         conn->host = "127.0.0.1";
@@ -17,12 +15,17 @@ namespace san
         conn->port = "5432";
     }
 
+    void Connections::init_connections()
+    {
+        open_conn_file();
+    }
+
     void Connections::open_conn_file()
     {
         try {
             conn_file.load_from_file(CONN_PATH);
         } catch (const Glib::Error& ex) {
-            // Pass
+            std::cerr << "Cannot load " << CONN_PATH << std::endl;
 
             return;
         }
@@ -36,7 +39,7 @@ namespace san
         try {
             return conn_file.get_value(group, key);
         } catch (const Glib::KeyFileError& ex) {
-            // Pass
+            std::cerr << "Cannot find " << group << "." << key << std::endl;
         }
 
         return "";

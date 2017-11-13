@@ -33,6 +33,7 @@ namespace san
         tmp = g_build_filename(path.c_str(), "connections", NULL);
 
         san::Connections::instance()->CONN_PATH = tmp;
+        san::Connections::instance()->init_connections();
 
         g_free(tmp);
 
