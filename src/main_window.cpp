@@ -15,6 +15,8 @@ namespace san
     {
         Glib::init();
 
+        g_debug("Debugging is on");
+
         set_title("Postgres Client");
 
         const Glib::ustring config_home = Glib::get_user_config_dir();
