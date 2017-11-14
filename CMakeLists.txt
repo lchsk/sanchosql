@@ -4,17 +4,41 @@ if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE Debug CACHE STRING "Choose the type of build (Debug or Release)" FORCE)
 endif()
 
+message(STATUS "CMAKE_BUILD_TYPE           = " ${CMAKE_BUILD_TYPE})
+
+if (CMAKE_BUILD_TYPE STREQUAL Debug)
+  message(STATUS "This is a DEBUG build!")
+  set(ENV{G_MESSAGES_DEBUG} "all")
+else()
+  message(STATUS "This is NOT a DEBUG build!")
+endif()
+
 project(postgres-client)
 
+MESSAGE(STATUS "CMAKE_ROOT: " ${CMAKE_ROOT} )
 message(STATUS "CMAKE_SYSTEM_NAME          = ${CMAKE_SYSTEM_NAME}"         )
+MESSAGE( STATUS "CMAKE_SYSTEM: " ${CMAKE_SYSTEM} )
+MESSAGE( STATUS "CMAKE_SYSTEM_VERSION: " ${CMAKE_SYSTEM_VERSION} )
+MESSAGE( STATUS "CMAKE_SYSTEM_PROCESSOR: " ${CMAKE_SYSTEM_PROCESSOR} )
 message(STATUS "CMAKE_CXX_COMPILER_ID      = ${CMAKE_CXX_COMPILER_ID}"     )
 message(STATUS "CMAKE_CXX_COMPILER_VERSION = ${CMAKE_CXX_COMPILER_VERSION}")
 message(STATUS "CMAKE_COMPILER_IS_GNUCXX   = ${CMAKE_COMPILER_IS_GNUCXX}"  )
 
+MESSAGE( STATUS "CMAKE_INCLUDE_PATH: " ${CMAKE_INCLUDE_PATH} )
+MESSAGE( STATUS "CMAKE_LIBRARY_PATH: " ${CMAKE_LIBRARY_PATH} )
+
+
 set(EXECUTABLE_NAME "postgres-client")
 
 set(CMAKE_CXX_STANDARD 14)
-add_definitions(-O0)
+
+if (CMAKE_BUILD_TYPE STREQUAL Debug)
+  message(STATUS "Setting definition -O0")
+  add_definitions(-O0)
+else()
+  message(STATUS "Setting definition -O3")
+  add_definitions(-O3)
+endif()
 
 find_package(PkgConfig)
 
@@ -29,6 +53,9 @@ message(STATUS "PQXX_VERSION               = ${PQXX_VERSION}")
 
 message(STATUS "All dependencies look ok")
 message(STATUS "Generating resources...")
+
+MESSAGE( STATUS "CMAKE_CXX_FLAGS: " ${CMAKE_CXX_FLAGS} )
+MESSAGE( STATUS "BUILD_SHARED_LIBS: " ${BUILD_SHARED_LIBS} )
 
 execute_process(
   COMMAND glib-compile-resources --target=src/resources.c --generate-source res/resources.gresource.xml
