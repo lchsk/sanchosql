@@ -20,6 +20,11 @@ namespace san
             return conn;
         }
 
+        std::shared_ptr<san::ConnectionDetails>&
+        get_connection(const Glib::ustring& connection_name) {
+            return connections[connection_name];
+        }
+
         void add(const Glib::ustring& name,
                  const std::string& host,
                  const std::string& user,
@@ -81,6 +86,8 @@ namespace san
         void save_connections();
 
         Glib::ustring CONN_PATH = "connections";
+
+        std::shared_ptr<san::ConnectionDetails> current_connection;
 
     private:
         void open_conn_file();

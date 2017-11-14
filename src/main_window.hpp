@@ -8,6 +8,7 @@
 #include "pg_conn.hpp"
 #include "model/tab_model.hpp"
 #include "tab.hpp"
+#include "win_new_connection.hpp"
 
 namespace san
 {
@@ -16,8 +17,6 @@ namespace san
     public:
         MainWindow();
         virtual ~MainWindow() {};
-
-        void insert_tables();
 
     protected:
         class BrowserModel : public Gtk::TreeModel::ColumnRecord
@@ -37,12 +36,16 @@ namespace san
 
     private:
         BrowserModel browser_model;
+        san::NewConnectionWindow* win_connections;
 
         AbstractTabModel& tab_model(Gtk::ScrolledWindow*);
         san::AbstractTab& get_tab(Gtk::ScrolledWindow*);
 
         san::SimpleTabModel& get_simple_tab_model(Gtk::ScrolledWindow*);
         san::QueryTabModel& get_query_tab_model(Gtk::ScrolledWindow*);
+
+        void on_connection_changed();
+        void on_win_connections_hide();
 
         void on_results_column_clicked(Gtk::ScrolledWindow*, Gtk::TreeViewColumn*);
         void on_tab_close_button_clicked(Gtk::ScrolledWindow*);
@@ -61,6 +64,8 @@ namespace san
 
         void on_action_file_new();
         void on_action_file_quit();
+
+        void refresh_connections_list();
 
         Glib::RefPtr<Gtk::Builder> res_builder;
         Glib::RefPtr<Gio::SimpleActionGroup> menu_group;

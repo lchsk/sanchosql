@@ -1,7 +1,6 @@
 #include <iostream>
 
 #include "main_window.hpp"
-#include "win_new_connection.hpp"
 #include "util.hpp"
 #include "model/tab_model.hpp"
 
@@ -10,7 +9,8 @@
 namespace san
 {
     MainWindow::MainWindow()
-        : main_box(Gtk::ORIENTATION_VERTICAL),
+        : win_connections(nullptr),
+          main_box(Gtk::ORIENTATION_VERTICAL),
           box_browser(Gtk::ORIENTATION_VERTICAL)
     {
         Glib::init();
@@ -43,12 +43,10 @@ namespace san
 
         add(main_box);
 
-        for (const auto& details : san::Connections::instance()->get_connections()) {
-            combo_connections.append(details.second->name);
-        }
+        refresh_connections_list();
 
-        if (san::Connections::instance()->size())
-            combo_connections.set_active(0);
+        combo_connections.signal_changed().connect(sigc::mem_fun(*this,
+            &MainWindow::on_connection_changed));
 
         Gsv::init();
 
@@ -123,13 +121,20 @@ namespace san
 
         main_box.pack_start(paned);
 
+        res_builder->get_widget_derived("win_new_connection", win_connections);
+
+        if (win_connections) {
+            win_connections->signal_hide().connect(
+                sigc::mem_fun(*this, &MainWindow::on_win_connections_hide));
+            win_connections->set_transient_for(*this);
+            win_connections->set_modal();
+        }
+
         show_all_children();
 
         int w, h;
         get_size(w, h);
         paned.set_position(0.21 * w);
-
-        insert_tables();
     }
 
     void MainWindow::on_action_file_quit()
@@ -139,31 +144,14 @@ namespace san
 
     void MainWindow::on_action_file_new()
     {
-        san::NewConnectionWindow* win = nullptr;
-        res_builder->get_widget_derived("win_new_connection", win);
-
-        if (win) {
-            win->set_transient_for(*this);
-            win->set_modal();
-            win->show();
+        if (win_connections) {
+            win_connections->show();
         }
     }
 
-    void MainWindow::insert_tables()
+    void MainWindow::on_win_connections_hide()
     {
-        std::shared_ptr<san::PostgresConnection> pc
-            = std::make_shared<san::PostgresConnection>(san::Connections::instance()->connection());
-        pc->init_connection();
-
-        const std::vector<std::string>& tables = pc->get_db_tables();
-
-        Gtk::TreeModel::Row row = *(browser_store->append());
-        row[browser_model.table] = "Tables";
-
-        for (const std::string& table_name : tables) {
-            Gtk::TreeModel::Row table_row = *(browser_store->append(row.children()));
-            table_row[browser_model.table] = table_name;
-        }
+        refresh_connections_list();
     }
 
     AbstractTabModel& MainWindow::tab_model(Gtk::ScrolledWindow* win)
@@ -407,53 +395,54 @@ namespace san
     void MainWindow::on_browser_row_activated(const Gtk::TreeModel::Path& path,
                                               Gtk::TreeViewColumn*)
     {
-
         Gtk::TreeModel::iterator iter = browser_store->get_iter(path);
 
-        if (iter) {
-            Gtk::TreeModel::Row current_row = *iter;
+        if (! iter)
+            return;
 
-            Glib::ustring table_name = current_row[browser_model.table];
+        Gtk::TreeModel::Row current_row = *iter;
 
-            auto tab = std::make_shared<san::SimpleTab>();
+        Glib::ustring table_name = current_row[browser_model.table];
 
-            Gtk::ScrolledWindow* window = tab->tree_scrolled_window;
+        auto tab = std::make_shared<san::SimpleTab>();
 
-            tabs[window] = (tab);
+        Gtk::ScrolledWindow* window = tab->tree_scrolled_window;
 
-            tab_models[window]
-                = std::make_shared<san::SimpleTabModel>(
-                    san::Connections::instance()->connection(),
-                    table_name);
+        tabs[window] = (tab);
 
-            tab->b->signal_clicked().connect
+        const auto current_connection = san::Connections::instance()->current_connection;
+
+        if (! current_connection) return;
+
+        tab_models[window]
+            = std::make_shared<san::SimpleTabModel>(
+            current_connection, table_name);
+
+        tab->b->signal_clicked().connect
             (sigc::bind<Gtk::ScrolledWindow*>
              (sigc::mem_fun(*this, &MainWindow::on_tab_close_button_clicked),
               window));
 
-            tab->btn_reload->signal_clicked().connect
+        tab->btn_reload->signal_clicked().connect
             (sigc::bind<Gtk::ScrolledWindow*>
              (sigc::mem_fun(*this, &MainWindow::on_reload_table_clicked),
               window));
 
-            tab->btn_prev->signal_clicked().connect
+        tab->btn_prev->signal_clicked().connect
             (sigc::bind<Gtk::ScrolledWindow*>
              (sigc::mem_fun(*this, &MainWindow::on_prev_results_page_clicked),
               window));
 
-            tab->btn_next->signal_clicked().connect
+        tab->btn_next->signal_clicked().connect
             (sigc::bind<Gtk::ScrolledWindow*>
              (sigc::mem_fun(*this, &MainWindow::on_next_results_page_clicked),
               window));
 
-            load_results(window, san::TabType::Simple);
+        load_results(window, san::TabType::Simple);
+        notebook.append_page(*window, *(tab->hb));
 
-            notebook.append_page(*window, *(tab->hb));
-
-            show_all_children();
-
-            notebook.next_page();
-        }
+        show_all_children();
+        notebook.next_page();
     }
 
     void MainWindow::on_submit_query_clicked
@@ -476,5 +465,45 @@ namespace san
             sorted_col->set_sort_indicator(true);
             sorted_col->set_sort_order(model->get_sort_type());
         }
+    }
+
+    void MainWindow::refresh_connections_list()
+    {
+        combo_connections.remove_all();
+
+        for (const auto& details : san::Connections::instance()->get_connections()) {
+            combo_connections.append(details.second->name);
+        }
+    }
+
+    void MainWindow::on_connection_changed()
+    {
+        browser_store->clear();
+
+        const Glib::ustring connection_name = combo_connections.get_active_text();
+
+        if (! san::Connections::instance()->exists(connection_name))
+            return;
+
+        const auto current_connection
+            = san::Connections::instance()->get_connection(connection_name);
+
+        std::shared_ptr<san::PostgresConnection> pc
+            = std::make_shared<san::PostgresConnection>(current_connection);
+        pc->init_connection();
+
+        san::Connections::instance()->current_connection = current_connection;
+
+        const std::vector<std::string>& tables = pc->get_db_tables();
+
+        Gtk::TreeModel::Row row = *(browser_store->append());
+        row[browser_model.table] = "Tables";
+
+        for (const std::string& table_name : tables) {
+            Gtk::TreeModel::Row table_row = *(browser_store->append(row.children()));
+            table_row[browser_model.table] = table_name;
+        }
+
+        browser.expand_all();
     }
 }
