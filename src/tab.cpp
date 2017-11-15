@@ -39,6 +39,9 @@ namespace san
             std::cerr << "Gsv::View::get_source_buffer () failed" << std::endl;
         }
 
+        source_view->set_show_line_numbers();
+        source_view->set_highlight_current_line();
+
         Glib::RefPtr<Gsv::LanguageManager> lm = Gsv::LanguageManager::get_default();
         Glib::RefPtr<Gsv::Language> lang = lm->get_language("sql");
 
