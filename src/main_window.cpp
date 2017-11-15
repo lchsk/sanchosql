@@ -368,6 +368,10 @@ namespace san
 
     void MainWindow::on_open_sql_editor_clicked()
     {
+        const auto current_connection = san::Connections::instance()->current_connection;
+
+        if (! current_connection) return;
+
         auto tab = std::make_shared<san::QueryTab>();
 
         Gtk::ScrolledWindow* window = tab->tree_scrolled_window;
@@ -384,8 +388,7 @@ namespace san
 
         tabs[window] = tab;
 
-        tab_models[window] = std::make_shared<san::QueryTabModel>(
-            san::Connections::instance()->connection());
+        tab_models[window] = std::make_shared<san::QueryTabModel>(current_connection);
 
         notebook.append_page(*window, *(tab->hb));
 
