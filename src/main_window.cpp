@@ -230,6 +230,16 @@ namespace san
 
         Gtk::TreeViewColumn* sorted_col = nullptr;
 
+        Gtk::TreeModelColumn<Glib::ustring> col;
+        cols["#"] = col;
+
+        tab->cr->add(cols["#"]);
+
+        Gtk::TreeViewColumn* tree_view_column
+            = Gtk::manage(new Gtk::TreeViewColumn("#", cols["#"]));
+        tab->tree->append_column(*tree_view_column);
+        tab->col_names[tree_view_column] = "#";
+
         for (const auto& column : result->columns) {
             Gtk::TreeModelColumn<Glib::ustring> col;
 
@@ -273,10 +283,14 @@ namespace san
                                 sorted_col);
         }
 
+        unsigned row_i = 1;
+
         for (const auto& row : result->data) {
             Gtk::TreeModel::Row r = *(tab->list_store->append());
 
             int i = 0;
+
+            r[cols["#"]] = std::to_string(row_i++);
 
             for (const auto& c : result->columns) {
                 r[cols[c.column_name]] = row[i];
