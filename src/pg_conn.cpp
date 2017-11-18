@@ -119,6 +119,36 @@ namespace san
         return data;
     }
 
+    const std::vector<PrimaryKey>
+    PostgresConnection::get_primary_key(const std::string& table_name) const
+    {
+        std::vector<PrimaryKey> data;
+
+        pqxx::work work(*conn);
+
+        const std::string sql = R"(
+            SELECT
+                a.attname as column_name,
+                format_type(a.atttypid, a.atttypmod) AS data_type
+            FROM pg_index i
+            JOIN pg_attribute a ON a.attrelid = i.indrelid
+                AND a.attnum = ANY(i.indkey)
+            WHERE i.indrelid = $1::regclass
+                AND i.indisprimary;)";
+
+        conn->prepare("get_primary_key", sql);
+        pqxx::result result = work.prepared("get_primary_key")(table_name).exec();
+
+        for (const auto& row : result) {
+            data.push_back(PrimaryKey({
+                .column_name=row["column_name"].as<std::string>(),
+                .data_type=row["data_type"].as<std::string>()
+            }));
+        }
+
+        return data;
+    }
+
     void PostgresConnection::init_connection()
     {
         std::cout << "Trying to connect to: " << conn_details->postgres_string() << std::endl;

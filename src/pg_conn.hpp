@@ -14,6 +14,12 @@
 
 namespace san
 {
+    struct PrimaryKey
+    {
+        std::string column_name;
+        std::string data_type;
+    };
+
     class PostgresConnection {
     public:
         PostgresConnection(const std::shared_ptr<san::ConnectionDetails>& conn_details);
@@ -29,6 +35,9 @@ namespace san
         std::vector<std::map<std::string, std::string> >
         get_table_data(const std::string& table_name,
                        const std::vector<std::pair<std::string, std::string>>& columns);
+
+        const std::vector<PrimaryKey>
+        get_primary_key(const std::string& table_name) const;
 
         void init_connection();
 
