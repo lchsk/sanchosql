@@ -76,12 +76,17 @@ namespace san
 			return sort_column;
 		}
 
+		const bool has_primary_key() const {
+			return primary_key.size();
+		}
+
 		const std::string get_query() const;
 
 	private:
 		const std::string get_order_by_query() const;
 
 		const Glib::ustring table_name;
+		const std::vector<san::PrimaryKey> primary_key;
 
 		unsigned limit;
 		unsigned offset;

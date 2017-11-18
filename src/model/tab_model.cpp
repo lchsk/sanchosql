@@ -6,6 +6,7 @@ namespace san
 								   const Glib::ustring& p_table_name) :
 		AbstractTabModel(conn_details),
 		table_name(p_table_name),
+		primary_key(conn().get_primary_key(p_table_name)),
 		limit(DEFAULT_LIMIT),
 		offset(DEFAULT_OFFSET),
 		sort_column(""),
