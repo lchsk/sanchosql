@@ -33,6 +33,8 @@ namespace san
 			return EMPTY_SORT_COLUMN;
 		};
 
+		std::map<std::string, Gtk::TreeModelColumn<Glib::ustring>> cols;
+
 	private:
 		std::shared_ptr<san::ConnectionDetails> conn_details;
 		std::unique_ptr<san::PostgresConnection> connection;
