@@ -202,9 +202,16 @@ namespace san
         san::AbstractTabModel* model = nullptr;
         san::AbstractTabModel& atm = tab_model(window);
 
+        san::SimpleTab* simple_tab = nullptr;
+        san::SimpleTabModel* simple_tab_model = nullptr;
+
         if (tab_type == san::TabType::Simple) {
             tab = &static_cast<san::SimpleTab&>(at);
             model = &static_cast<san::SimpleTabModel&>(atm);
+
+            simple_tab = static_cast<san::SimpleTab*>(tab);
+            simple_tab_model = static_cast<san::SimpleTabModel*>(model);
+
         } else if (tab_type == san::TabType::Query) {
             tab = &static_cast<san::QueryTab&>(at);
             model = &static_cast<san::QueryTabModel&>(atm);
@@ -221,8 +228,6 @@ namespace san
         std::shared_ptr<san::QueryResult> result
             = pc.run_query(model->get_query());
 
-        std::map<std::string, Gtk::TreeModelColumn<Glib::ustring>> cols;
-
         tab->col_names.clear();
         tab->tree->remove_all_columns();
 
@@ -231,34 +236,48 @@ namespace san
         Gtk::TreeViewColumn* sorted_col = nullptr;
 
         Gtk::TreeModelColumn<Glib::ustring> col;
-        cols["#"] = col;
+        model->cols["#"] = col;
 
-        tab->cr->add(cols["#"]);
+        tab->cr->add(model->cols["#"]);
 
         Gtk::TreeViewColumn* tree_view_column
-            = Gtk::manage(new Gtk::TreeViewColumn("#", cols["#"]));
+            = Gtk::manage(new Gtk::TreeViewColumn("#", model->cols["#"]));
         tab->tree->append_column(*tree_view_column);
         tab->col_names[tree_view_column] = "#";
 
+        // Column records must be added before setting the model
         for (const auto& column : result->columns) {
             Gtk::TreeModelColumn<Glib::ustring> col;
 
-            cols[column.column_name] = col;
+            model->cols[column.column_name] = col;
 
-            tab->cr->add(cols[column.column_name]);
+            tab->cr->add(model->cols[column.column_name]);
+        }
 
+        tab->list_store = Gtk::ListStore::create(*(tab->cr));
+        tab->tree->set_model(tab->list_store);
+
+        for (const auto& column : result->columns) {
             const std::string escaped_column_name
                 = san::util::replace_all(column.column_name, "_", "__");
             const std::string data_type = column.data_type;
             const std::string column_name = escaped_column_name + "\n" + data_type;
 
-            Gtk::TreeViewColumn* tree_view_column
-                = Gtk::manage(new Gtk::TreeViewColumn(column_name,
-                                                      cols[column.column_name]));
+            int c = tab->tree->append_column_editable(column_name, model->cols[column.column_name]);
+            Gtk::TreeViewColumn* tree_view_column = tab->tree->get_columns()[c - 1];
 
             tree_view_column->set_resizable();
 
-            tab->tree->append_column(*tree_view_column);
+            auto cren = tree_view_column->get_first_cell();
+
+            Gtk::CellRendererText* crtext = dynamic_cast<Gtk::CellRendererText*>(cren);
+
+            if (crtext) {
+                auto slot = sigc::bind<san::SimpleTab*, san::SimpleTabModel*, const std::string>(
+sigc::mem_fun(*this, &MainWindow::cellrenderer_validated_on_edited), simple_tab, simple_tab_model, column.column_name);
+
+                crtext->signal_edited().connect(slot);
+            }
 
             tree_view_column->signal_clicked().connect
                 (sigc::bind<Gtk::ScrolledWindow*, Gtk::TreeViewColumn*>
@@ -272,9 +291,6 @@ namespace san
 
             tab->col_names[tree_view_column] = column.column_name;
         }
-
-        tab->list_store = Gtk::ListStore::create(*(tab->cr));
-        tab->tree->set_model(tab->list_store);
 
         if (tab_type == san::TabType::Simple) {
             tab->tree->set_headers_clickable();
@@ -290,10 +306,10 @@ namespace san
 
             int i = 0;
 
-            r[cols["#"]] = std::to_string(row_i++);
+            r[model->cols["#"]] = std::to_string(row_i++);
 
             for (const auto& c : result->columns) {
-                r[cols[c.column_name]] = row[i];
+                r[model->cols[c.column_name]] = row[i];
 
                 i++;
             }
@@ -433,9 +449,19 @@ namespace san
 
         if (! current_connection) return;
 
-        tab_models[window]
+        auto shared_tab_model
             = std::make_shared<san::SimpleTabModel>(
             current_connection, table_name);
+
+        tab_models[window] = shared_tab_model;
+
+        san::SimpleTab* simple_tab = tab.get();
+        san::SimpleTabModel* simple_tab_model = shared_tab_model.get();
+
+        tab->btn_accept->signal_clicked().connect
+            (sigc::bind<san::SimpleTab*, san::SimpleTabModel*>
+             (sigc::mem_fun(*this, &MainWindow::on_btn_accept_changes_clicked),
+              simple_tab, simple_tab_model));
 
         tab->b->signal_clicked().connect
             (sigc::bind<Gtk::ScrolledWindow*>
@@ -524,5 +550,30 @@ namespace san
         }
 
         browser.expand_all();
+    }
+
+    void MainWindow::cellrenderer_validated_on_edited(const Glib::ustring& path, const Glib::ustring& new_text, san::SimpleTab* tab, san::SimpleTabModel* model, const std::string& column_name)
+    {
+        Gtk::TreeModel::iterator iter = tab->list_store->get_iter(path);
+
+        if (model->has_primary_key()) {
+        }
+
+        if (iter) {
+            Gtk::TreeModel::Row row = *iter;
+
+            std::set<std::pair<Glib::ustring, Glib::ustring>> pk;
+
+            for (auto key : model->get_primary_key()) {
+                 pk.insert(std::make_pair<Glib::ustring, Glib::ustring>(key.column_name, row[model->cols[key.column_name]]));
+            }
+
+            model->pk[pk][column_name] = new_text;
+        }
+    }
+
+    void MainWindow::on_btn_accept_changes_clicked(san::SimpleTab* tab, san::SimpleTabModel* model)
+    {
+        model->accept_changes();
     }
 }

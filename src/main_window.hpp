@@ -44,6 +44,8 @@ namespace san
         san::SimpleTabModel& get_simple_tab_model(Gtk::ScrolledWindow*);
         san::QueryTabModel& get_query_tab_model(Gtk::ScrolledWindow*);
 
+        void cellrenderer_validated_on_edited(const Glib::ustring& path_string, const Glib::ustring& new_text, san::SimpleTab* tab, san::SimpleTabModel* model, const std::string& column_name);
+
         void on_connection_changed();
         void on_win_connections_hide();
 
@@ -56,6 +58,8 @@ namespace san
                                       Gtk::TreeViewColumn* column);
         void on_open_sql_editor_clicked();
         void on_submit_query_clicked(Gtk::ScrolledWindow*, Glib::RefPtr<Gsv::Buffer>&);
+
+        void on_btn_accept_changes_clicked(san::SimpleTab* tab, san::SimpleTabModel* model);
 
         void load_results(Gtk::ScrolledWindow*, const san::TabType);
 
