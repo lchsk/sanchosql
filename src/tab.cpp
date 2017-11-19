@@ -83,8 +83,11 @@ namespace san
         toolbar = Gtk::manage(new Gtk::Toolbar);
         btn1 = Gtk::manage(new Gtk::ToolButton);
         btn1->set_icon_name("document-save");
+        btn_accept = Gtk::manage(new Gtk::ToolButton);
+        btn_accept->set_icon_name("document-save");
 
         toolbar->append(*btn1);
+        toolbar->append(*btn_accept);
 
         tree = Gtk::manage(new Gtk::TreeView);
 
