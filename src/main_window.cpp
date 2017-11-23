@@ -232,6 +232,8 @@ namespace san
         tab->tree->remove_all_columns();
 
         tab->cr = std::make_unique<Gtk::TreeModel::ColumnRecord>();
+        model->col_color = std::make_unique<Gtk::TreeModelColumn<Gdk::RGBA>>();
+        tab->cr->add(*model->col_color);
 
         Gtk::TreeViewColumn* sorted_col = nullptr;
 
@@ -244,6 +246,10 @@ namespace san
             = Gtk::manage(new Gtk::TreeViewColumn("#", model->cols["#"]));
         tab->tree->append_column(*tree_view_column);
         tab->col_names[tree_view_column] = "#";
+
+        tree_view_column->add_attribute(*tree_view_column->get_first_cell(),
+                                        "background-rgba",
+                                        *model->col_color);
 
         // Column records must be added before setting the model
         for (const auto& column : result->columns) {
@@ -269,6 +275,8 @@ namespace san
             tree_view_column->set_resizable();
 
             auto cren = tree_view_column->get_first_cell();
+
+            tree_view_column->add_attribute(*cren, "background-rgba", *model->col_color);
 
             Gtk::CellRendererText* crtext = dynamic_cast<Gtk::CellRendererText*>(cren);
 
@@ -307,6 +315,7 @@ sigc::mem_fun(*this, &MainWindow::cellrenderer_validated_on_edited), simple_tab,
             int i = 0;
 
             r[model->cols["#"]] = std::to_string(row_i++);
+            r[*model->col_color] = model->col_white;
 
             for (const auto& c : result->columns) {
                 r[model->cols[c.column_name]] = row[i];
@@ -569,11 +578,22 @@ sigc::mem_fun(*this, &MainWindow::cellrenderer_validated_on_edited), simple_tab,
             }
 
             model->pk[pk][column_name] = new_text;
+            row[*model->col_color] = model->col_highlighted;
         }
     }
 
     void MainWindow::on_btn_accept_changes_clicked(san::SimpleTab* tab, san::SimpleTabModel* model)
     {
         model->accept_changes();
+
+        // Reset the background color of highlighted rows
+
+        Gtk::TreeModel::Children children = tab->list_store->children();
+
+        for (Gtk::TreeModel::Children::iterator iter = children.begin(); iter != children.end(); ++iter) {
+            Gtk::TreeModel::Row row = *iter;
+
+            row[*model->col_color] = model->col_white;
+        }
     }
 }
