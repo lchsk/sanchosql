@@ -176,20 +176,13 @@ namespace san
         return static_cast<san::QueryTab&>(*(tabs[win]));
     }
 
-    san::AbstractTab& MainWindow::get_tab(Gtk::ScrolledWindow* win)
-    {
-        return *(tabs[win]);
-    }
-
     void MainWindow::on_results_column_clicked(
         Gtk::ScrolledWindow* window,
         Gtk::TreeViewColumn* col
     )
     {
-        san::AbstractTab& at = get_tab(window);
-        san::SimpleTab& tab = static_cast<san::SimpleTab&>(at);
-
-        auto& model = get_simple_tab_model(window);
+        san::SimpleTab& tab = get_simple_tab(window);
+        san::SimpleTabModel& model = get_simple_tab_model(window);
 
         model.set_sort(tab.col_names[col]);
 
@@ -370,10 +363,8 @@ sigc::mem_fun(*this, &MainWindow::cellrenderer_validated_on_edited), &tab, &mode
 
     void MainWindow::on_prev_results_page_clicked(Gtk::ScrolledWindow* window)
     {
-        san::AbstractTab& at = get_tab(window);
-        san::SimpleTab& tab = static_cast<san::SimpleTab&>(at);
-
-        auto& tab_model = get_simple_tab_model(window);
+        san::SimpleTab& tab = get_simple_tab(window);
+        san::SimpleTabModel& tab_model = get_simple_tab_model(window);
 
         tab_model.set_offset(tab.number_offset->get_text());
         tab_model.set_limit(tab.number_limit->get_text());
@@ -388,10 +379,8 @@ sigc::mem_fun(*this, &MainWindow::cellrenderer_validated_on_edited), &tab, &mode
 
     void MainWindow::on_next_results_page_clicked(Gtk::ScrolledWindow* window)
     {
-        san::AbstractTab& at = get_tab(window);
-        san::SimpleTab& tab = static_cast<san::SimpleTab&>(at);
-
-        auto& tab_model = get_simple_tab_model(window);
+        san::SimpleTab& tab = get_simple_tab(window);
+        san::SimpleTabModel& tab_model = get_simple_tab_model(window);
 
         tab_model.set_offset(tab.number_offset->get_text());
         tab_model.set_limit(tab.number_limit->get_text());
@@ -406,10 +395,8 @@ sigc::mem_fun(*this, &MainWindow::cellrenderer_validated_on_edited), &tab, &mode
 
     void MainWindow::on_reload_table_clicked(Gtk::ScrolledWindow* window)
     {
-        san::AbstractTab& at = get_tab(window);
-        san::SimpleTab& tab = static_cast<san::SimpleTab&>(at);
-
-        auto& tab_model = get_simple_tab_model(window);
+        san::SimpleTab& tab = get_simple_tab(window);
+        san::SimpleTabModel& tab_model = get_simple_tab_model(window);
 
         tab_model.set_offset(tab.number_offset->get_text());
         tab_model.set_limit(tab.number_limit->get_text());

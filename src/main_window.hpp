@@ -38,8 +38,6 @@ namespace san
         BrowserModel browser_model;
         san::NewConnectionWindow* win_connections;
 
-        san::AbstractTab& get_tab(Gtk::ScrolledWindow*);
-
         san::SimpleTabModel& get_simple_tab_model(Gtk::ScrolledWindow*);
         san::QueryTabModel& get_query_tab_model(Gtk::ScrolledWindow*);
 
