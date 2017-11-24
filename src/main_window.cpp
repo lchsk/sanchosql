@@ -171,6 +171,16 @@ namespace san
         return static_cast<san::QueryTabModel&>(*(tab_models[win]));
     }
 
+    san::SimpleTab& MainWindow::get_simple_tab(Gtk::ScrolledWindow* win)
+    {
+        return static_cast<san::SimpleTab&>(*(tabs[win]));
+    }
+
+    san::QueryTab& MainWindow::get_query_tab(Gtk::ScrolledWindow* win)
+    {
+        return static_cast<san::QueryTab&>(*(tabs[win]));
+    }
+
     san::AbstractTab& MainWindow::get_tab(Gtk::ScrolledWindow* win)
     {
         return *(tabs[win]);
@@ -188,80 +198,53 @@ namespace san
 
         model.set_sort(tab.col_names[col]);
 
-        load_results(window, san::TabType::Simple);
+        load_list_results(window);
     }
 
-    void MainWindow::load_results(Gtk::ScrolledWindow* window,
-                                  const san::TabType tab_type)
-    {
+	void MainWindow::load_list_results(Gtk::ScrolledWindow* window)
+	{
         auto& pc = tab_models[window]->conn();
 
-        san::AbstractTab* tab = nullptr;
-        san::AbstractTab& at = get_tab(window);
-
-        san::AbstractTabModel* model = nullptr;
-        san::AbstractTabModel& atm = tab_model(window);
-
-        san::SimpleTab* simple_tab = nullptr;
-        san::SimpleTabModel* simple_tab_model = nullptr;
-
-        if (tab_type == san::TabType::Simple) {
-            tab = &static_cast<san::SimpleTab&>(at);
-            model = &static_cast<san::SimpleTabModel&>(atm);
-
-            simple_tab = static_cast<san::SimpleTab*>(tab);
-            simple_tab_model = static_cast<san::SimpleTabModel*>(model);
-
-        } else if (tab_type == san::TabType::Query) {
-            tab = &static_cast<san::QueryTab&>(at);
-            model = &static_cast<san::QueryTabModel&>(atm);
-        }
-
-        if (! tab) {
-            throw std::runtime_error("Invalid tab pointer");
-        }
-
-        if (! model) {
-            throw std::runtime_error("Invalid tab model pointer");
-        }
+        san::SimpleTab& tab = get_simple_tab(window);
+        san::SimpleTabModel& model = get_simple_tab_model(window);
 
         std::shared_ptr<san::QueryResult> result
-            = pc.run_query(model->get_query());
+            = pc.run_query(model.get_query());
 
-        tab->col_names.clear();
-        tab->tree->remove_all_columns();
+        tab.col_names.clear();
+        tab.tree->remove_all_columns();
 
-        tab->cr = std::make_unique<Gtk::TreeModel::ColumnRecord>();
-        model->col_color = std::make_unique<Gtk::TreeModelColumn<Gdk::RGBA>>();
-        tab->cr->add(*model->col_color);
+        tab.cr = std::make_unique<Gtk::TreeModel::ColumnRecord>();
+        model.col_color = std::make_unique<Gtk::TreeModelColumn<Gdk::RGBA>>();
+        tab.cr->add(*model.col_color);
 
         Gtk::TreeViewColumn* sorted_col = nullptr;
 
         Gtk::TreeModelColumn<Glib::ustring> col;
-        model->cols["#"] = col;
+        model.cols["#"] = col;
 
-        tab->cr->add(model->cols["#"]);
+        tab.cr->add(model.cols["#"]);
 
         Gtk::TreeViewColumn* tree_view_column
-            = Gtk::manage(new Gtk::TreeViewColumn("#", model->cols["#"]));
-        tab->tree->append_column(*tree_view_column);
-        tab->col_names[tree_view_column] = "#";
+            = Gtk::manage(new Gtk::TreeViewColumn("#", model.cols["#"]));
+        tab.tree->append_column(*tree_view_column);
+        tab.col_names[tree_view_column] = "#";
 
         tree_view_column->add_attribute(*tree_view_column->get_first_cell(),
                                         "background-rgba",
-                                        *model->col_color);
+                                        *model.col_color);
 
         // Column records must be added before setting the model
         for (const auto& column : result->columns) {
             Gtk::TreeModelColumn<Glib::ustring> col;
 
-            model->cols[column.column_name] = col;
+            model.cols[column.column_name] = col;
 
-            tab->cr->add(model->cols[column.column_name]);
+            tab.cr->add(model.cols[column.column_name]);
         }
 
-        tab->list_store = Gtk::ListStore::create(*(tab->cr));
-        tab->tree->set_model(tab->list_store);
+        tab.list_store = Gtk::ListStore::create(*(tab.cr));
+        tab.tree->set_model(tab.list_store);
 
         for (const auto& column : result->columns) {
             const std::string escaped_column_name
@@ -269,20 +252,20 @@ namespace san
             const std::string data_type = column.data_type;
             const std::string column_name = escaped_column_name + "\n" + data_type;
 
-            int c = tab->tree->append_column_editable(column_name, model->cols[column.column_name]);
-            Gtk::TreeViewColumn* tree_view_column = tab->tree->get_columns()[c - 1];
+            int c = tab.tree->append_column_editable(column_name, model.cols[column.column_name]);
+            Gtk::TreeViewColumn* tree_view_column = tab.tree->get_columns()[c - 1];
 
             tree_view_column->set_resizable();
 
             auto cren = tree_view_column->get_first_cell();
 
-            tree_view_column->add_attribute(*cren, "background-rgba", *model->col_color);
+            tree_view_column->add_attribute(*cren, "background-rgba", *model.col_color);
 
             Gtk::CellRendererText* crtext = dynamic_cast<Gtk::CellRendererText*>(cren);
 
             if (crtext) {
                 auto slot = sigc::bind<san::SimpleTab*, san::SimpleTabModel*, const std::string>(
-sigc::mem_fun(*this, &MainWindow::cellrenderer_validated_on_edited), simple_tab, simple_tab_model, column.column_name);
+sigc::mem_fun(*this, &MainWindow::cellrenderer_validated_on_edited), &tab, &model, column.column_name);
 
                 crtext->signal_edited().connect(slot);
             }
@@ -292,38 +275,103 @@ sigc::mem_fun(*this, &MainWindow::cellrenderer_validated_on_edited), simple_tab,
                  (sigc::mem_fun(*this, &MainWindow::on_results_column_clicked),
                   window, tree_view_column));
 
-            if (tab_type == san::TabType::Simple &&
-                column.column_name == model->get_sort_column()) {
+            if (column.column_name == model.get_sort_column()) {
                 sorted_col = tree_view_column;
             }
 
-            tab->col_names[tree_view_column] = column.column_name;
+            tab.col_names[tree_view_column] = column.column_name;
         }
 
-        if (tab_type == san::TabType::Simple) {
-            tab->tree->set_headers_clickable();
+        tab.tree->set_headers_clickable();
 
-            handle_results_sort(static_cast<const san::SimpleTabModel*>(model),
-                                sorted_col);
-        }
+        handle_results_sort(static_cast<const san::SimpleTabModel*>(&model),
+                            sorted_col);
 
         unsigned row_i = 1;
 
         for (const auto& row : result->data) {
-            Gtk::TreeModel::Row r = *(tab->list_store->append());
+            Gtk::TreeModel::Row r = *(tab.list_store->append());
 
             int i = 0;
 
-            r[model->cols["#"]] = std::to_string(row_i++);
-            r[*model->col_color] = model->col_white;
+            r[model.cols["#"]] = std::to_string(row_i++);
+            r[*model.col_color] = model.col_white;
 
             for (const auto& c : result->columns) {
-                r[model->cols[c.column_name]] = row[i];
+                r[model.cols[c.column_name]] = row[i];
 
                 i++;
             }
         }
     }
+
+	void MainWindow::load_query_results(Gtk::ScrolledWindow* window)
+	{
+        auto& pc = tab_models[window]->conn();
+
+        san::QueryTab& tab = get_query_tab(window);
+        san::QueryTabModel& model = get_query_tab_model(window);
+
+        std::shared_ptr<san::QueryResult> result
+            = pc.run_query(model.get_query());
+
+        tab.col_names.clear();
+        tab.tree->remove_all_columns();
+
+        tab.cr = std::make_unique<Gtk::TreeModel::ColumnRecord>();
+
+        Gtk::TreeModelColumn<Glib::ustring> col;
+        model.cols["#"] = col;
+
+        tab.cr->add(model.cols["#"]);
+
+        Gtk::TreeViewColumn* tree_view_column
+            = Gtk::manage(new Gtk::TreeViewColumn("#", model.cols["#"]));
+        tab.tree->append_column(*tree_view_column);
+        tab.col_names[tree_view_column] = "#";
+
+        // Column records must be added before setting the model
+        for (const auto& column : result->columns) {
+            Gtk::TreeModelColumn<Glib::ustring> col;
+
+            model.cols[column.column_name] = col;
+
+            tab.cr->add(model.cols[column.column_name]);
+        }
+
+        tab.list_store = Gtk::ListStore::create(*(tab.cr));
+        tab.tree->set_model(tab.list_store);
+
+        for (const auto& column : result->columns) {
+            const std::string escaped_column_name
+                = san::util::replace_all(column.column_name, "_", "__");
+            const std::string data_type = column.data_type;
+            const std::string column_name = escaped_column_name + "\n" + data_type;
+
+            int c = tab.tree->append_column(column_name, model.cols[column.column_name]);
+            Gtk::TreeViewColumn* tree_view_column = tab.tree->get_columns()[c - 1];
+
+            tree_view_column->set_resizable();
+
+            tab.col_names[tree_view_column] = column.column_name;
+        }
+
+        unsigned row_i = 1;
+
+        for (const auto& row : result->data) {
+            Gtk::TreeModel::Row r = *(tab.list_store->append());
+
+            int i = 0;
+
+            r[model.cols["#"]] = std::to_string(row_i++);
+
+            for (const auto& c : result->columns) {
+                r[model.cols[c.column_name]] = row[i];
+
+                i++;
+            }
+        }
+	}
 
     void MainWindow::on_prev_results_page_clicked(Gtk::ScrolledWindow* window)
     {
@@ -340,7 +388,7 @@ sigc::mem_fun(*this, &MainWindow::cellrenderer_validated_on_edited), simple_tab,
         tab.number_offset->set_text(tab_model.get_offset());
         tab.number_limit->set_text(tab_model.get_limit());
 
-        load_results(window, san::TabType::Simple);
+        load_list_results(window);
     }
 
     void MainWindow::on_next_results_page_clicked(Gtk::ScrolledWindow* window)
@@ -358,7 +406,7 @@ sigc::mem_fun(*this, &MainWindow::cellrenderer_validated_on_edited), simple_tab,
         tab.number_offset->set_text(tab_model.get_offset());
         tab.number_limit->set_text(tab_model.get_limit());
 
-        load_results(window, san::TabType::Simple);
+        load_list_results(window);
     }
 
     void MainWindow::on_reload_table_clicked(Gtk::ScrolledWindow* window)
@@ -374,7 +422,7 @@ sigc::mem_fun(*this, &MainWindow::cellrenderer_validated_on_edited), simple_tab,
         tab.number_offset->set_text(tab_model.get_offset());
         tab.number_limit->set_text(tab_model.get_limit());
 
-        load_results(window, san::TabType::Simple);
+        load_list_results(window);
     }
 
     void MainWindow::on_tab_close_button_clicked(Gtk::ScrolledWindow* tree)
@@ -492,7 +540,7 @@ sigc::mem_fun(*this, &MainWindow::cellrenderer_validated_on_edited), simple_tab,
              (sigc::mem_fun(*this, &MainWindow::on_next_results_page_clicked),
               window));
 
-        load_results(window, san::TabType::Simple);
+        load_list_results(window);
         notebook.append_page(*window, *(tab->hb));
 
         show_all_children();
@@ -509,7 +557,7 @@ sigc::mem_fun(*this, &MainWindow::cellrenderer_validated_on_edited), simple_tab,
         auto& model = get_query_tab_model(tree_scrolled_window);
         model.query = query;
 
-        load_results(tree_scrolled_window, san::TabType::Query);
+        load_query_results(tree_scrolled_window);
     }
 
     void MainWindow::handle_results_sort(const san::SimpleTabModel* model,

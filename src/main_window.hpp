@@ -44,6 +44,9 @@ namespace san
         san::SimpleTabModel& get_simple_tab_model(Gtk::ScrolledWindow*);
         san::QueryTabModel& get_query_tab_model(Gtk::ScrolledWindow*);
 
+        san::SimpleTab& get_simple_tab(Gtk::ScrolledWindow*);
+        san::QueryTab& get_query_tab(Gtk::ScrolledWindow*);
+
         void cellrenderer_validated_on_edited(const Glib::ustring& path_string, const Glib::ustring& new_text, san::SimpleTab* tab, san::SimpleTabModel* model, const std::string& column_name);
 
         void on_connection_changed();
@@ -61,7 +64,8 @@ namespace san
 
         void on_btn_accept_changes_clicked(san::SimpleTab* tab, san::SimpleTabModel* model);
 
-        void load_results(Gtk::ScrolledWindow*, const san::TabType);
+        void load_list_results(Gtk::ScrolledWindow*);
+        void load_query_results(Gtk::ScrolledWindow*);
 
         void handle_results_sort(const san::SimpleTabModel* model,
                                  Gtk::TreeViewColumn* sorted_col);
