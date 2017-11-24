@@ -156,11 +156,6 @@ namespace san
         refresh_connections_list();
     }
 
-    AbstractTabModel& MainWindow::tab_model(Gtk::ScrolledWindow* win)
-    {
-        return *(tab_models[win]);
-    }
-
     san::SimpleTabModel& MainWindow::get_simple_tab_model(Gtk::ScrolledWindow* win)
     {
         return static_cast<san::SimpleTabModel&>(*(tab_models[win]));
