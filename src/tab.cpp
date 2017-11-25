@@ -102,6 +102,8 @@ namespace san
 
         btn_reload = Gtk::manage(new Gtk::Button);
         btn_reload->set_label("Reload");
+        btn_insert = Gtk::manage(new Gtk::Button);
+        btn_insert->set_label("Insert");
         btn_prev = Gtk::manage(new Gtk::Button);
         btn_prev->set_label("<");
         btn_next = Gtk::manage(new Gtk::Button);
@@ -118,6 +120,7 @@ namespace san
         browse_box = Gtk::manage(new Gtk::Box);
 
         browse_box->pack_start(*btn_reload);
+        browse_box->pack_start(*btn_insert);
         browse_box->pack_start(*btn_prev);
         browse_box->pack_start(*btn_next);
 

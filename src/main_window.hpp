@@ -52,6 +52,7 @@ namespace san
         void on_results_column_clicked(Gtk::ScrolledWindow*, Gtk::TreeViewColumn*);
         void on_tab_close_button_clicked(Gtk::ScrolledWindow*);
         void on_reload_table_clicked(Gtk::ScrolledWindow*);
+        void on_insert_row_clicked(Gtk::ScrolledWindow*);
         void on_prev_results_page_clicked(Gtk::ScrolledWindow*);
         void on_next_results_page_clicked(Gtk::ScrolledWindow*);
         void on_browser_row_activated(const Gtk::TreeModel::Path& path,

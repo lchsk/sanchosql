@@ -407,6 +407,17 @@ sigc::mem_fun(*this, &MainWindow::cellrenderer_validated_on_edited), &tab, &mode
         load_list_results(window);
     }
 
+    void MainWindow::on_insert_row_clicked(Gtk::ScrolledWindow* window)
+    {
+        san::SimpleTab& tab = get_simple_tab(window);
+        san::SimpleTabModel& model = get_simple_tab_model(window);
+
+        Gtk::TreeModel::Children children = tab.list_store->children();
+
+        Gtk::TreeModel::Row r = *(tab.list_store->append());
+        r[model.cols["#"]] = std::to_string(children.size());
+    }
+
     void MainWindow::on_tab_close_button_clicked(Gtk::ScrolledWindow* tree)
     {
         if (tab_models.find(tree) == tab_models.end()) {
@@ -510,6 +521,11 @@ sigc::mem_fun(*this, &MainWindow::cellrenderer_validated_on_edited), &tab, &mode
         tab->btn_reload->signal_clicked().connect
             (sigc::bind<Gtk::ScrolledWindow*>
              (sigc::mem_fun(*this, &MainWindow::on_reload_table_clicked),
+              window));
+
+        tab->btn_insert->signal_clicked().connect
+            (sigc::bind<Gtk::ScrolledWindow*>
+             (sigc::mem_fun(*this, &MainWindow::on_insert_row_clicked),
               window));
 
         tab->btn_prev->signal_clicked().connect

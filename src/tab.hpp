@@ -52,6 +52,7 @@ namespace san
 
         // Browse box
         Gtk::Box* browse_box;
+        Gtk::Button* btn_insert;
         Gtk::Button* btn_reload;
         // Accept DB changes
         Gtk::ToolButton* btn_accept;
