@@ -101,7 +101,12 @@ namespace san
 			std::stringstream where;
 			std::stringstream values;
 
+			auto pk_col = get_primary_key()[0].column_name;
+
+			if (pk.size()){
+
 			for	(const auto& el : pk) {
+
 				where << " where ";
 				bool first_where = true;
 
@@ -112,7 +117,7 @@ namespace san
 
 					where << key.first
 						  << " = '"
-						  << key.second
+						  << get_db_pk(key.second)
 						  << "'";
 
 					first_where = false;
@@ -142,6 +147,35 @@ namespace san
 			conn().run_query(query.str());
 
 			pk.clear();
+			}
+			// PK changes
+
+			std::stringstream pk_qry;
+			pk_qry.str(std::string());
+			pk_qry.clear();
+
+			for (auto k : pk_hist) {
+				pk_qry.str(std::string());
+				pk_qry.clear();
+
+				pk_qry << "update "
+					   << table_name
+					   << " set "
+					   << pk_col
+					   << " = '"
+					   << k.first
+					   << "' where "
+					   << pk_col
+					   << " = '"
+					   << k.second
+					   << "'; commit;";
+
+				g_debug("PK query: %s", pk_qry.str().c_str());
+
+				conn().run_query(pk_qry.str());
+			}
+
+			pk_hist.clear();
 		}
 
 		const std::string get_query() const;
@@ -151,6 +185,20 @@ namespace san
 		std::vector<Glib::ustring> columns_to_update;
 
 		std::map<std::set<std::pair<Glib::ustring, Glib::ustring>>, std::unordered_map<std::string, Glib::ustring>> pk;
+
+		// Editing PKs
+		// New value, Value in DB
+		std::map<Glib::ustring, Glib::ustring> pk_hist;
+
+		Glib::ustring pk_edited;
+		// const Glib::ustring& get_db_pk(const Glib::ustring& pk) {
+		const std::string get_db_pk(const Glib::ustring& pk) {
+			if (IN_MAP(pk_hist, pk))
+				return pk_hist[pk];
+
+			return pk;
+		}
+
 
 	private:
 		const std::string get_order_by_query() const;

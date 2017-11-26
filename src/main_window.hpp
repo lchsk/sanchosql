@@ -45,6 +45,9 @@ namespace san
         san::QueryTab& get_query_tab(Gtk::ScrolledWindow*);
 
         void cellrenderer_validated_on_edited(const Glib::ustring& path_string, const Glib::ustring& new_text, san::SimpleTab* tab, san::SimpleTabModel* model, const std::string& column_name);
+        // void cellrenderer_validated_on_editing_started(Gtk::CellEditable* cell_editable, const Glib::ustring& path_string, const Glib::ustring& new_text, san::SimpleTab* tab, san::SimpleTabModel* model, const std::string& column_name) {};
+        void cellrenderer_validated_on_editing_started(Gtk::CellEditable* cell_editable, const Glib::ustring& path_string, san::SimpleTab* tab, san::SimpleTabModel* model, const std::string& column_name);
+        // void cellrenderer_validated_on_editing_started(Gtk::CellEditable* cell_editable, const Glib::ustring& path) {};
 
         void on_connection_changed();
         void on_win_connections_hide();

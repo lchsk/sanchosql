@@ -252,10 +252,15 @@ namespace san
             Gtk::CellRendererText* crtext = dynamic_cast<Gtk::CellRendererText*>(cren);
 
             if (crtext) {
-                auto slot = sigc::bind<san::SimpleTab*, san::SimpleTabModel*, const std::string>(
+                auto signal_edited_slot = sigc::bind<san::SimpleTab*, san::SimpleTabModel*, const std::string>(
 sigc::mem_fun(*this, &MainWindow::cellrenderer_validated_on_edited), &tab, &model, column.column_name);
 
-                crtext->signal_edited().connect(slot);
+                crtext->signal_edited().connect(signal_edited_slot);
+
+                auto editing_started_slot = sigc::bind<san::SimpleTab*, san::SimpleTabModel*, const std::string>(
+sigc::mem_fun(*this, &MainWindow::cellrenderer_validated_on_editing_started), &tab, &model, column.column_name);
+
+                crtext->signal_editing_started().connect(editing_started_slot);
             }
 
             tree_view_column->signal_clicked().connect
@@ -607,6 +612,21 @@ sigc::mem_fun(*this, &MainWindow::cellrenderer_validated_on_edited), &tab, &mode
         browser.expand_all();
     }
 
+    void MainWindow::cellrenderer_validated_on_editing_started(Gtk::CellEditable* cell_editable, const Glib::ustring& path, san::SimpleTab* tab, san::SimpleTabModel* model, const std::string& column_name)
+    {
+        Gtk::TreeModel::iterator iter = tab->list_store->get_iter(path);
+
+        if (iter) {
+            Gtk::TreeModel::Row row = *iter;
+
+            for (auto key : model->get_primary_key()) {
+                if (key.column_name == column_name) {
+                    model->pk_edited = row[model->cols[column_name]];
+                }
+            }
+        }
+    }
+
     void MainWindow::cellrenderer_validated_on_edited(const Glib::ustring& path, const Glib::ustring& new_text, san::SimpleTab* tab, san::SimpleTabModel* model, const std::string& column_name)
     {
         Gtk::TreeModel::iterator iter = tab->list_store->get_iter(path);
@@ -620,10 +640,38 @@ sigc::mem_fun(*this, &MainWindow::cellrenderer_validated_on_edited), &tab, &mode
             std::set<std::pair<Glib::ustring, Glib::ustring>> pk;
 
             for (auto key : model->get_primary_key()) {
-                 pk.insert(std::make_pair<Glib::ustring, Glib::ustring>(key.column_name, row[model->cols[key.column_name]]));
+                if (key.column_name == column_name) {
+                    Glib::ustring current = model->pk_edited;
+
+                    if (! current.empty()) {
+                        // More PK changes
+                        if (IN_MAP(model->pk_hist, current)) {
+                            model->pk_hist[new_text] = model->pk_hist[current];
+
+                            // Remove intermediate value
+                            model->pk_hist.erase(model->pk_hist.find(current));
+                        } else {
+                            // A first PK change
+                            model->pk_hist[new_text] = current;
+                        }
+                    }
+                } else {
+                    pk.insert(std::make_pair<Glib::ustring, Glib::ustring>(key.column_name, model->get_db_pk(row[model->cols[key.column_name]])));
+                }
             }
 
-            model->pk[pk][column_name] = new_text;
+            bool is_pk = false;
+
+            for (auto key : model->get_primary_key()) {
+                if (key.column_name == column_name) {
+                    is_pk = true;
+                    break;
+                }
+            }
+
+            if (! is_pk)
+                model->pk[pk][column_name] = new_text;
+
             row[*model->col_color] = model->col_highlighted;
         }
     }
