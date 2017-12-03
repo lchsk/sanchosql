@@ -620,9 +620,7 @@ sigc::mem_fun(*this, &MainWindow::cellrenderer_validated_on_editing_started), &t
             Gtk::TreeModel::Row row = *iter;
 
             for (auto key : model->get_primary_key()) {
-                if (key.column_name == column_name) {
-                    model->pk_edited = row[model->cols[column_name]];
-                }
+                model->pk_hist[key.column_name] = row[model->cols[key.column_name]];
             }
         }
     }
@@ -637,41 +635,9 @@ sigc::mem_fun(*this, &MainWindow::cellrenderer_validated_on_editing_started), &t
         if (iter) {
             Gtk::TreeModel::Row row = *iter;
 
-            std::set<std::pair<Glib::ustring, Glib::ustring>> pk;
+            model->map_test[model->pk_hist][column_name] = new_text;
 
-            for (auto key : model->get_primary_key()) {
-                if (key.column_name == column_name) {
-                    Glib::ustring current = model->pk_edited;
-
-                    if (! current.empty()) {
-                        // More PK changes
-                        if (IN_MAP(model->pk_hist, current)) {
-                            model->pk_hist[new_text] = model->pk_hist[current];
-
-                            // Remove intermediate value
-                            model->pk_hist.erase(model->pk_hist.find(current));
-                        } else {
-                            // A first PK change
-                            model->pk_hist[new_text] = current;
-                        }
-                    }
-                } else {
-                    pk.insert(std::make_pair<Glib::ustring, Glib::ustring>(key.column_name, model->get_db_pk(row[model->cols[key.column_name]])));
-                }
-            }
-
-            bool is_pk = false;
-
-            for (auto key : model->get_primary_key()) {
-                if (key.column_name == column_name) {
-                    is_pk = true;
-                    break;
-                }
-            }
-
-            if (! is_pk)
-                model->pk[pk][column_name] = new_text;
-
+            model->pk_hist.clear();
             row[*model->col_color] = model->col_highlighted;
         }
     }

@@ -91,114 +91,71 @@ namespace san
 			return primary_key;
 		}
 
+        const bool is_part_of_pk(const Glib::ustring& column_name) {
+            for (const auto& pk_column : get_primary_key()) {
+                if (pk_column.column_name == column_name)
+                    return true;
+            }
+
+            return false;
+        }
+
 		void accept_changes() {
+            if (! map_test.size()) return;
+
 			std::stringstream query;
 
-			query << "update "
+            for (auto pk : map_test) {
+    			query << "update "
 				  << table_name
-				  << " ";
+				  << " set ";
 
-			std::stringstream where;
-			std::stringstream values;
+                unsigned i = 0;
 
-			auto pk_col = get_primary_key()[0].column_name;
+                for (auto pk_val : pk.second) {
+                    if (i > 0) {
+                        query << ", ";
+                    }
 
-			if (pk.size()){
+                    query << pk_val.first << " = " << "'" << pk_val.second << "'";
 
-			for	(const auto& el : pk) {
+                    i++;
+                }
 
-				where << " where ";
-				bool first_where = true;
+                query << " where ";
 
-				for (const auto& key : el.first) {
-					if (! first_where) {
-						where << " and ";
-					}
+                i = 0;
 
-					where << key.first
-						  << " = '"
-						  << get_db_pk(key.second)
-						  << "'";
+                for (auto pk_col : pk.first) {
+                    if (i > 0) {
+                        query << " and ";
+                    }
 
-					first_where = false;
-				}
+                    query << pk_col.first << " = " << "'" << pk_col.second << "'";
 
-				values << " set ";
-				bool first_value = true;
+                    i++;
+                }
 
-				for (const auto& value : el.second) {
-					if (! first_value) {
-						values << ", ";
-					}
+                query << "; ";
+            }
 
-					values << value.first
-						   << " = '"
-						   << value.second
-						   << "'";
-
-					first_value = false;
-				}
-			}
-
-			query << values.str() << where.str() << "; commit;";
+            query << "commit;";
 
 			g_debug("Accept query: %s", query.str().c_str());
 
 			conn().run_query(query.str());
 
-			pk.clear();
-			}
-			// PK changes
-
-			std::stringstream pk_qry;
-			pk_qry.str(std::string());
-			pk_qry.clear();
-
-			for (auto k : pk_hist) {
-				pk_qry.str(std::string());
-				pk_qry.clear();
-
-				pk_qry << "update "
-					   << table_name
-					   << " set "
-					   << pk_col
-					   << " = '"
-					   << k.first
-					   << "' where "
-					   << pk_col
-					   << " = '"
-					   << k.second
-					   << "'; commit;";
-
-				g_debug("PK query: %s", pk_qry.str().c_str());
-
-				conn().run_query(pk_qry.str());
-			}
-
-			pk_hist.clear();
+            map_test.clear();
 		}
 
 		const std::string get_query() const;
 
-		std::vector<std::map<std::string, std::string>> original_pk;
-		std::vector<std::map<std::string, std::string>> to_update;
-		std::vector<Glib::ustring> columns_to_update;
-
-		std::map<std::set<std::pair<Glib::ustring, Glib::ustring>>, std::unordered_map<std::string, Glib::ustring>> pk;
-
-		// Editing PKs
-		// New value, Value in DB
+		// PK currently being edited
+        // Column name -> Current Value
 		std::map<Glib::ustring, Glib::ustring> pk_hist;
 
-		Glib::ustring pk_edited;
-		// const Glib::ustring& get_db_pk(const Glib::ustring& pk) {
-		const std::string get_db_pk(const Glib::ustring& pk) {
-			if (IN_MAP(pk_hist, pk))
-				return pk_hist[pk];
-
-			return pk;
-		}
-
+        std::map<std::map<Glib::ustring, Glib::ustring>,
+                 std::map<Glib::ustring, Glib::ustring>> map_test;
 
 	private:
 		const std::string get_order_by_query() const;
