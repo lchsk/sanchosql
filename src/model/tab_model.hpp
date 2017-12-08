@@ -148,6 +148,43 @@ namespace san
             map_test.clear();
 		}
 
+		void accept_pk_change() {
+			if (pk_changes.empty())
+				return;
+
+			std::cout << "Accepting pk change " << std::endl;
+
+			std::stringstream query;
+
+			const auto data = *(pk_changes.begin());
+
+			query << "update "
+				  << table_name
+				  << " set "
+				  << data.first
+				  << " = '"
+				  << data.second.second
+				  << "' where ";
+
+			unsigned i = 0;
+
+			for (auto t : pk_hist) {
+				if (i > 0) {
+					query << " and ";
+				}
+
+				query << t.first << " = '" << t.second << "'";
+
+				i++;
+			}
+
+			query << "; commit;";
+
+			g_debug("Accept PK change query: %s", query.str().c_str());
+
+			conn().run_query(query.str());
+		};
+
 		const std::string get_query() const;
 
 		// PK currently being edited
@@ -156,6 +193,9 @@ namespace san
 
         std::map<std::map<Glib::ustring, Glib::ustring>,
                  std::map<Glib::ustring, Glib::ustring>> map_test;
+
+		// column_name: (old_value, new_value)
+		std::map<Glib::ustring, std::pair<Glib::ustring, Glib::ustring>> pk_changes;
 
 	private:
 		const std::string get_order_by_query() const;

@@ -616,12 +616,16 @@ sigc::mem_fun(*this, &MainWindow::cellrenderer_validated_on_editing_started), &t
     {
         Gtk::TreeModel::iterator iter = tab->list_store->get_iter(path);
 
-        if (iter) {
-            Gtk::TreeModel::Row row = *iter;
+        if (! iter) return;
 
-            for (auto key : model->get_primary_key()) {
-                model->pk_hist[key.column_name] = row[model->cols[key.column_name]];
-            }
+        Gtk::TreeModel::Row row = *iter;
+
+        for (const auto& key : model->get_primary_key()) {
+            model->pk_hist[key.column_name] = row[model->cols[key.column_name]];;
+        }
+
+        if (model->is_part_of_pk(column_name)) {
+            model->pk_changes[column_name].first = row[model->cols[column_name]];
         }
     }
 
@@ -629,17 +633,43 @@ sigc::mem_fun(*this, &MainWindow::cellrenderer_validated_on_editing_started), &t
     {
         Gtk::TreeModel::iterator iter = tab->list_store->get_iter(path);
 
-        if (model->has_primary_key()) {
+        if (! iter) return;
+
+        Gtk::TreeModel::Row row = *iter;
+
+        // TODO: model->pk_hist
+
+        if (model->pk_changes.size() && model->is_part_of_pk(column_name) && new_text != model->pk_changes[column_name].first) {
+            Gtk::MessageDialog dialog(*this, "Are you sure you want to change the primary key?", false /* use_markup */, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_OK_CANCEL);
+            std::stringstream q;
+
+            q << "Primary key column '"
+              << column_name
+              << "' will permanently change from '"
+              << model->pk_changes[column_name].first
+              << "' to '"
+              << new_text << "'";
+
+            dialog.set_secondary_text(q.str());
+
+            int result = dialog.run();
+
+            if (result == Gtk::RESPONSE_OK) {
+                model->pk_changes[column_name].second = new_text;
+                model->accept_pk_change();
+            } else {
+                row[model->cols[column_name]] = model->pk_changes[column_name].first;
+            }
+
+            return;
         }
 
-        if (iter) {
-            Gtk::TreeModel::Row row = *iter;
-
+        if (! model->is_part_of_pk(column_name)) {
             model->map_test[model->pk_hist][column_name] = new_text;
-
             model->pk_hist.clear();
-            row[*model->col_color] = model->col_highlighted;
         }
+
+        row[*model->col_color] = model->col_highlighted;
     }
 
     void MainWindow::on_btn_accept_changes_clicked(san::SimpleTab* tab, san::SimpleTabModel* model)
