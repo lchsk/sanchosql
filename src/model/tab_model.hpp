@@ -185,6 +185,61 @@ namespace san
 			conn().run_query(query.str());
 		};
 
+		bool insert_row(const Gtk::TreeModel::Row& row) {
+			std::stringstream query;
+
+			query << "insert into "
+				  << table_name
+				  << " (";
+
+			unsigned i = 0;
+
+			for (const auto& col : cols) {
+				if (col.first == "#") continue;
+
+				Glib::ustring value = row.get_value(col.second);;
+
+				if (! value.empty()) {
+					if (i > 0) {
+						query << ", ";
+					}
+
+					query << col.first;
+
+					i++;
+				}
+			}
+
+			i = 0;
+
+			query << ") values (";
+
+			for (const auto& col : cols) {
+				if (col.first == "#") continue;
+
+				Glib::ustring value = row.get_value(col.second);;
+
+				if (! value.empty()) {
+					if (i > 0) {
+						query << ", ";
+					}
+					query << "'" << value << "'";
+
+					i++;
+				}
+			}
+
+			query << "); commit;";
+
+			g_debug("Insert row query: %s", query.str().c_str());
+
+			conn().run_query(query.str());
+
+			return true;
+		}
+
+		unsigned db_rows_cnt;
+
 		const std::string get_query() const;
 
 		// PK currently being edited

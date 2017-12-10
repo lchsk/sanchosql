@@ -282,6 +282,8 @@ sigc::mem_fun(*this, &MainWindow::cellrenderer_validated_on_editing_started), &t
 
         unsigned row_i = 1;
 
+        model.db_rows_cnt = result->data.size();
+
         for (const auto& row : result->data) {
             Gtk::TreeModel::Row r = *(tab.list_store->append());
 
@@ -637,6 +639,12 @@ sigc::mem_fun(*this, &MainWindow::cellrenderer_validated_on_editing_started), &t
 
         Gtk::TreeModel::Row row = *iter;
 
+        const Glib::ustring val = row.get_value(model->cols["#"]);
+
+        if (std::atol(val.c_str()) > model->db_rows_cnt) {
+            return;
+        }
+
         // TODO: model->pk_hist
 
         if (model->pk_changes.size() && model->is_part_of_pk(column_name) && new_text != model->pk_changes[column_name].first) {
@@ -683,7 +691,17 @@ sigc::mem_fun(*this, &MainWindow::cellrenderer_validated_on_editing_started), &t
         for (Gtk::TreeModel::Children::iterator iter = children.begin(); iter != children.end(); ++iter) {
             Gtk::TreeModel::Row row = *iter;
 
-            row[*model->col_color] = model->col_white;
+            const Glib::ustring val = row.get_value(model->cols["#"]);
+
+            if (std::atol(val.c_str()) > model->db_rows_cnt) {
+                bool inserted = model->insert_row(row);
+
+                if (inserted) {
+                    row[*model->col_color] = model->col_white;
+                }
+            } else {
+                row[*model->col_color] = model->col_white;
+            }
         }
     }
 }
