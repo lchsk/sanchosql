@@ -196,6 +196,9 @@ namespace san
         san::SimpleTab& tab = get_simple_tab(window);
         san::SimpleTabModel& model = get_simple_tab_model(window);
 
+        Glib::RefPtr<Gtk::TreeSelection> selection = tab.tree->get_selection();
+        selection->set_mode(Gtk::SELECTION_MULTIPLE);
+
         std::shared_ptr<san::QueryResult> result
             = pc.run_query(model.get_query());
 
