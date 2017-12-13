@@ -52,6 +52,27 @@ namespace san
         void on_connection_changed();
         void on_win_connections_hide();
 
+        void on_menu_file_popup_generic(san::SimpleTab* tab, san::SimpleTabModel* model) {
+            auto selection = tab->tree->get_selection();
+
+            if (selection) {
+                auto rows = selection->get_selected_rows();
+
+                for (const auto& row_path : rows) {
+                    Gtk::TreeModel::iterator row_iter = tab->tree->get_model()->get_iter(row_path);
+
+                    if (row_iter) {
+                        Gtk::TreeModel::Row row = *row_iter;
+                        const Glib::ustring row_number = row.get_value(model->cols["#"]);
+                    }
+                }
+            }
+        }
+
+        bool on_list_press(GdkEventButton* button_event, san::SimpleTab* tab, san::SimpleTabModel* model) {
+            return false;
+        };
+
         void on_results_column_clicked(Gtk::ScrolledWindow*, Gtk::TreeViewColumn*);
         void on_tab_close_button_clicked(Gtk::ScrolledWindow*);
         void on_reload_table_clicked(Gtk::ScrolledWindow*);

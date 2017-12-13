@@ -199,6 +199,19 @@ namespace san
         Glib::RefPtr<Gtk::TreeSelection> selection = tab.tree->get_selection();
         selection->set_mode(Gtk::SELECTION_MULTIPLE);
 
+		auto item = Gtk::manage(new Gtk::MenuItem("_Delete selected row(s)", true));
+
+        auto slot_delete = sigc::bind<san::SimpleTab*, san::SimpleTabModel*>(sigc::mem_fun(*this, &MainWindow::on_menu_file_popup_generic), &tab, &model);
+		item->signal_activate().connect(slot_delete);
+		tab.popup.append(*item);
+
+        tab.popup.accelerate(*this);
+        tab.popup.show_all();
+
+        auto slot_popup = sigc::bind<san::SimpleTab*, san::SimpleTabModel*>(sigc::mem_fun(*this, &MainWindow::on_list_press), &tab, &model);
+
+        tab.tree->signal_button_release_event().connect(slot_popup);
+
         std::shared_ptr<san::QueryResult> result
             = pc.run_query(model.get_query());
 

@@ -62,6 +62,8 @@ namespace san
         Gtk::Label* label_limit;
         san::NumberEntry* number_offset;
         san::NumberEntry* number_limit;
+
+        Gtk::Menu popup;
     };
 }
 
