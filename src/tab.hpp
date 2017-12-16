@@ -24,7 +24,6 @@ namespace san
         Gtk::Toolbar* toolbar;
         Gtk::ToolButton* btn1;
 
-        Gtk::TreeView* tree;
         Glib::RefPtr<Gtk::ListStore> list_store;
         std::unique_ptr<Gtk::TreeModel::ColumnRecord> cr;
 
@@ -43,6 +42,7 @@ namespace san
 
         Glib::RefPtr<Gsv::Buffer> buffer;
         Gsv::View* source_view;
+        Gtk::TreeView* tree;
     };
 
     class SimpleTab : public AbstractTab
@@ -62,6 +62,7 @@ namespace san
         Gtk::Label* label_limit;
         san::NumberEntry* number_offset;
         san::NumberEntry* number_limit;
+        Gtk::TreeView* tree;
 
         Gtk::Menu popup;
     };
