@@ -196,22 +196,6 @@ namespace san
         san::SimpleTab& tab = get_simple_tab(window);
         san::SimpleTabModel& model = get_simple_tab_model(window);
 
-        Glib::RefPtr<Gtk::TreeSelection> selection = tab.tree->get_selection();
-        selection->set_mode(Gtk::SELECTION_MULTIPLE);
-
-		auto item = Gtk::manage(new Gtk::MenuItem("_Delete selected row(s)", true));
-
-        auto slot_delete = sigc::bind<san::SimpleTab*, san::SimpleTabModel*>(sigc::mem_fun(*this, &MainWindow::on_menu_file_popup_generic), &tab, &model);
-		item->signal_activate().connect(slot_delete);
-		tab.popup.append(*item);
-
-        tab.popup.accelerate(*this);
-        tab.popup.show_all();
-
-        auto slot_popup = sigc::bind<san::SimpleTab*, san::SimpleTabModel*>(sigc::mem_fun(*this, &MainWindow::on_list_press), &tab, &model);
-
-        tab.tree->signal_button_release_event().connect(slot_popup);
-
         std::shared_ptr<san::QueryResult> result
             = pc.run_query(model.get_query());
 
@@ -512,12 +496,6 @@ sigc::mem_fun(*this, &MainWindow::cellrenderer_validated_on_editing_started), &t
 
         Glib::ustring table_name = current_row[browser_model.table];
 
-        auto tab = std::make_shared<san::SimpleTab>();
-
-        Gtk::ScrolledWindow* window = tab->tree_scrolled_window;
-
-        tabs[window] = (tab);
-
         const auto current_connection = san::Connections::instance()->current_connection;
 
         if (! current_connection) return;
@@ -526,6 +504,25 @@ sigc::mem_fun(*this, &MainWindow::cellrenderer_validated_on_editing_started), &t
             = std::make_shared<san::SimpleTabModel>(
             current_connection, table_name);
 
+        auto tab = std::make_shared<san::SimpleTab>(shared_tab_model);
+        Gtk::ScrolledWindow* window = tab->tree_scrolled_window;
+
+        tab->tree->get_selection()->set_mode(Gtk::SELECTION_MULTIPLE);
+
+        auto item = Gtk::manage(new Gtk::MenuItem("_Delete selected row(s)", true));
+
+        auto slot_delete = sigc::bind<Gtk::ScrolledWindow*, san::SimpleTab*, san::SimpleTabModel*>(sigc::mem_fun(*this, &MainWindow::on_menu_file_popup_generic), window, tab.get(), shared_tab_model.get());
+		item->signal_activate().connect(slot_delete);
+		tab->popup.append(*item);
+
+        tab->popup.accelerate(*this);
+        tab->popup.show_all();
+
+        auto slot_popup = sigc::bind<san::SimpleTab*, san::SimpleTabModel*>(sigc::mem_fun(*this, &MainWindow::on_list_press), tab.get(), shared_tab_model.get());
+
+        tab->tree->signal_button_release_event().connect(slot_popup);
+
+        tabs[window] = tab;
         tab_models[window] = shared_tab_model;
 
         san::SimpleTab* simple_tab = tab.get();

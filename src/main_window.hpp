@@ -52,25 +52,86 @@ namespace san
         void on_connection_changed();
         void on_win_connections_hide();
 
-        void on_menu_file_popup_generic(san::SimpleTab* tab, san::SimpleTabModel* model) {
-            auto selection = tab->tree->get_selection();
+        void on_menu_file_popup_generic(Gtk::ScrolledWindow* window, san::SimpleTab* tab, san::SimpleTabModel* model) {
+            const auto selection = tab->tree->get_selection();
 
             if (selection) {
+                std::size_t size = selection->get_selected_rows().size();
+
+                std::stringstream question;
+                question << "Are you sure you want to permanently delete "
+                         << size
+                         << " row(s)?";
+
+                Gtk::MessageDialog dialog(
+                    *this,
+                    question.str(), false /* use_markup */, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_OK_CANCEL);
+                dialog.set_modal();
+
+                std::stringstream text;
+
+                text << "The following rows will be deleted: ";
+
                 auto rows = selection->get_selected_rows();
+
+                unsigned i = 0;
 
                 for (const auto& row_path : rows) {
                     Gtk::TreeModel::iterator row_iter = tab->tree->get_model()->get_iter(row_path);
 
                     if (row_iter) {
                         Gtk::TreeModel::Row row = *row_iter;
-                        const Glib::ustring row_number = row.get_value(model->cols["#"]);
+
+                        if (i > 0)
+                            text << ", ";
+
+                        text << row.get_value(model->cols["#"]);
+
+                        i++;
                     }
                 }
+
+                dialog.set_secondary_text(text.str());
+
+                const int result = dialog.run();
+
+            if (result == Gtk::RESPONSE_OK) {
+                auto pks = model->get_primary_key();
+
+                auto rows = selection->get_selected_rows();
+
+                std::vector<std::vector<std::pair<Glib::ustring, Glib::ustring>>> rows_to_delete;
+
+                for (const auto& row_path : rows) {
+                    Gtk::TreeModel::iterator row_iter = tab->tree->get_model()->get_iter(row_path);
+
+                    if (row_iter) {
+                        Gtk::TreeModel::Row row = *row_iter;
+
+                        std::vector<std::pair<Glib::ustring, Glib::ustring>> pk_values;
+
+                        for (auto pk : pks) {
+                            const Glib::ustring pk_value = row.get_value(model->cols[pk.column_name]);
+
+                            pk_values.push_back(std::make_pair<Glib::ustring, Glib::ustring>(Glib::ustring(pk.column_name), Glib::ustring(pk_value)));
+                        }
+
+                        rows_to_delete.push_back(pk_values);
+                    }
+                }
+
+                model->delete_rows(rows_to_delete);
+                load_list_results(window);
+            }
             }
         }
 
         bool on_list_press(GdkEventButton* button_event, san::SimpleTab* tab, san::SimpleTabModel* model) {
-            return false;
+            if ((button_event->type == GDK_BUTTON_RELEASE) && (button_event->button == 3)) {
+                tab->popup.popup_at_pointer((GdkEvent*) button_event);
+            }
+
+            return true;
         };
 
         void on_results_column_clicked(Gtk::ScrolledWindow*, Gtk::TreeViewColumn*);
