@@ -185,6 +185,44 @@ namespace san
 			conn().run_query(query.str());
 		};
 
+		void delete_rows(const std::vector<std::vector<std::pair<Glib::ustring, Glib::ustring>>>& rows_to_delete) {
+			if (rows_to_delete.empty())
+				return;
+
+			std::cout << "Removing " << rows_to_delete.size() << " rows" << std::endl;
+
+			std::stringstream query;
+
+			for (const auto& row : rows_to_delete) {
+				std::stringstream row_query;
+
+				row_query << "delete from "
+					  << table_name
+					  << " where ";
+
+				unsigned i = 0;
+
+				for (auto t : row) {
+					if (i > 0) {
+						row_query << " and ";
+					}
+
+					row_query << t.first << " = '" << t.second << "'";
+
+					i++;
+				}
+
+				row_query << "; ";
+				query << row_query.str();
+			}
+
+			query << "commit;";
+
+			g_debug("Executing delete query: %s", query.str().c_str());
+
+			conn().run_query(query.str());
+		}
+
 		bool insert_row(const Gtk::TreeModel::Row& row) {
 			std::stringstream query;
 

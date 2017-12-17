@@ -8,6 +8,7 @@
 #include <gtksourceviewmm.h>
 
 #include "widgets/number_entry.hpp"
+#include "model/tab_model.hpp"
 
 namespace san
 {

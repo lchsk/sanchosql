@@ -68,7 +68,7 @@ namespace san
 
     SimpleTab::SimpleTab(std::shared_ptr<san::SimpleTabModel>& model)
         : tree(Gtk::manage(new Gtk::TreeView)),
-          model(model),
+          model(model)
     {
         hb = Gtk::manage(new Gtk::HBox);
         b = Gtk::manage(new Gtk::Button);
