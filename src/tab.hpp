@@ -48,7 +48,7 @@ namespace san
     class SimpleTab : public AbstractTab
     {
     public:
-        SimpleTab();
+        SimpleTab(std::shared_ptr<san::SimpleTabModel>& model);
 
         // Browse box
         Gtk::Box* browse_box;
@@ -65,6 +65,8 @@ namespace san
         Gtk::TreeView* tree;
 
         Gtk::Menu popup;
+
+        std::shared_ptr<san::SimpleTabModel> model;
     };
 }
 

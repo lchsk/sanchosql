@@ -66,7 +66,9 @@ namespace san
         hb->show_all_children();
     }
 
-    SimpleTab::SimpleTab()
+    SimpleTab::SimpleTab(std::shared_ptr<san::SimpleTabModel>& model)
+        : tree(Gtk::manage(new Gtk::TreeView)),
+          model(model),
     {
         hb = Gtk::manage(new Gtk::HBox);
         b = Gtk::manage(new Gtk::Button);
@@ -88,8 +90,6 @@ namespace san
 
         toolbar->append(*btn1);
         toolbar->append(*btn_accept);
-
-        tree = Gtk::manage(new Gtk::TreeView);
 
         cr = std::make_unique<Gtk::TreeModel::ColumnRecord>();
         list_store = Gtk::ListStore::create(*cr);
