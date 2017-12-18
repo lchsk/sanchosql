@@ -238,9 +238,16 @@ namespace san
             const std::string escaped_column_name
                 = san::util::replace_all(column.column_name, "_", "__");
             const std::string data_type = column.data_type;
-            const std::string column_name = escaped_column_name + "\n" + data_type;
 
-            int c = tab.tree->append_column_editable(column_name, model.cols[column.column_name]);
+            std::stringstream column_name;
+
+            if (model.is_part_of_pk(column.column_name)) {
+                column_name << "(PK) ";
+            }
+
+            column_name << escaped_column_name << "\n" << data_type;
+
+            int c = tab.tree->append_column_editable(column_name.str(), model.cols[column.column_name]);
             Gtk::TreeViewColumn* tree_view_column = tab.tree->get_columns()[c - 1];
 
             tree_view_column->set_resizable();
