@@ -8,7 +8,7 @@
 
 int main (int argc, char *argv[])
 {
-    auto app = Gtk::Application::create(argc, argv, "postgres.client");
+    auto app = Gtk::Application::create(argc, argv, "sancho");
 
     san::MainWindow main_window;
 

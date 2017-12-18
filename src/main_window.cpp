@@ -17,7 +17,7 @@ namespace san
 
         g_debug("Debugging is on");
 
-        set_title("Postgres Client");
+        set_title("SanchoSQL");
 
         const Glib::ustring config_home = Glib::get_user_config_dir();
 
