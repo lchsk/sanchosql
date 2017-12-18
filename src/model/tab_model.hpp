@@ -249,6 +249,10 @@ namespace san
 				}
 			}
 
+			if (! i) {
+				return false;
+			}
+
 			i = 0;
 
 			query << ") values (";
