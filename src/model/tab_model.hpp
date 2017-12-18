@@ -35,6 +35,7 @@ namespace san
 
 		const Gdk::RGBA col_white = Gdk::RGBA("rgba(255, 255, 255, 1.0)");
 		const Gdk::RGBA col_highlighted = Gdk::RGBA("rgba(100, 20, 210, 1.0)");
+		const Gdk::RGBA col_inserted = Gdk::RGBA("rgba(40, 200, 10, 1.0)");
 		std::map<std::string, Gtk::TreeModelColumn<Glib::ustring>> cols;
 		std::unique_ptr<Gtk::TreeModelColumn<Gdk::RGBA>> col_color;
 

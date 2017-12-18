@@ -430,6 +430,8 @@ sigc::mem_fun(*this, &MainWindow::cellrenderer_validated_on_editing_started), &t
 
         Gtk::TreeModel::Row r = *(tab.list_store->append());
         r[model.cols["#"]] = std::to_string(children.size());
+
+        r[*model.col_color] = model.col_inserted;
     }
 
     void MainWindow::on_tab_close_button_clicked(Gtk::ScrolledWindow* tree)
