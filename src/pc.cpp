@@ -8,7 +8,7 @@
 
 int main (int argc, char *argv[])
 {
-    auto app = Gtk::Application::create(argc, argv, "sancho");
+    auto app = Gtk::Application::create(argc, argv, "sancho.sql");
 
     san::MainWindow main_window;
 
