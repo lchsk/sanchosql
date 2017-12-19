@@ -119,6 +119,23 @@ namespace san
         return data;
     }
 
+    const std::vector<Glib::ustring> PostgresConnection::get_schemas() const
+    {
+        std::vector<Glib::ustring> schemas;
+
+        pqxx::work work(*conn);
+
+        const std::string sql = R"(SELECT nspname FROM pg_catalog.pg_namespace;)";
+
+        pqxx::result result = work.exec(sql);
+
+        for (const auto& row : result) {
+            schemas.push_back(row["nspname"].as<std::string>());
+        }
+
+        return schemas;
+    }
+
     const std::vector<PrimaryKey>
     PostgresConnection::get_primary_key(const std::string& table_name) const
     {

@@ -16,7 +16,8 @@ namespace san
 	public:
 		AbstractTabModel(const std::shared_ptr<san::ConnectionDetails>& conn_details)
 			: conn_details(conn_details),
-			  connection(std::make_unique<san::PostgresConnection>(conn_details))
+			  connection(std::make_unique<san::PostgresConnection>(conn_details)),
+			  schemas(conn().get_schemas())
 		{
 			connection->init_connection();
 		}
@@ -42,6 +43,7 @@ namespace san
 	private:
 		std::shared_ptr<san::ConnectionDetails> conn_details;
 		std::unique_ptr<san::PostgresConnection> connection;
+		std::vector<Glib::ustring> schemas;
 
 		const std::string EMPTY_SORT_COLUMN = "";
 	};

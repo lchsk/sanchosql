@@ -39,6 +39,8 @@ namespace san
         const std::vector<PrimaryKey>
         get_primary_key(const std::string& table_name) const;
 
+        const std::vector<Glib::ustring> get_schemas() const;
+
         void init_connection();
 
         bool is_open() const {
