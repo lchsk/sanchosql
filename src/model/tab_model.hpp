@@ -109,8 +109,10 @@ namespace san
 
             for (auto pk : map_test) {
     			query << "update "
-				  << table_name
-				  << " set ";
+					  << schema_name
+					  << "."
+					  << table_name
+					  << " set ";
 
                 unsigned i = 0;
 
@@ -161,6 +163,8 @@ namespace san
 			const auto data = *(pk_changes.begin());
 
 			query << "update "
+				  << schema_name
+				  << "."
 				  << table_name
 				  << " set "
 				  << data.first
@@ -199,8 +203,10 @@ namespace san
 				std::stringstream row_query;
 
 				row_query << "delete from "
-					  << table_name
-					  << " where ";
+						  << schema_name
+						  << "."
+						  << table_name
+						  << " where ";
 
 				unsigned i = 0;
 
@@ -229,6 +235,8 @@ namespace san
 			std::stringstream query;
 
 			query << "insert into "
+				  << schema_name
+				  << "."
 				  << table_name
 				  << " (";
 
