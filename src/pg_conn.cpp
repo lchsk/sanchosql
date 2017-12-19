@@ -29,10 +29,12 @@ namespace san
     std::shared_ptr<san::QueryResult>
     PostgresConnection::run_query(const std::string& query)
     {
+        g_debug("Running query: %s", query.c_str());
+
         return std::make_shared<san::QueryResult>(*conn, query, oid_names);
     }
 
-    std::vector<std::string> PostgresConnection::get_db_tables()
+    std::vector<std::string> PostgresConnection::get_db_tables(const Glib::ustring& schema_name)
     {
         std::vector<std::string> tables;
 
@@ -44,12 +46,13 @@ namespace san
             FROM
                 information_schema.tables
             WHERE
-                table_schema = 'public'
+                table_schema = $1
             ORDER BY
                 table_name ASC
             )";
 
-        pqxx::result result = work.exec(sql);
+        conn->prepare("get_db_tables", sql);
+        pqxx::result result = work.prepared("get_db_tables")(std::string(schema_name)).exec();
 
         for (const auto& row : result) {
             tables.push_back(row["table_name"].as<std::string>());
@@ -61,6 +64,9 @@ namespace san
     std::vector<std::pair<std::string, std::string>>
     PostgresConnection::get_table_columns(const std::string& table_name)
     {
+        // TODO: Remove if no longer needed
+        // Otherwise, modify to use schema
+
         std::vector<std::pair<std::string, std::string>> columns;
 
         pqxx::work work(*conn);
@@ -119,9 +125,9 @@ namespace san
         return data;
     }
 
-    const std::vector<Glib::ustring> PostgresConnection::get_schemas() const
+    std::unique_ptr<std::vector<Glib::ustring>> PostgresConnection::get_schemas() const
     {
-        std::vector<Glib::ustring> schemas;
+        std::unique_ptr<std::vector<Glib::ustring>> schemas = std::make_unique<std::vector<Glib::ustring>>();
 
         pqxx::work work(*conn);
 
@@ -130,14 +136,16 @@ namespace san
         pqxx::result result = work.exec(sql);
 
         for (const auto& row : result) {
-            schemas.push_back(row["nspname"].as<std::string>());
+            schemas->push_back(row["nspname"].as<std::string>());
         }
 
-        return schemas;
+        std::sort(schemas->begin(), schemas->end());
+
+        return std::move(schemas);
     }
 
     const std::vector<PrimaryKey>
-    PostgresConnection::get_primary_key(const std::string& table_name) const
+    PostgresConnection::get_primary_key(const std::string& table_name, const std::string& schema_name) const
     {
         std::vector<PrimaryKey> data;
 
@@ -154,7 +162,8 @@ namespace san
                 AND i.indisprimary;)";
 
         conn->prepare("get_primary_key", sql);
-        pqxx::result result = work.prepared("get_primary_key")(table_name).exec();
+        const std::string id = schema_name + "." + table_name;
+        pqxx::result result = work.prepared("get_primary_key")(id).exec();
 
         for (const auto& row : result) {
             data.push_back(PrimaryKey({

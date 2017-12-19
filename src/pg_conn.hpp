@@ -27,7 +27,7 @@ namespace san
 
         std::shared_ptr<san::QueryResult> run_query(const std::string& query);
 
-        std::vector<std::string> get_db_tables();
+        std::vector<std::string> get_db_tables(const Glib::ustring& schema_name);
 
         std::vector<std::pair<std::string, std::string>>
         get_table_columns(const std::string& table_name);
@@ -37,9 +37,9 @@ namespace san
                        const std::vector<std::pair<std::string, std::string>>& columns);
 
         const std::vector<PrimaryKey>
-        get_primary_key(const std::string& table_name) const;
+        get_primary_key(const std::string& table_name, const std::string& schema_name) const;
 
-        const std::vector<Glib::ustring> get_schemas() const;
+        std::unique_ptr<std::vector<Glib::ustring>> get_schemas() const;
 
         void init_connection();
 

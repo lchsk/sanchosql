@@ -50,6 +50,7 @@ namespace san
         // void cellrenderer_validated_on_editing_started(Gtk::CellEditable* cell_editable, const Glib::ustring& path) {};
 
         void on_connection_changed();
+        void on_schema_changed();
         void on_win_connections_hide();
 
         void on_menu_file_popup_generic(Gtk::ScrolledWindow* window, san::SimpleTab* tab, san::SimpleTabModel* model) {
@@ -157,6 +158,7 @@ namespace san
         void on_action_file_quit();
 
         void refresh_connections_list();
+        void refresh_browser(const std::shared_ptr<san::PostgresConnection>&);
 
         Glib::RefPtr<Gtk::Builder> res_builder;
         Glib::RefPtr<Gio::SimpleActionGroup> menu_group;
@@ -172,6 +174,7 @@ namespace san
         Gtk::Box box_browser;
         // List of connections
         Gtk::ComboBoxText combo_connections;
+        Gtk::ComboBoxText combo_schemas;
 
         std::unordered_map
         <Gtk::ScrolledWindow*, std::shared_ptr<AbstractTabModel> > tab_models;

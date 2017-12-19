@@ -16,8 +16,7 @@ namespace san
 	public:
 		AbstractTabModel(const std::shared_ptr<san::ConnectionDetails>& conn_details)
 			: conn_details(conn_details),
-			  connection(std::make_unique<san::PostgresConnection>(conn_details)),
-			  schemas(conn().get_schemas())
+			  connection(std::make_unique<san::PostgresConnection>(conn_details))
 		{
 			connection->init_connection();
 		}
@@ -43,7 +42,6 @@ namespace san
 	private:
 		std::shared_ptr<san::ConnectionDetails> conn_details;
 		std::unique_ptr<san::PostgresConnection> connection;
-		std::vector<Glib::ustring> schemas;
 
 		const std::string EMPTY_SORT_COLUMN = "";
 	};
@@ -54,7 +52,8 @@ namespace san
 		enum class ColumnSortType { None, Asc, Desc };
 
 		SimpleTabModel(const std::shared_ptr<san::ConnectionDetails>& conn_details,
-					   const Glib::ustring& p_table_name);
+					   const Glib::ustring& p_table_name,
+					   const Glib::ustring& p_schema_name);
 
 		void set_limit(const std::string& p_limit);
 		void set_offset(const std::string& p_offset);
@@ -301,6 +300,7 @@ namespace san
 		const std::string get_order_by_query() const;
 
 		const Glib::ustring table_name;
+		const Glib::ustring schema_name;
 		const std::vector<san::PrimaryKey> primary_key;
 
 		unsigned limit;

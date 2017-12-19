@@ -49,6 +49,8 @@ namespace san
 
         combo_connections.signal_changed().connect(sigc::mem_fun(*this,
             &MainWindow::on_connection_changed));
+        combo_schemas.signal_changed().connect(sigc::mem_fun(*this,
+            &MainWindow::on_schema_changed));
 
         Gsv::init();
 
@@ -56,9 +58,11 @@ namespace san
         browser_scrolled_window.set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
 
         combo_connections.set_title("Active connection");
+        combo_schemas.set_title("Schema");
 
         // expand, fill, padding
         box_browser.pack_start(combo_connections, false, false, 4);
+        box_browser.pack_start(combo_schemas, false, false, 4);
         box_browser.pack_start(browser_scrolled_window);
 
         paned.pack1(box_browser);
@@ -509,9 +513,10 @@ sigc::mem_fun(*this, &MainWindow::cellrenderer_validated_on_editing_started), &t
 
         if (! current_connection) return;
 
+        const std::string& schema_name = combo_schemas.get_active_text();
+
         auto shared_tab_model
-            = std::make_shared<san::SimpleTabModel>(
-            current_connection, table_name);
+            = std::make_shared<san::SimpleTabModel>(current_connection, table_name, schema_name);
 
         auto tab = std::make_shared<san::SimpleTab>(shared_tab_model);
         Gtk::ScrolledWindow* window = tab->tree_scrolled_window;
@@ -607,8 +612,6 @@ sigc::mem_fun(*this, &MainWindow::cellrenderer_validated_on_editing_started), &t
 
     void MainWindow::on_connection_changed()
     {
-        browser_store->clear();
-
         const Glib::ustring connection_name = combo_connections.get_active_text();
 
         if (! san::Connections::instance()->exists(connection_name))
@@ -620,10 +623,47 @@ sigc::mem_fun(*this, &MainWindow::cellrenderer_validated_on_editing_started), &t
         std::shared_ptr<san::PostgresConnection> pc
             = std::make_shared<san::PostgresConnection>(current_connection);
         pc->init_connection();
+        current_connection->schemas = pc->get_schemas();
+
+        combo_schemas.remove_all();
+
+        unsigned selected_id = 0;
+
+        for (const auto& schema : *current_connection->schemas) {
+            combo_schemas.append(schema);
+
+            if (schema != "public")
+                selected_id++;
+        }
+
+        combo_schemas.set_active(selected_id);
 
         san::Connections::instance()->current_connection = current_connection;
 
-        const std::vector<std::string>& tables = pc->get_db_tables();
+        refresh_browser(pc);
+    }
+
+    void MainWindow::on_schema_changed()
+    {
+        const auto current_connection = san::Connections::instance()->current_connection;
+
+        if (! current_connection)
+            return;
+
+        std::shared_ptr<san::PostgresConnection> pc
+            = std::make_shared<san::PostgresConnection>(current_connection);
+        pc->init_connection();
+
+        refresh_browser(pc);
+    }
+
+    void MainWindow::refresh_browser(const std::shared_ptr<san::PostgresConnection>& pc)
+    {
+        browser_store->clear();
+
+        const Glib::ustring schema_name = combo_schemas.get_active_text();
+
+        const std::vector<std::string>& tables = pc->get_db_tables(schema_name);
 
         Gtk::TreeModel::Row row = *(browser_store->append());
         row[browser_model.table] = "Tables";

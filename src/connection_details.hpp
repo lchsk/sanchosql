@@ -19,6 +19,8 @@ namespace san
         std::string password;
         std::string dbname;
         std::string port;
+
+        std::unique_ptr<std::vector<Glib::ustring>> schemas;
     };
 }
 

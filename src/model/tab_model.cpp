@@ -3,10 +3,12 @@
 namespace san
 {
 	SimpleTabModel::SimpleTabModel(const std::shared_ptr<san::ConnectionDetails>& conn_details,
-								   const Glib::ustring& p_table_name) :
+								   const Glib::ustring& p_table_name,
+								   const Glib::ustring& p_schema_name) :
 		AbstractTabModel(conn_details),
 		table_name(p_table_name),
-		primary_key(conn().get_primary_key(p_table_name)),
+		schema_name(p_schema_name),
+		primary_key(conn().get_primary_key(p_table_name, p_schema_name)),
 		limit(DEFAULT_LIMIT),
 		offset(DEFAULT_OFFSET),
 		sort_column(""),
@@ -67,8 +69,13 @@ namespace san
 	{
 		std::stringstream query;
 
-		query << "select * from "
-			  << table_name
+		query << "select * from ";
+
+		if (schema_name != "") {
+			query << schema_name << ".";
+		}
+
+		query << table_name
 			  << get_order_by_query()
 			  << " offset "
 			  << std::to_string(offset)
