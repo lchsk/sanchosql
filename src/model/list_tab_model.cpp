@@ -82,53 +82,53 @@ namespace san
 
 	void SimpleTabModel::accept_changes()
 	{
-            if (! map_test.size()) return;
+		if (! map_test.size()) return;
 
-			std::stringstream query;
+		std::stringstream query;
 
-            for (auto pk : map_test) {
-    			query << "update "
-					  << schema_name
-					  << "."
-					  << table_name
-					  << " set ";
+		for (auto pk : map_test) {
+			query << "update "
+				  << schema_name
+				  << "."
+				  << table_name
+				  << " set ";
 
-                unsigned i = 0;
+			unsigned i = 0;
 
-                for (auto pk_val : pk.second) {
-                    if (i > 0) {
-                        query << ", ";
-                    }
+			for (auto pk_val : pk.second) {
+				if (i > 0) {
+					query << ", ";
+				}
 
-                    query << pk_val.first << " = " << "'" << pk_val.second << "'";
+				query << pk_val.first << " = " << "'" << pk_val.second << "'";
 
-                    i++;
-                }
+				i++;
+			}
 
-                query << " where ";
+			query << " where ";
 
-                i = 0;
+			i = 0;
 
-                for (auto pk_col : pk.first) {
-                    if (i > 0) {
-                        query << " and ";
-                    }
+			for (auto pk_col : pk.first) {
+				if (i > 0) {
+					query << " and ";
+				}
 
-                    query << pk_col.first << " = " << "'" << pk_col.second << "'";
+				query << pk_col.first << " = " << "'" << pk_col.second << "'";
 
-                    i++;
-                }
+				i++;
+			}
 
-                query << "; ";
-            }
+			query << "; ";
+		}
 
-            query << "commit;";
+		query << "commit;";
 
-			g_debug("Accept query: %s", query.str().c_str());
+		g_debug("Accept query: %s", query.str().c_str());
 
-			conn().run_query(query.str());
+		conn().run_query(query.str());
 
-            map_test.clear();
+		map_test.clear();
 	}
 
 	const std::string SimpleTabModel::get_order_by_query() const
