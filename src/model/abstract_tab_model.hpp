@@ -1,7 +1,20 @@
 #ifndef ABSTRACT_TAB_MODEL_HPP
 #define ABSTRACT_TAB_MODEL_HPP
 
+#include "../config.hpp"
 #include "../pg_conn.hpp"
+
+#ifdef MOCK_PG_CONN
+
+#include "../../tests/mock_pg_conn.hpp"
+#define PG_CLASS MockPostgresConnection
+using ::testing::Exactly;
+
+#else
+
+#define PG_CLASS san::PostgresConnection
+
+#endif
 
 namespace san
 {
@@ -10,8 +23,12 @@ namespace san
 	public:
 		AbstractTabModel(const std::shared_ptr<san::ConnectionDetails>& conn_details)
 			: conn_details(conn_details),
-			  connection(std::make_unique<san::PostgresConnection>(conn_details))
+			  connection(std::make_unique<PG_CLASS>(conn_details))
 		{
+			#ifdef MOCK_PG_CONN
+			EXPECT_CALL(*get_mock_connection(), init_connection()).Times(Exactly(1));
+			#endif
+
 			connection->init_connection();
 		}
 
@@ -32,6 +49,12 @@ namespace san
 		const Gdk::RGBA col_inserted = Gdk::RGBA("rgba(40, 200, 10, 1.0)");
 		std::map<std::string, Gtk::TreeModelColumn<Glib::ustring>> cols;
 		std::unique_ptr<Gtk::TreeModelColumn<Gdk::RGBA>> col_color;
+
+		#ifdef MOCK_PG_CONN
+		virtual MockPostgresConnection* get_mock_connection() {
+			return static_cast<MockPostgresConnection*>(connection.get());
+		}
+		#endif
 
 	private:
 		std::shared_ptr<san::ConnectionDetails> conn_details;

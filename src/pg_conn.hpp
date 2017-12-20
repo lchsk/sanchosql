@@ -18,12 +18,16 @@ namespace san
     {
         std::string column_name;
         std::string data_type;
+
+        PrimaryKey(const std::string& column_name, const std::string& data_type)
+            : column_name(column_name),
+              data_type(data_type) {}
     };
 
     class PostgresConnection {
     public:
         PostgresConnection(const std::shared_ptr<san::ConnectionDetails>& conn_details);
-        ~PostgresConnection();
+        virtual ~PostgresConnection();
 
         std::shared_ptr<san::QueryResult> run_query(const std::string& query);
 
@@ -36,12 +40,12 @@ namespace san
         get_table_data(const std::string& table_name,
                        const std::vector<std::pair<std::string, std::string>>& columns);
 
-        const std::vector<PrimaryKey>
+        virtual const std::vector<PrimaryKey>
         get_primary_key(const std::string& table_name, const std::string& schema_name) const;
 
         std::unique_ptr<std::vector<Glib::ustring>> get_schemas() const;
 
-        void init_connection();
+        virtual void init_connection();
 
         bool is_open() const {
             return is_open_;
