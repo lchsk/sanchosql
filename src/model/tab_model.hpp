@@ -284,18 +284,6 @@ namespace san
 		static const unsigned DEFAULT_LIMIT = 30;
 		static const unsigned DEFAULT_OFFSET = 0;
 	};
-
-	class QueryTabModel : public AbstractTabModel
-	{
-	public:
-		QueryTabModel(const std::shared_ptr<san::ConnectionDetails>& conn_details);
-
-		std::string query;
-
-		const std::string get_query() const {
-			return query;
-		}
-	};
 }
 
 #endif

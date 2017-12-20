@@ -7,6 +7,7 @@
 
 #include "pg_conn.hpp"
 #include "model/tab_model.hpp"
+#include "model/query_tab_model.hpp"
 #include "tab.hpp"
 #include "win_new_connection.hpp"
 

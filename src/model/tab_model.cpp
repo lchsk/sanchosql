@@ -16,11 +16,6 @@ namespace san
 	{
 	}
 
-	QueryTabModel::QueryTabModel(const std::shared_ptr<san::ConnectionDetails>& conn_details)
-		: AbstractTabModel(conn_details)
-	{
-	}
-
 	void SimpleTabModel::set_sort(const std::string& p_sort_column)
 	{
 		switch (sort_type) {
