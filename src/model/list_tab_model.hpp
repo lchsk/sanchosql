@@ -216,6 +216,9 @@ namespace san
         // Column name -> Current Value
 		std::map<Glib::ustring, Glib::ustring> pk_hist;
 
+		// Pending changes:
+		// - first: primary key (column -> value)
+		// - second: value changes (column -> new value)
         std::map<std::map<Glib::ustring, Glib::ustring>,
                  std::map<Glib::ustring, Glib::ustring>> map_test;
 
