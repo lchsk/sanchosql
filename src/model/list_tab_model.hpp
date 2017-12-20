@@ -78,7 +78,7 @@ namespace san
 		const std::string get_query() const;
 
 		// PK currently being edited
-        // Column name -> Current Value
+        // Column name -> Current Value (before commiting to DB)
 		std::map<Glib::ustring, Glib::ustring> pk_hist;
 
 		// Pending changes:

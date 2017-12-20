@@ -135,7 +135,12 @@ namespace san
 		if (pk_changes.empty())
 			return;
 
-		std::cout << "Accepting pk change " << std::endl;
+		if (pk_changes.size() > 1) {
+			pk_changes.clear();
+			pk_hist.clear();
+
+			return;
+		};
 
 		std::stringstream query;
 

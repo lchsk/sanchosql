@@ -94,6 +94,62 @@ TEST(CellUpdate, test_update_2_different_rows)
     EXPECT_EQ(model.map_test.size(), 0);
 }
 
+// Primary Key change
+
+TEST(PrimaryKeyUpdate, simple_primary_key)
+{
+    san::SimpleTabModel model(std::make_shared<san::ConnectionDetails>(), "test_table", "test_public");
+
+    model.pk_changes["name"] = std::make_pair<Glib::ustring, Glib::ustring>("old_name", "new_name");
+    model.pk_hist["name"] = "old_name";
+
+    const std::string expected_query
+        = "update test_public.test_table set name = 'new_name' where name = 'old_name'; commit;";
+
+    EXPECT_CALL(*model.get_mock_connection(), run_query(expected_query));
+
+    model.accept_pk_change();
+
+    EXPECT_EQ(model.map_test.size(), 0);
+}
+
+TEST(PrimaryKeyUpdate, compound_primary_key_one_changed)
+{
+    san::SimpleTabModel model(std::make_shared<san::ConnectionDetails>(), "test_table", "test_public");
+
+    model.pk_changes["name"] = std::make_pair<Glib::ustring, Glib::ustring>("old_name", "new_name");
+    // model.pk_changes["email"] = std::make_pair<Glib::ustring, Glib::ustring>("old_email", "new_email");
+    model.pk_hist["email"] = "old_email";
+    model.pk_hist["name"] = "old_name";
+
+    const std::string expected_query
+        = "update test_public.test_table set name = 'new_name' where email = 'old_email' and name = 'old_name'; commit;";
+
+    EXPECT_CALL(*model.get_mock_connection(), run_query(expected_query));
+
+    model.accept_pk_change();
+
+    EXPECT_EQ(model.map_test.size(), 0);
+}
+
+TEST(PrimaryKeyUpdate, compound_primary_key_both_changed)
+{
+    san::SimpleTabModel model(std::make_shared<san::ConnectionDetails>(), "test_table", "test_public");
+
+    model.pk_changes["email"] = std::make_pair<Glib::ustring, Glib::ustring>("old_email", "new_email");
+    model.pk_changes["name"] = std::make_pair<Glib::ustring, Glib::ustring>("old_name", "new_name");
+    model.pk_hist["email"] = "old_email";
+    model.pk_hist["name"] = "old_name";
+
+    // Don't allow to change > 1 PK columns at the same time
+    EXPECT_CALL(*model.get_mock_connection(), run_query("")).Times(Exactly(0));
+
+    model.accept_pk_change();
+
+    EXPECT_EQ(model.pk_changes.size(), 0);
+    EXPECT_EQ(model.pk_hist.size(), 0);
+}
+
 int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);
 
