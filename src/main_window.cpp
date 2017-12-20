@@ -1,10 +1,9 @@
 #include <iostream>
 
+#include <glib.h>
+
 #include "main_window.hpp"
 #include "util.hpp"
-#include "model/tab_model.hpp"
-
-#include <glib.h>
 
 namespace san
 {

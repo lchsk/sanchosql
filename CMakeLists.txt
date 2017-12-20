@@ -72,7 +72,7 @@ add_executable(${EXECUTABLE_NAME}
     src/util.cpp
 
     # Models
-    src/model/tab_model.cpp
+    src/model/list_tab_model.cpp
 
     # Windows
     src/main_window.cpp
