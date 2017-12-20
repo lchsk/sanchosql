@@ -80,6 +80,57 @@ namespace san
 		return query.str();
 	}
 
+	void SimpleTabModel::accept_changes()
+	{
+            if (! map_test.size()) return;
+
+			std::stringstream query;
+
+            for (auto pk : map_test) {
+    			query << "update "
+					  << schema_name
+					  << "."
+					  << table_name
+					  << " set ";
+
+                unsigned i = 0;
+
+                for (auto pk_val : pk.second) {
+                    if (i > 0) {
+                        query << ", ";
+                    }
+
+                    query << pk_val.first << " = " << "'" << pk_val.second << "'";
+
+                    i++;
+                }
+
+                query << " where ";
+
+                i = 0;
+
+                for (auto pk_col : pk.first) {
+                    if (i > 0) {
+                        query << " and ";
+                    }
+
+                    query << pk_col.first << " = " << "'" << pk_col.second << "'";
+
+                    i++;
+                }
+
+                query << "; ";
+            }
+
+            query << "commit;";
+
+			g_debug("Accept query: %s", query.str().c_str());
+
+			conn().run_query(query.str());
+
+            map_test.clear();
+	}
+
 	const std::string SimpleTabModel::get_order_by_query() const
 	{
 		std::stringstream order_by;
