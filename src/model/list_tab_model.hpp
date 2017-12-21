@@ -76,6 +76,7 @@ namespace san
 		unsigned db_rows_cnt;
 
 		const std::string get_query() const;
+		const std::string get_columns_query() const;
 
 		// PK currently being edited
         // Column name -> Current Value (before commiting to DB)

@@ -80,6 +80,25 @@ namespace san
 		return query.str();
 	}
 
+	const std::string SimpleTabModel::get_columns_query() const
+	{
+		std::stringstream query;
+
+		query << "select * from information_schema.columns where table_name = "
+			  << "'"
+			  << table_name
+			  << "'";
+
+		if (schema_name != "") {
+			query << " and table_schema = "
+				  << "'"
+				  << schema_name
+				  << "'";
+		}
+
+		return query.str();
+	}
+
 	void SimpleTabModel::accept_changes()
 	{
 		if (! map_test.size()) return;

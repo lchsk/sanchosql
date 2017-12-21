@@ -200,7 +200,7 @@ namespace san
         san::SimpleTabModel& model = get_simple_tab_model(window);
 
         std::shared_ptr<san::QueryResult> result
-            = pc.run_query(model.get_query());
+            = pc.run_query(model.get_query(), model.get_columns_query());
 
         tab.col_names.clear();
         tab.tree->remove_all_columns();
@@ -249,6 +249,14 @@ namespace san
             }
 
             column_name << escaped_column_name << "\n" << data_type;
+
+            if (! column.char_length.empty()) {
+                column_name << " (" << column.char_length << ")";
+            }
+
+            if (column.is_nullable) {
+                column_name << " [N]";
+            }
 
             int c = tab.tree->append_column_editable(column_name.str(), model.cols[column.column_name]);
             Gtk::TreeViewColumn* tree_view_column = tab.tree->get_columns()[c - 1];

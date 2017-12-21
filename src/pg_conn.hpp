@@ -29,7 +29,7 @@ namespace san
         PostgresConnection(const std::shared_ptr<san::ConnectionDetails>& conn_details);
         virtual ~PostgresConnection();
 
-        virtual std::shared_ptr<san::QueryResult> run_query(const std::string& query);
+        virtual std::shared_ptr<san::QueryResult> run_query(const std::string& query, const std::string& columns_query = std::string());
 
         std::vector<std::string> get_db_tables(const Glib::ustring& schema_name);
 

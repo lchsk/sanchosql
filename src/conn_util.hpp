@@ -19,8 +19,15 @@ namespace san
         pqxx::oid oid;
         std::string column_name;
         std::string data_type;
+        std::string char_length;
+        bool is_nullable;
     };
 
+    struct ColumnMetadata
+    {
+        std::string character_maximum_length;
+        bool is_nullable;
+    };
 
     const std::string get_data_type(
         const pqxx::oid oid,

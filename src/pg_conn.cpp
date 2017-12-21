@@ -27,11 +27,15 @@ namespace san
     }
 
     std::shared_ptr<san::QueryResult>
-    PostgresConnection::run_query(const std::string& query)
+    PostgresConnection::run_query(const std::string& query, const std::string& columns_query)
     {
-        g_debug("Running query: %s", query.c_str());
+        g_debug("Executing query: %s", query.c_str());
 
-        return std::make_shared<san::QueryResult>(*conn, query, oid_names);
+        if (! columns_query.empty()) {
+            g_debug("Executing columns query: %s", columns_query.c_str());
+        }
+
+        return std::make_shared<san::QueryResult>(*conn, query, columns_query, oid_names);
     }
 
     std::vector<std::string> PostgresConnection::get_db_tables(const Glib::ustring& schema_name)
