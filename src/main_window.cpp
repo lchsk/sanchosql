@@ -488,7 +488,7 @@ sigc::mem_fun(*this, &MainWindow::cellrenderer_validated_on_editing_started), &t
              (sigc::mem_fun(*this, &MainWindow::on_tab_close_button_clicked),
               window));
 
-        tab->btn1->signal_clicked().connect
+        tab->btn_execute_editor_query->signal_clicked().connect
             (sigc::bind<Gtk::ScrolledWindow*, Glib::RefPtr<Gsv::Buffer> >
              (sigc::mem_fun(*this, &MainWindow::on_submit_query_clicked),
               window, tab->buffer));

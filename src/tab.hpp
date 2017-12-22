@@ -23,7 +23,6 @@ namespace san
         Gtk::TextView* tv;
 
         Gtk::Toolbar* toolbar;
-        Gtk::ToolButton* btn1;
 
         Glib::RefPtr<Gtk::ListStore> list_store;
         std::unique_ptr<Gtk::TreeModel::ColumnRecord> cr;
@@ -44,6 +43,7 @@ namespace san
         Glib::RefPtr<Gsv::Buffer> buffer;
         Gsv::View* source_view;
         Gtk::TreeView* tree;
+        Gtk::ToolButton* btn_execute_editor_query;
     };
 
     class SimpleTab : public AbstractTab

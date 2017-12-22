@@ -17,10 +17,10 @@ namespace san
         tv = Gtk::manage(new Gtk::TextView);
 
         toolbar = Gtk::manage(new Gtk::Toolbar);
-        btn1 = Gtk::manage(new Gtk::ToolButton);
-        btn1->set_icon_name("document-save");
+        btn_execute_editor_query = Gtk::manage(new Gtk::ToolButton);
+        btn_execute_editor_query->set_icon_name("document-save");
 
-        toolbar->append(*btn1);
+        toolbar->append(*btn_execute_editor_query);
 
         tree = Gtk::manage(new Gtk::TreeView);
 
@@ -83,12 +83,9 @@ namespace san
         tv = Gtk::manage(new Gtk::TextView);
 
         toolbar = Gtk::manage(new Gtk::Toolbar);
-        btn1 = Gtk::manage(new Gtk::ToolButton);
-        btn1->set_icon_name("document-save");
         btn_accept = Gtk::manage(new Gtk::ToolButton);
         btn_accept->set_icon_name("document-save");
 
-        toolbar->append(*btn1);
         toolbar->append(*btn_accept);
 
         cr = std::make_unique<Gtk::TreeModel::ColumnRecord>();
