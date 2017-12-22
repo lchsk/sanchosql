@@ -6,11 +6,12 @@ endif()
 
 message(STATUS "CMAKE_BUILD_TYPE           = " ${CMAKE_BUILD_TYPE})
 
+set(ENV{G_MESSAGES_DEBUG} "all")
+
 if (CMAKE_BUILD_TYPE STREQUAL Debug)
   message(STATUS "This is a DEBUG build!")
-  set(ENV{G_MESSAGES_DEBUG} "all")
-else()
-  message(STATUS "This is NOT a DEBUG build!")
+elseif (CMAKE_BUILD_TYPE STREQUAL Release)
+  message(STATUS "This is a RELEASE build!")
 endif()
 
 if (WIN32)
