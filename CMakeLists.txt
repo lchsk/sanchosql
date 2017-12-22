@@ -72,7 +72,7 @@ execute_process(
   )
 
 add_executable(${EXECUTABLE_NAME}
-    src/pc.cpp
+    src/sanchosql.cpp
     src/pg_conn.cpp
     src/conn_util.cpp
     src/query_result.cpp
