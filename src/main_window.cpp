@@ -584,6 +584,19 @@ sigc::mem_fun(*this, &MainWindow::cellrenderer_validated_on_editing_started), &t
 
         show_all_children();
         notebook.next_page();
+
+        if (shared_tab_model->has_primary_key()) {
+            tab->btn_primary_key_warning->hide();
+            tab->btn_accept->show();
+        } else {
+            tab->btn_primary_key_warning->show();
+            tab->btn_accept->hide();
+
+            tab->btn_primary_key_warning->signal_clicked().connect
+                (sigc::bind<const Glib::ustring>
+                 (sigc::mem_fun(*this, &MainWindow::on_primary_key_warning_clicked),
+                  table_name));
+        }
     }
 
     void MainWindow::on_submit_query_clicked

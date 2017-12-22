@@ -57,6 +57,7 @@ namespace san
         Gtk::Button* btn_reload;
         // Accept DB changes
         Gtk::ToolButton* btn_accept;
+        Gtk::ToolButton* btn_primary_key_warning;
         Gtk::Button* btn_prev;
         Gtk::Button* btn_next;
         Gtk::Label* label_offset;

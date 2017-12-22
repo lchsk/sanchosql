@@ -54,6 +54,14 @@ namespace san
         void on_schema_changed();
         void on_win_connections_hide();
 
+        void on_primary_key_warning_clicked(const Glib::ustring table_name) {
+            Gtk::MessageDialog dialog(*this, "Table \"" + table_name + "\" doesn't a have primary key", false /* use_markup */, Gtk::MESSAGE_WARNING, Gtk::BUTTONS_OK);
+            dialog.set_modal();
+            dialog.set_secondary_text("Updating values in the editor will be disabled");
+
+            dialog.run();
+        }
+
         void on_menu_file_popup_generic(Gtk::ScrolledWindow* window, san::SimpleTab* tab, san::SimpleTabModel* model) {
             const auto selection = tab->tree->get_selection();
 

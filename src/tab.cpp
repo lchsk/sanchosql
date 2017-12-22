@@ -85,8 +85,11 @@ namespace san
         toolbar = Gtk::manage(new Gtk::Toolbar);
         btn_accept = Gtk::manage(new Gtk::ToolButton);
         btn_accept->set_icon_name("document-save");
+        btn_primary_key_warning = Gtk::manage(new Gtk::ToolButton);
+        btn_primary_key_warning->set_icon_name("dialog-warning");
 
         toolbar->append(*btn_accept);
+        toolbar->append(*btn_primary_key_warning);
 
         cr = std::make_unique<Gtk::TreeModel::ColumnRecord>();
         list_store = Gtk::ListStore::create(*cr);
