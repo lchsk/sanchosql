@@ -258,7 +258,14 @@ namespace san
                 column_name << " [N]";
             }
 
-            int c = tab.tree->append_column_editable(column_name.str(), model.cols[column.column_name]);
+            int c;
+
+            if (model.has_primary_key()) {
+                c = tab.tree->append_column_editable(column_name.str(), model.cols[column.column_name]);
+            } else {
+                c = tab.tree->append_column(column_name.str(), model.cols[column.column_name]);
+            }
+
             Gtk::TreeViewColumn* tree_view_column = tab.tree->get_columns()[c - 1];
 
             tree_view_column->set_resizable();
@@ -269,7 +276,7 @@ namespace san
 
             Gtk::CellRendererText* crtext = dynamic_cast<Gtk::CellRendererText*>(cren);
 
-            if (crtext) {
+            if (crtext && model.has_primary_key()) {
                 auto signal_edited_slot = sigc::bind<san::SimpleTab*, san::SimpleTabModel*, const std::string>(
 sigc::mem_fun(*this, &MainWindow::cellrenderer_validated_on_edited), &tab, &model, column.column_name);
 
@@ -281,10 +288,12 @@ sigc::mem_fun(*this, &MainWindow::cellrenderer_validated_on_editing_started), &t
                 crtext->signal_editing_started().connect(editing_started_slot);
             }
 
-            tree_view_column->signal_clicked().connect
-                (sigc::bind<Gtk::ScrolledWindow*, Gtk::TreeViewColumn*>
-                 (sigc::mem_fun(*this, &MainWindow::on_results_column_clicked),
-                  window, tree_view_column));
+            if (model.has_primary_key()) {
+                tree_view_column->signal_clicked().connect
+                    (sigc::bind<Gtk::ScrolledWindow*, Gtk::TreeViewColumn*>
+                     (sigc::mem_fun(*this, &MainWindow::on_results_column_clicked),
+                      window, tree_view_column));
+            }
 
             if (column.column_name == model.get_sort_column()) {
                 sorted_col = tree_view_column;
@@ -587,10 +596,8 @@ sigc::mem_fun(*this, &MainWindow::cellrenderer_validated_on_editing_started), &t
 
         if (shared_tab_model->has_primary_key()) {
             tab->btn_primary_key_warning->hide();
-            tab->btn_accept->show();
         } else {
             tab->btn_primary_key_warning->show();
-            tab->btn_accept->hide();
 
             tab->btn_primary_key_warning->signal_clicked().connect
                 (sigc::bind<const Glib::ustring>
