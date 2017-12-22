@@ -1,3 +1,3 @@
 #!/bin/sh
 
-G_MESSAGES_DEBUG=all ./postgres-client
+G_MESSAGES_DEBUG=all ./sanchosql

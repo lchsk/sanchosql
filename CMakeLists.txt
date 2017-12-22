@@ -23,7 +23,7 @@ else ()
   set(EXTRA_TARGET_LIB "")
 endif ()
 
-project(postgres-client)
+project(sanchosql)
 
 MESSAGE(STATUS "CMAKE_ROOT: " ${CMAKE_ROOT} )
 message(STATUS "CMAKE_SYSTEM_NAME          = ${CMAKE_SYSTEM_NAME}"         )
@@ -38,7 +38,7 @@ MESSAGE( STATUS "CMAKE_INCLUDE_PATH: " ${CMAKE_INCLUDE_PATH} )
 MESSAGE( STATUS "CMAKE_LIBRARY_PATH: " ${CMAKE_LIBRARY_PATH} )
 
 
-set(EXECUTABLE_NAME "postgres-client")
+set(EXECUTABLE_NAME "sanchosql")
 
 set(CMAKE_CXX_STANDARD 14)
 
