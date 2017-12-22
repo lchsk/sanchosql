@@ -539,11 +539,13 @@ sigc::mem_fun(*this, &MainWindow::cellrenderer_validated_on_editing_started), &t
 
         tab->tree->get_selection()->set_mode(Gtk::SELECTION_MULTIPLE);
 
-        auto item = Gtk::manage(new Gtk::MenuItem("_Delete selected row(s)", true));
+        tab->popup_item_delete_rows = Gtk::manage(new Gtk::MenuItem("_Delete selected row(s)", true));
+
+		tab->popup_item_delete_rows->set_sensitive(shared_tab_model->has_primary_key());
 
         auto slot_delete = sigc::bind<Gtk::ScrolledWindow*, san::SimpleTab*, san::SimpleTabModel*>(sigc::mem_fun(*this, &MainWindow::on_menu_file_popup_generic), window, tab.get(), shared_tab_model.get());
-		item->signal_activate().connect(slot_delete);
-		tab->popup.append(*item);
+		tab->popup_item_delete_rows->signal_activate().connect(slot_delete);
+		tab->popup.append(*tab->popup_item_delete_rows);
 
         tab->popup.accelerate(*this);
         tab->popup.show_all();

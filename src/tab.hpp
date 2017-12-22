@@ -68,6 +68,8 @@ namespace san
 
         Gtk::Menu popup;
 
+        Gtk::MenuItem* popup_item_delete_rows;
+
         std::shared_ptr<san::SimpleTabModel> model;
     };
 }
