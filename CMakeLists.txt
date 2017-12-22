@@ -13,6 +13,15 @@ else()
   message(STATUS "This is NOT a DEBUG build!")
 endif()
 
+if (WIN32)
+  message(STATUS "Detected Windows")
+  # Needed to link this lib on Windows
+  set(EXTRA_TARGET_LIB "-lws2_32")
+else ()
+  message(STATUS "Detected non-Windows")
+  set(EXTRA_TARGET_LIB "")
+endif ()
+
 project(postgres-client)
 
 MESSAGE(STATUS "CMAKE_ROOT: " ${CMAKE_ROOT} )
@@ -95,7 +104,7 @@ endif ( CMAKE_COMPILER_IS_GNUCC )
 
 link_directories(${GTKMM_LIBRARY_DIRS} ${PQXX_LIBRARY_DIRS} ${GTKSOURCEVIEW_LIBRARY_DIRS})
 include_directories(${GTKMM_INCLUDE_DIRS} ${PQXX_INCLUDE_DIRS} ${GTKSOURCEVIEW_INCLUDE_DIRS})
-target_link_libraries(${EXECUTABLE_NAME} ${GTKMM_LIBRARIES} ${PQXX_LIBRARIES} -lpq ${GTKSOURCEVIEW_LIBRARIES})
+target_link_libraries(${EXECUTABLE_NAME} ${GTKMM_LIBRARIES} ${PQXX_LIBRARIES} -lpq ${EXTRA_TARGET_LIB} ${GTKSOURCEVIEW_LIBRARIES})
 
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
 
