@@ -261,13 +261,7 @@ namespace san
                 column_name << " [N]";
             }
 
-            int c;
-
-            if (model.has_primary_key()) {
-                c = tab.tree->append_column_editable(column_name.str(), model.cols[column.column_name]);
-            } else {
-                c = tab.tree->append_column(column_name.str(), model.cols[column.column_name]);
-            }
+            const int c = tab.tree->append_column_editable(column_name.str(), model.cols[column.column_name]);
 
             Gtk::TreeViewColumn* tree_view_column = tab.tree->get_columns()[c - 1];
 
@@ -766,11 +760,20 @@ sigc::mem_fun(*this, &MainWindow::cellrenderer_validated_on_editing_started), &t
             return;
         }
 
-        if (IN_MAP(model->map_old_values, model->pk_hist)
+        if (! model->has_primary_key()) {
+            // When user attempts to edit table without pk - bring back the old value
+            if (IN_MAP(model->map_old_values, model->pk_hist)
+                && IN_MAP(model->map_old_values[model->pk_hist], column_name)) {
+                row[model->cols[column_name]] = model->map_old_values[model->pk_hist][column_name];
+            } else {
+                g_warning("Table does not have a primary key - unable to bring the old value back!");
+            }
+        } else if (IN_MAP(model->map_old_values, model->pk_hist)
             && IN_MAP(model->map_old_values[model->pk_hist], column_name)
             && model->map_old_values[model->pk_hist][column_name] == new_text) {
             // Leave row alone - the value of edited cell didn't change
         } else if (! model->is_part_of_pk(column_name)) {
+            // Remember new value - later send it to db
             model->map_test[model->pk_hist][column_name] = new_text;
 
             row[*model->col_color] = model->col_highlighted;

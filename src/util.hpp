@@ -4,6 +4,7 @@
 #include <glibmm.h>
 
 #define IN_MAP(map, item) (map.find(item) != map.end())
+#define COUT(var) std::cout << var << std::endl;
 
 namespace san
 {
