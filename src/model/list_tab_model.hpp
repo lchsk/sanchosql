@@ -88,6 +88,12 @@ namespace san
         std::map<std::map<Glib::ustring, Glib::ustring>,
                  std::map<Glib::ustring, Glib::ustring>> map_test;
 
+		// Storing old value of the cell that's being edited:
+		// - first: primary key (column -> value)
+		// - second: value (column -> old value)
+        std::map<std::map<Glib::ustring, Glib::ustring>,
+                 std::map<Glib::ustring, Glib::ustring>> map_old_values;
+
 		// column_name: (old_value, new_value)
 		std::map<Glib::ustring, std::pair<Glib::ustring, Glib::ustring>> pk_changes;
 

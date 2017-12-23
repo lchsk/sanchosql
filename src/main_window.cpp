@@ -718,6 +718,8 @@ sigc::mem_fun(*this, &MainWindow::cellrenderer_validated_on_editing_started), &t
             model->pk_hist[key.column_name] = row[model->cols[key.column_name]];;
         }
 
+        model->map_old_values[model->pk_hist][column_name] = row[model->cols[column_name]];
+
         if (model->is_part_of_pk(column_name)) {
             model->pk_changes[column_name].first = row[model->cols[column_name]];
         }
@@ -764,12 +766,18 @@ sigc::mem_fun(*this, &MainWindow::cellrenderer_validated_on_editing_started), &t
             return;
         }
 
-        if (! model->is_part_of_pk(column_name)) {
+        if (IN_MAP(model->map_old_values, model->pk_hist)
+            && IN_MAP(model->map_old_values[model->pk_hist], column_name)
+            && model->map_old_values[model->pk_hist][column_name] == new_text) {
+            // Leave row alone - the value of edited cell didn't change
+        } else if (! model->is_part_of_pk(column_name)) {
             model->map_test[model->pk_hist][column_name] = new_text;
-            model->pk_hist.clear();
+
+            row[*model->col_color] = model->col_highlighted;
         }
 
-        row[*model->col_color] = model->col_highlighted;
+        model->map_old_values.clear();
+        model->pk_hist.clear();
     }
 
     void MainWindow::on_btn_accept_changes_clicked(san::SimpleTab* tab, san::SimpleTabModel* model)
