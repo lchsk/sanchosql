@@ -105,6 +105,9 @@ namespace san
         toolbutton_sql->signal_clicked().connect
             (sigc::mem_fun(*this, &MainWindow::on_open_sql_editor_clicked));
 
+        auto theme = Gtk::IconTheme::get_default();
+        theme->add_resource_path("/icons/64x64/res/icons");
+
         auto object = res_builder->get_object("menubar");
         auto menu = Glib::RefPtr<Gio::Menu>::cast_dynamic(object);
 

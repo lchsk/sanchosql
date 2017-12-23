@@ -102,6 +102,7 @@ namespace san
 
         btn_reload = Gtk::manage(new Gtk::Button);
         btn_reload->set_label("Reload");
+        // btn_reload->set_image_from_icon_name("icon");
         btn_insert = Gtk::manage(new Gtk::Button);
         btn_insert->set_label("Insert");
         btn_prev = Gtk::manage(new Gtk::Button);
