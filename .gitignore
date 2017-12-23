@@ -30,7 +30,7 @@
 *.exe
 *.out
 *.app
-postgres-client
+sanchosql
 
 # CMake
 CMakeCache.txt
