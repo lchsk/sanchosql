@@ -276,7 +276,7 @@ namespace san
 
             Gtk::CellRendererText* crtext = dynamic_cast<Gtk::CellRendererText*>(cren);
 
-            if (crtext && model.has_primary_key()) {
+            if (crtext) {
                 auto signal_edited_slot = sigc::bind<san::SimpleTab*, san::SimpleTabModel*, const std::string>(
 sigc::mem_fun(*this, &MainWindow::cellrenderer_validated_on_edited), &tab, &model, column.column_name);
 
@@ -288,12 +288,10 @@ sigc::mem_fun(*this, &MainWindow::cellrenderer_validated_on_editing_started), &t
                 crtext->signal_editing_started().connect(editing_started_slot);
             }
 
-            if (model.has_primary_key()) {
                 tree_view_column->signal_clicked().connect
                     (sigc::bind<Gtk::ScrolledWindow*, Gtk::TreeViewColumn*>
                      (sigc::mem_fun(*this, &MainWindow::on_results_column_clicked),
                       window, tree_view_column));
-            }
 
             if (column.column_name == model.get_sort_column()) {
                 sorted_col = tree_view_column;
