@@ -44,6 +44,7 @@ res/*~
 
 # Tests
 tests/*
-!tests/test_*.cpp
-!tests/test_*.hpp
+!tests/*.cpp
+!tests/*.hpp
 !tests/Makefile
+!tests/CMakeLists.txt

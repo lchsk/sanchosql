@@ -38,6 +38,12 @@ namespace san
         return std::make_shared<san::QueryResult>(*conn, query, columns_query, oid_names);
     }
 
+    std::shared_ptr<san::QueryResult>
+    PostgresConnection::run_query(const std::string& query)
+    {
+        return run_query(query, "");
+    }
+
     std::vector<std::string> PostgresConnection::get_db_tables(const Glib::ustring& schema_name)
     {
         std::vector<std::string> tables;

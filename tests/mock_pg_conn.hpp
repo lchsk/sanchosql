@@ -16,6 +16,7 @@ public:
 
 	MOCK_METHOD0(init_connection, void());
 	MOCK_METHOD1(run_query, std::shared_ptr<san::QueryResult>(const std::string& query));
+	// MOCK_METHOD2(run_query, std::shared_ptr<san::QueryResult>(const std::string& query, const std::string& columns_query));
 
 	const std::vector<san::PrimaryKey>
     get_primary_key(const std::string& table_name, const std::string& schema_name) const override {
