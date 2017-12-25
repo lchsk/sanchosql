@@ -266,6 +266,13 @@ namespace san
             Gtk::TreeViewColumn* tree_view_column = tab.tree->get_columns()[c - 1];
 
             tree_view_column->set_resizable();
+            tree_view_column->set_expand(true);
+
+            if (data_type == "text") {
+                tree_view_column->set_fixed_width(200);
+            } else if (data_type == "json") {
+                tree_view_column->set_fixed_width(150);
+            }
 
             auto cren = tree_view_column->get_first_cell();
 
