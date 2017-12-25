@@ -9,7 +9,7 @@ PQXX_FLAGS = `pkg-config --cflags --libs libpqxx`
 #                            #
 ##############################
 
-TEST_UTIL = test_util
+TEST_STRING = test_string
 TEST_CELL_UPDATE = test_cell_update
 
 ##############################
@@ -26,8 +26,8 @@ clean:
 check:
 	$(foreach var, $(TESTS), ./$(var);)
 
-test_util:
-	$(CXX) test_util.cpp ../src/util.cpp $(GTEST_FLAGS) $(GTK_FLAGS) -o $(TEST_UTIL)
+test_string:
+	$(CXX) test_string.cpp ../src/string.cpp $(GTEST_FLAGS) $(GTK_FLAGS) -o $(TEST_STRING)
 
 test_cell_update:
-	$(CXX) test_cell_update.cpp ../src/util.cpp ../src/conn_util.cpp ../src/query_result.cpp ../src/connection_details.cpp ../src/connections.cpp ../src/pg_conn.cpp ../src/model/list_tab_model.cpp $(GTEST_FLAGS) $(GMOCK_FLAGS) $(GTK_FLAGS) $(PQXX_FLAGS) -o $(TEST_CELL_UPDATE)
+	$(CXX) test_cell_update.cpp ../src/string.cpp ../src/conn_util.cpp ../src/query_result.cpp ../src/connection_details.cpp ../src/connections.cpp ../src/pg_conn.cpp ../src/model/list_tab_model.cpp $(GTEST_FLAGS) $(GMOCK_FLAGS) $(GTK_FLAGS) $(PQXX_FLAGS) -o $(TEST_CELL_UPDATE)
