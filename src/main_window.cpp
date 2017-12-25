@@ -208,6 +208,8 @@ namespace san
         tab.col_names.clear();
         tab.tree->remove_all_columns();
 
+        tab.tree->set_grid_lines(Gtk::TreeViewGridLines::TREE_VIEW_GRID_LINES_VERTICAL);
+
         tab.cr = std::make_unique<Gtk::TreeModel::ColumnRecord>();
         model.col_color = std::make_unique<Gtk::TreeModelColumn<Gdk::RGBA>>();
         tab.cr->add(*model.col_color);
