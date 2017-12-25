@@ -41,3 +41,9 @@ Makefile
 # Resources
 src/resources.c
 res/*~
+
+# Tests
+tests/*
+!tests/test_*.cpp
+!tests/test_*.hpp
+!tests/Makefile
