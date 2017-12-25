@@ -3,7 +3,7 @@
 
 #include <gtkmm.h>
 
-#include "../util.hpp"
+#include "../string.hpp"
 
 namespace san
 {
@@ -11,7 +11,7 @@ namespace san
     {
         void on_insert_text(const Glib::ustring& text, int* position)
         {
-            if (san::util::contains_only_numbers(text))
+            if (san::string::contains_only_numbers(text))
                 Gtk::Entry::on_insert_text(text, position);
         }
     };

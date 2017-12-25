@@ -62,7 +62,7 @@ namespace san
             const Glib::ustring dbname = get_conn_value(group, "dbname");
             const Glib::ustring port = get_conn_value(group, "port");
 
-            if (san::util::is_empty(name)) continue;
+            if (san::string::is_empty(name)) continue;
 
             add(name, host, user, password, dbname, port);
         }
@@ -158,11 +158,11 @@ namespace san
         const Glib::ustring& user,
         const Glib::ustring& connection_name) const
     {
-        if (san::util::is_empty(host) ||
-            san::util::is_empty(port) ||
-            san::util::is_empty(db) ||
-            san::util::is_empty(user) ||
-            san::util::is_empty(connection_name))
+        if (san::string::is_empty(host) ||
+            san::string::is_empty(port) ||
+            san::string::is_empty(db) ||
+            san::string::is_empty(user) ||
+            san::string::is_empty(connection_name))
             // no password - it can be empty
             return true;
 

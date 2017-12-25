@@ -3,7 +3,7 @@
 #include "win_new_connection.hpp"
 #include "pg_conn.hpp"
 
-#include "util.hpp"
+#include "string.hpp"
 
 namespace san
 {

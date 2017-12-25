@@ -83,7 +83,7 @@ add_executable(${EXECUTABLE_NAME}
     src/connection_details.cpp
     src/connections.cpp
     src/tab.cpp
-    src/util.cpp
+    src/string.cpp
 
     # Models
     src/model/list_tab_model.cpp

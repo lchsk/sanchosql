@@ -1,5 +1,5 @@
-#ifndef UTIL_HPP
-#define UTIL_HPP
+#ifndef STRING_HPP
+#define STRING_HPP
 
 #include <glibmm.h>
 
@@ -8,7 +8,7 @@
 
 namespace san
 {
-    namespace util
+    namespace string
     {
         std::string replace_all(std::string str,
                                 const std::string& from,

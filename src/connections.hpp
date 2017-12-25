@@ -7,7 +7,7 @@
 #include <glibmm.h>
 
 #include "connection_details.hpp"
-#include "util.hpp"
+#include "string.hpp"
 
 namespace san
 {

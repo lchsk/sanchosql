@@ -1,10 +1,10 @@
 #include <string>
 
-#include "util.hpp"
+#include "string.hpp"
 
 namespace san
 {
-    namespace util
+    namespace string
     {
         std::string replace_all(std::string str,
                                 const std::string& from,

@@ -3,7 +3,7 @@
 #include <glib.h>
 
 #include "main_window.hpp"
-#include "util.hpp"
+#include "string.hpp"
 
 namespace san
 {
@@ -244,7 +244,7 @@ namespace san
 
         for (const auto& column : result->columns) {
             const std::string escaped_column_name
-                = san::util::replace_all(column.column_name, "_", "__");
+                = san::string::replace_all(column.column_name, "_", "__");
             const std::string data_type = column.data_type;
 
             std::stringstream column_name;
@@ -370,7 +370,7 @@ sigc::mem_fun(*this, &MainWindow::cellrenderer_validated_on_editing_started), &t
 
         for (const auto& column : result->columns) {
             const std::string escaped_column_name
-                = san::util::replace_all(column.column_name, "_", "__");
+                = san::string::replace_all(column.column_name, "_", "__");
             const std::string data_type = column.data_type;
             const std::string column_name = escaped_column_name + "\n" + data_type;
 

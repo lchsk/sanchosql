@@ -6,7 +6,7 @@
 #include <pqxx/pqxx>
 
 #include "conn_util.hpp"
-#include "util.hpp"
+#include "string.hpp"
 
 namespace san
 {
