@@ -324,7 +324,7 @@ sigc::mem_fun(*this, &MainWindow::cellrenderer_validated_on_editing_started), &t
             r[*model.col_color] = model.col_white;
 
             for (const auto& c : result->columns) {
-                r[model.cols[c.column_name]] = row[i];
+                r[model.cols[c.column_name]] = san::string::escape_db_data(row[i]);
 
                 i++;
             }
@@ -392,7 +392,7 @@ sigc::mem_fun(*this, &MainWindow::cellrenderer_validated_on_editing_started), &t
             r[model.cols["#"]] = std::to_string(row_i++);
 
             for (const auto& c : result->columns) {
-                r[model.cols[c.column_name]] = row[i];
+                r[model.cols[c.column_name]] = san::string::escape_db_data(row[i]);
 
                 i++;
             }

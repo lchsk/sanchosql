@@ -17,6 +17,19 @@ TEST(Util, replace_all)
     EXPECT_EQ(san::string::replace_all("abc def", "def", "abc"), "abc abc");
 }
 
+TEST(Util, quote_sql)
+{
+    EXPECT_EQ(san::string::escape_sql("test"), "test");
+    EXPECT_EQ(san::string::escape_sql("test's"), "test''s");
+    EXPECT_EQ(san::string::escape_sql("test's test's"), "test''s test''s");
+}
+
+TEST(Util, prepare_sql_value)
+{
+    EXPECT_EQ(san::string::prepare_sql_value("Test's\\n"), "'Test''s\n'");
+    EXPECT_EQ(san::string::prepare_sql_value("\\ttest\\n"), "'\ttest\n'");
+}
+
 TEST(Util, trim)
 {
     EXPECT_EQ(san::string::trim("abc"), "abc");

@@ -119,7 +119,7 @@ namespace san
 					query << ", ";
 				}
 
-				query << pk_val.first << " = " << "'" << pk_val.second << "'";
+				query << pk_val.first << " = " << san::string::prepare_sql_value(pk_val.second);
 
 				i++;
 			}
@@ -133,7 +133,7 @@ namespace san
 					query << " and ";
 				}
 
-				query << pk_col.first << " = " << "'" << pk_col.second << "'";
+				query << pk_col.first << " = " << san::string::prepare_sql_value(pk_col.second);
 
 				i++;
 			}
@@ -171,9 +171,9 @@ namespace san
 			  << table_name
 			  << " set "
 			  << data.first
-			  << " = '"
-			  << data.second.second
-			  << "' where ";
+			  << " = "
+			  << san::string::prepare_sql_value(data.second.second)
+			  << " where ";
 
 		unsigned i = 0;
 
@@ -182,7 +182,7 @@ namespace san
 				query << " and ";
 			}
 
-			query << t.first << " = '" << t.second << "'";
+			query << t.first << " = " << san::string::prepare_sql_value(t.second);
 
 			i++;
 		}
@@ -218,7 +218,7 @@ namespace san
 					row_query << " and ";
 				}
 
-				row_query << t.first << " = '" << t.second << "'";
+				row_query << t.first << " = " << san::string::prepare_sql_value(t.second);
 
 				i++;
 			}
@@ -278,7 +278,7 @@ namespace san
 				if (i > 0) {
 					query << ", ";
 				}
-				query << "'" << value << "'";
+				query << san::string::prepare_sql_value(value);
 
 				i++;
 			}

@@ -20,6 +20,27 @@ namespace san
             return str;
         }
 
+        std::string escape_sql(std::string str)
+        {
+            return san::string::replace_all(str, "'", "''");
+        }
+
+        std::string escape_db_data(std::string str)
+        {
+            return Glib::strescape(str, "\"");
+        }
+
+        std::string prepare_sql_value(std::string str)
+        {
+            std::stringstream s;
+
+            s << "'"
+              << san::string::escape_sql(Glib::strcompress(str))
+              << "'";
+
+            return s.str();
+        }
+
         bool contains_only_numbers(const Glib::ustring& text)
         {
             for (unsigned i = 0; i < text.length(); i++) {
