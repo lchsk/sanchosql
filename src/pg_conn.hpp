@@ -40,12 +40,12 @@ namespace san
 
         std::vector<std::string> get_db_tables(const Glib::ustring& schema_name) const noexcept;
 
-        std::vector<std::pair<std::string, std::string>>
-        get_table_columns(const std::string& table_name);
+        // std::vector<std::pair<std::string, std::string>>
+        // get_table_columns(const std::string& table_name);
 
-        std::vector<std::map<std::string, std::string> >
-        get_table_data(const std::string& table_name,
-                       const std::vector<std::pair<std::string, std::string>>& columns);
+        // std::vector<std::map<std::string, std::string> >
+        // get_table_data(const std::string& table_name,
+                       // const std::vector<std::pair<std::string, std::string>>& columns);
 
         virtual const std::vector<PrimaryKey>
         get_primary_key(const std::string& table_name, const std::string& schema_name) const noexcept;

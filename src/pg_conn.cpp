@@ -74,71 +74,71 @@ namespace san
         return tables;
     }
 
-    std::vector<std::pair<std::string, std::string>>
-    PostgresConnection::get_table_columns(const std::string& table_name)
-    {
+    // std::vector<std::pair<std::string, std::string>>
+    // PostgresConnection::get_table_columns(const std::string& table_name)
+    // {
         // TODO: Remove if no longer needed
         // Otherwise, modify to use schema
 
-        std::vector<std::pair<std::string, std::string>> columns;
+        // std::vector<std::pair<std::string, std::string>> columns;
 
-        pqxx::work work(*conn);
+        // pqxx::work work(*conn);
 
-        const std::string sql = R"(
-            SELECT
-                *
-            FROM
-                information_schema.columns
-            WHERE
-                table_schema = 'public'
-                AND table_name = $1
-            ORDER BY
-                ordinal_position ASC
-            )";
+        // const std::string sql = R"(
+            // SELECT
+                // *
+            // FROM
+                // information_schema.columns
+            // WHERE
+                // table_schema = 'public'
+                // AND table_name = $1
+            // ORDER BY
+                // ordinal_position ASC
+            // )";
 
-        conn->prepare("get_columns", sql);
-        pqxx::result result = work.prepared("get_columns")(table_name).exec();
+        // conn->prepare("get_columns", sql);
+        // pqxx::result result = work.prepared("get_columns")(table_name).exec();
 
-        for (const auto& row : result) {
-            columns.push_back(std::make_pair<std::string, std::string>
-                              (row["column_name"].as<std::string>(),
-                               row["data_type"].as<std::string>()));
-        }
+        // for (const auto& row : result) {
+            // columns.push_back(std::make_pair<std::string, std::string>
+                              // (row["column_name"].as<std::string>(),
+                               // row["data_type"].as<std::string>()));
+        // }
 
-        return columns;
-    }
+        // return columns;
+    // }
 
-    std::vector<std::map<std::string, std::string> >
-    PostgresConnection::get_table_data(
-                                       const std::string& table_name,
-                                       const std::vector<std::pair<std::string, std::string>>& columns)
-    {
-        std::vector<std::map<std::string, std::string> > data;
+    // std::vector<std::map<std::string, std::string> >
+    // PostgresConnection::get_table_data(
+                                       // const std::string& table_name,
+                                       // const std::vector<std::pair<std::string, std::string>>& columns)
+    // {
+        // std::vector<std::map<std::string, std::string> > data;
 
 		// TODO: ?
 
-        pqxx::work work(*conn);
+        // pqxx::work work(*conn);
 
-        const std::string sql = "select * from " + table_name;
+        // const std::string sql = "select * from " + table_name;
 
-        pqxx::result result = work.exec(sql);
+        // pqxx::result result = work.exec(sql);
 
-        for (const auto& row : result) {
-            std::map<std::string, std::string> v;
+        // for (const auto& row : result) {
+            // std::map<std::string, std::string> v;
 
-            for (const auto& col_name : columns) {
-                try {
-                    v[col_name.first] = row[col_name.first].as<std::string>();
-                } catch (const std::exception&) {
-                    v[col_name.first] = "null";
-                }
-            }
+            // for (const auto& col_name : columns) {
+                // try {
+                    // v[col_name.first] = row[col_name.first].as<std::string>();
+                // } catch (const std::exception&) {
+                    // v[col_name.first] = "null";
+                // }
+            // }
 
-            data.push_back(v);
-        }
+            // data.push_back(v);
+        // }
 
-        return data;
-    }
+        // return data;
+    // }
 
     std::unique_ptr<std::vector<Glib::ustring>> PostgresConnection::get_schemas() const
     {
