@@ -144,14 +144,18 @@ namespace san
     {
         std::unique_ptr<std::vector<Glib::ustring>> schemas = std::make_unique<std::vector<Glib::ustring>>();
 
-        pqxx::work work(*conn);
-
         const std::string sql = R"(SELECT nspname FROM pg_catalog.pg_namespace;)";
 
-        pqxx::result result = work.exec(sql);
+        // TODO: Remove oid_names
+        auto oid_names = std::make_shared<std::unordered_map<pqxx::oid, san::OidMapping>>();
 
-        for (const auto& row : result) {
-            schemas->push_back(row["nspname"].as<std::string>());
+        auto query_result = san::QueryResult::get(*conn, sql, "", oid_names);
+
+        if (! query_result->success)
+            return std::move(schemas);
+
+        for (auto& row : query_result->as_map()) {
+            schemas->push_back(row["nspname"]);
         }
 
         std::sort(schemas->begin(), schemas->end());
