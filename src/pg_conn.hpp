@@ -50,7 +50,7 @@ namespace san
         virtual const std::vector<PrimaryKey>
         get_primary_key(const std::string& table_name, const std::string& schema_name) const noexcept;
 
-        std::unique_ptr<std::vector<Glib::ustring>> get_schemas() const;
+        std::unique_ptr<std::vector<Glib::ustring>> get_schemas();
 
         virtual void init_connection();
 

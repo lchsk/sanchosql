@@ -140,15 +140,13 @@ namespace san
         // return data;
     // }
 
-    std::unique_ptr<std::vector<Glib::ustring>> PostgresConnection::get_schemas() const
+    std::unique_ptr<std::vector<Glib::ustring>> PostgresConnection::get_schemas()
     {
         std::unique_ptr<std::vector<Glib::ustring>> schemas = std::make_unique<std::vector<Glib::ustring>>();
 
         const std::string sql = R"(SELECT nspname FROM pg_catalog.pg_namespace;)";
 
-        // TODO: Remove oid_names
-        auto oid_names = std::make_shared<std::unordered_map<pqxx::oid, san::OidMapping>>();
-
+        // TODO: Remove oid_names - it is not used here
         auto query_result = san::QueryResult::get(*conn, sql, "", oid_names);
 
         if (! query_result->success)
@@ -222,25 +220,28 @@ namespace san
 
     void PostgresConnection::load_oids()
     {
-        pqxx::work work(*conn);
-
         const std::string sql = R"(
-        select
-            distinct udt_name, data_type, t.oid
-        from
-            information_schema.columns c
-        join pg_type t
-            on t.typname = c.udt_name
-    )";
+            SELECT
+                DISTINCT udt_name, data_type, t.oid
+            FROM
+                information_schema.columns c
+            JOIN pg_type t
+                on t.typname = c.udt_name
+        )";
 
-        pqxx::result result = work.exec(sql);
+        auto query_result = san::QueryResult::get(*conn, sql, "", oid_names);
 
-        for (const auto& row : result) {
-            (*oid_names)[row["oid"].as<pqxx::oid>()] = san::OidMapping({
-                    .oid=row["oid"].as<pqxx::oid>(),
-                        .udt_name=row["udt_name"].as<std::string>(),
-                        .data_type=row["data_type"].as<std::string>(),
-                        });
+        if (! query_result->success)
+            return;
+
+        for (auto& row : query_result->as_map()) {
+            const pqxx::oid oid = std::atoi(row["oid"].c_str());
+
+            (*oid_names)[oid] = san::OidMapping({
+                .oid=oid,
+                .udt_name=row["udt_name"],
+                .data_type=row["data_type"],
+            });
         }
     }
 }
