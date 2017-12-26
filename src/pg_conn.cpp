@@ -49,8 +49,6 @@ namespace san
     {
         std::vector<std::string> tables;
 
-        pqxx::nontransaction work(*conn);
-
         const std::string sql = R"(
             SELECT
                 table_name
@@ -62,10 +60,11 @@ namespace san
                 table_name ASC
             )";
 
-        conn->prepare("get_db_tables", sql);
-
         auto query_result
-            = san::QueryResult::get_prepared_stmt(work.prepared("get_db_tables")(std::string(schema_name)));
+            = san::QueryResult::get_prepared_stmt(*conn, "get_db_tables", sql, schema_name);
+
+        if (! query_result->success)
+            return tables;
 
         for (auto& row : query_result->as_map()) {
             tables.push_back(row["table_name"]);
@@ -100,8 +99,6 @@ namespace san
     {
         std::vector<PrimaryKey> data;
 
-        pqxx::nontransaction work(*conn);
-
         const std::string sql = R"(
             SELECT
                 a.attname as column_name,
@@ -112,11 +109,10 @@ namespace san
             WHERE i.indrelid = $1::regclass
                 AND i.indisprimary;)";
 
-        conn->prepare("get_primary_key", sql);
         const std::string id = schema_name + "." + table_name;
 
         auto query_result
-            = san::QueryResult::get_prepared_stmt(work.prepared("get_primary_key")(id));
+            = san::QueryResult::get_prepared_stmt(*conn, "get_primary_key", sql, id);
 
         if (! query_result->success)
             return data;

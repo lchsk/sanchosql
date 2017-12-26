@@ -42,7 +42,11 @@ namespace san
         }
 
         static std::shared_ptr<QueryResult>
-        get_prepared_stmt(const pqxx::prepare::invocation& prepared_stmt);
+        get_prepared_stmt(pqxx::connection& conn,
+                          const std::string& name,
+                          const std::string& query,
+                          const std::string& arg);
+
         void run_prepared_stmt(const pqxx::prepare::invocation& prepared_stmt);
 
         void handle_results(const pqxx::result&);

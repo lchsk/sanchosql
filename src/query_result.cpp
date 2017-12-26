@@ -10,14 +10,22 @@ namespace san
     }
 
     std::shared_ptr<QueryResult>
-    QueryResult::get_prepared_stmt(const pqxx::prepare::invocation& prepared_stmt)
+    QueryResult::get_prepared_stmt(pqxx::connection& conn,
+                                   const std::string& name,
+                                   const std::string& query,
+                                   const std::string& arg)
     {
         auto query_result = std::make_shared<QueryResult>();
 
         // TODO: Check if further error handling is needed
 
         try {
-            query_result->run_prepared_stmt(prepared_stmt);
+            pqxx::nontransaction work(conn);
+            conn.prepare(name, query);
+            auto prepared = work.prepared(name)(arg);
+
+            query_result->run_prepared_stmt(prepared);
+
             query_result->set_status(true, "");
         } catch (const pqxx::sql_error& e) {
             query_result->set_status(false, e.what());
