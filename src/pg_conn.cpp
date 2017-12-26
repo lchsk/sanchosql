@@ -45,15 +45,15 @@ namespace san
         return run_query(query, "");
     }
 
-    std::vector<std::string> PostgresConnection::get_db_tables(const Glib::ustring& schema_name)
+    std::vector<std::string> PostgresConnection::get_db_tables(const Glib::ustring& schema_name) const noexcept
     {
         std::vector<std::string> tables;
 
-        pqxx::work work(*conn);
+        pqxx::nontransaction work(*conn);
 
         const std::string sql = R"(
             SELECT
-                *
+                table_name
             FROM
                 information_schema.tables
             WHERE
@@ -63,10 +63,12 @@ namespace san
             )";
 
         conn->prepare("get_db_tables", sql);
-        pqxx::result result = work.prepared("get_db_tables")(std::string(schema_name)).exec();
 
-        for (const auto& row : result) {
-            tables.push_back(row["table_name"].as<std::string>());
+        auto query_result
+            = san::QueryResult::get_prepared_stmt(work.prepared("get_db_tables")(std::string(schema_name)));
+
+        for (auto& row : query_result->as_map()) {
+            tables.push_back(row["table_name"]);
         }
 
         return tables;

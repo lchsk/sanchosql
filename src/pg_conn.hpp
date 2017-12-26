@@ -38,7 +38,7 @@ namespace san
         virtual std::shared_ptr<san::QueryResult> run_query(const std::string& query, const std::string& columns_query);
         virtual std::shared_ptr<san::QueryResult> run_query(const std::string& query);
 
-        std::vector<std::string> get_db_tables(const Glib::ustring& schema_name);
+        std::vector<std::string> get_db_tables(const Glib::ustring& schema_name) const noexcept;
 
         std::vector<std::pair<std::string, std::string>>
         get_table_columns(const std::string& table_name);
