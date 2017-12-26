@@ -18,16 +18,38 @@ namespace san
         get(pqxx::connection& conn,
             const std::string& query,
             const std::string& columns_query,
-            std::unordered_map<pqxx::oid,
-            san::OidMapping>& oid_names);
+            std::shared_ptr<std::unordered_map<pqxx::oid, san::OidMapping>>& oid_names);
 
         std::vector<san::Column> columns;
         std::vector<std::vector<std::string> > data;
 
+        // Return data where each row is a map column name -> value
+        std::vector<std::map<std::string, std::string>>
+        as_map() const {
+            std::vector<std::map<std::string, std::string>> v;
+
+            for (unsigned i = 0; i < data.size(); i++) {
+                std::map<std::string, std::string> m;
+
+                for (unsigned j = 0; j < columns.size(); j++) {
+                    m[columns[j].column_name] = data[i][j];
+                }
+
+                v.push_back(m);
+            }
+
+            return v;
+        }
+
+        static std::shared_ptr<QueryResult>
+        get_prepared_stmt(const pqxx::prepare::invocation& prepared_stmt);
+        void run_prepared_stmt(const pqxx::prepare::invocation& prepared_stmt);
+
+        void handle_results(const pqxx::result&);
+
         void run(pqxx::connection& conn,
                  const std::string& query,
-                 const std::string& columns_query,
-                 std::unordered_map<pqxx::oid, san::OidMapping>& oid_names);
+                 const std::string& columns_query);
 
         const std::map<std::string, san::ColumnMetadata>
         get_columns_data(pqxx::connection& conn, const std::string& columns_query) const  {
@@ -64,6 +86,13 @@ namespace san
 
         bool success;
         Glib::ustring error_message;
+
+        // Optional query to obtain information about columns
+        std::string columns_query;
+
+        std::map<std::string, san::ColumnMetadata> columns_data;
+
+        std::shared_ptr<std::unordered_map<pqxx::oid, san::OidMapping>> oid_names;
     };
 }
 

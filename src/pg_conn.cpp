@@ -10,7 +10,8 @@ namespace san
     (const std::shared_ptr<san::ConnectionDetails>& conn_details) :
         conn_details(conn_details),
         is_open_(false),
-        error_message_("")
+        error_message_(""),
+        oid_names(std::make_shared<std::unordered_map<pqxx::oid, san::OidMapping>>())
     {
     }
 
@@ -112,6 +113,8 @@ namespace san
     {
         std::vector<std::map<std::string, std::string> > data;
 
+		// TODO: ?
+
         pqxx::work work(*conn);
 
         const std::string sql = "select * from " + table_name;
@@ -155,11 +158,11 @@ namespace san
     }
 
     const std::vector<PrimaryKey>
-    PostgresConnection::get_primary_key(const std::string& table_name, const std::string& schema_name) const
+    PostgresConnection::get_primary_key(const std::string& table_name, const std::string& schema_name) const noexcept
     {
         std::vector<PrimaryKey> data;
 
-        pqxx::work work(*conn);
+        pqxx::nontransaction work(*conn);
 
         const std::string sql = R"(
             SELECT
@@ -173,12 +176,17 @@ namespace san
 
         conn->prepare("get_primary_key", sql);
         const std::string id = schema_name + "." + table_name;
-        pqxx::result result = work.prepared("get_primary_key")(id).exec();
 
-        for (const auto& row : result) {
+        auto query_result
+            = san::QueryResult::get_prepared_stmt(work.prepared("get_primary_key")(id));
+
+        if (! query_result->success)
+            return data;
+
+        for (auto& row : query_result->as_map()) {
             data.push_back(PrimaryKey({
-                .column_name=row["column_name"].as<std::string>(),
-                .data_type=row["data_type"].as<std::string>()
+                .column_name = row["column_name"],
+                .data_type = row["data_type"]
             }));
         }
 
@@ -222,7 +230,7 @@ namespace san
         pqxx::result result = work.exec(sql);
 
         for (const auto& row : result) {
-            oid_names[row["oid"].as<pqxx::oid>()] = san::OidMapping({
+            (*oid_names)[row["oid"].as<pqxx::oid>()] = san::OidMapping({
                     .oid=row["oid"].as<pqxx::oid>(),
                         .udt_name=row["udt_name"].as<std::string>(),
                         .data_type=row["data_type"].as<std::string>(),

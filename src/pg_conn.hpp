@@ -48,7 +48,7 @@ namespace san
                        const std::vector<std::pair<std::string, std::string>>& columns);
 
         virtual const std::vector<PrimaryKey>
-        get_primary_key(const std::string& table_name, const std::string& schema_name) const;
+        get_primary_key(const std::string& table_name, const std::string& schema_name) const noexcept;
 
         std::unique_ptr<std::vector<Glib::ustring>> get_schemas() const;
 
@@ -69,10 +69,10 @@ namespace san
 
         std::unique_ptr<pqxx::connection> conn;
 
-        std::unordered_map<pqxx::oid, san::OidMapping> oid_names;
-
         bool is_open_;
         std::string error_message_;
+
+        std::shared_ptr<std::unordered_map<pqxx::oid, san::OidMapping>> oid_names;
     };
 }
 
