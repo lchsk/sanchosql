@@ -10,14 +10,31 @@ namespace san
             host = hostname;
     }
 
-    const std::string ConnectionDetails::postgres_string()
+    const std::string ConnectionDetails::postgres_connection_string()
+    {
+        return postgres_string_(true);
+    }
+
+    const std::string ConnectionDetails::postgres_string_safe()
+    {
+        return postgres_string_(false);
+    }
+
+    const std::string ConnectionDetails::postgres_string_(bool include_password)
     {
         std::stringstream conn;
 
         conn << "hostaddr = " << host
              << " user = " << user
-             << " password = " << password
-             << " dbname = " << dbname
+             << " password = ";
+
+        if (include_password) {
+			conn << password;
+        } else {
+            conn << "****";
+        }
+
+        conn << " dbname = " << dbname
              << " port = " << port;
 
         return conn.str();
