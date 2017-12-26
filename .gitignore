@@ -37,6 +37,8 @@ CMakeCache.txt
 CMakeFiles/
 Makefile
 *.cmake
+build/
+cotire/
 
 # Resources
 src/resources.c
@@ -46,5 +48,4 @@ res/*~
 tests/*
 !tests/*.cpp
 !tests/*.hpp
-!tests/Makefile
 !tests/CMakeLists.txt
