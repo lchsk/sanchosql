@@ -1,5 +1,9 @@
 #include <iostream>
 
+#if defined(SANCHO_OS_UNIX) || defined(SANCHO_OS_MAC)
+#include <signal.h>
+#endif
+
 #include <pqxx/pqxx>
 
 #include "main_window.hpp"
@@ -9,6 +13,12 @@
 int main (int argc, char *argv[])
 {
     g_debug("Detected system: %s", SANCHO_OS);
+
+    // If pqxx breaks the connection we might get a SIGPIPE signal
+    // Ignoring it here because it leads to program termination
+    #if defined(SANCHO_OS_UNIX) || defined(SANCHO_OS_MAC)
+    signal(SIGPIPE, SIG_IGN);
+    #endif
 
     auto app = Gtk::Application::create(argc, argv, "sancho.sql");
 
