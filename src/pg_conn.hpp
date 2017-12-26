@@ -24,6 +24,12 @@ namespace san
               data_type(data_type) {}
     };
 
+    class NoConnection : public std::runtime_error
+    {
+    public:
+        NoConnection(const std::string& what) : std::runtime_error(what) {}
+    };
+
     class PostgresConnection {
     public:
         PostgresConnection(const std::shared_ptr<san::ConnectionDetails>& conn_details);

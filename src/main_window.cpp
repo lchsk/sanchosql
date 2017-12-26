@@ -638,6 +638,8 @@ sigc::mem_fun(*this, &MainWindow::cellrenderer_validated_on_editing_started), &t
     {
         combo_connections.remove_all();
 
+        combo_connections.append("");
+
         for (const auto& details : san::Connections::instance()->get_connections()) {
             combo_connections.append(details.second->name);
         }
@@ -653,9 +655,17 @@ sigc::mem_fun(*this, &MainWindow::cellrenderer_validated_on_editing_started), &t
         const auto current_connection
             = san::Connections::instance()->get_connection(connection_name);
 
-        std::shared_ptr<san::PostgresConnection> pc
-            = std::make_shared<san::PostgresConnection>(current_connection);
-        pc->init_connection();
+        std::shared_ptr<san::PostgresConnection> pc = nullptr;
+
+        try {
+            pc = connect(current_connection);
+        } catch (const san::NoConnection& e) {
+            show_warning("Connection failed", e.what());
+            reset_browser();
+
+            return;
+        }
+
         current_connection->schemas = pc->get_schemas();
 
         combo_schemas.remove_all();
@@ -683,9 +693,16 @@ sigc::mem_fun(*this, &MainWindow::cellrenderer_validated_on_editing_started), &t
         if (! current_connection)
             return;
 
-        std::shared_ptr<san::PostgresConnection> pc
-            = std::make_shared<san::PostgresConnection>(current_connection);
-        pc->init_connection();
+        std::shared_ptr<san::PostgresConnection> pc = nullptr;
+
+        try {
+            pc = connect(current_connection);
+        } catch (const san::NoConnection& e) {
+            show_warning("Connection failed", e.what());
+            reset_browser();
+
+            return;
+        }
 
         refresh_browser(pc);
     }

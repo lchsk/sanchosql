@@ -54,10 +54,29 @@ namespace san
         void on_schema_changed();
         void on_win_connections_hide();
 
+        std::shared_ptr<san::PostgresConnection> connect(const std::shared_ptr<san::ConnectionDetails>& conn_details) {
+            std::shared_ptr<san::PostgresConnection> pc
+                = std::make_shared<san::PostgresConnection>(conn_details);
+            pc->init_connection();
+
+            return pc;
+        }
+
         void on_primary_key_warning_clicked(const Glib::ustring table_name) {
             Gtk::MessageDialog dialog(*this, "Table \"" + table_name + "\" doesn't a have primary key", false /* use_markup */, Gtk::MESSAGE_WARNING, Gtk::BUTTONS_OK);
             dialog.set_modal();
             dialog.set_secondary_text("Updating values in the editor will be disabled");
+
+            dialog.run();
+        }
+
+        void show_warning(const Glib::ustring& primary, const Glib::ustring& secondary = Glib::ustring()) {
+            Gtk::MessageDialog dialog(*this, primary, false /* use_markup */, Gtk::MESSAGE_WARNING, Gtk::BUTTONS_OK);
+            dialog.set_modal();
+
+            if (! secondary.empty()) {
+                dialog.set_secondary_text(secondary);
+            }
 
             dialog.run();
         }
@@ -168,6 +187,13 @@ namespace san
 
         void refresh_connections_list();
         void refresh_browser(const std::shared_ptr<san::PostgresConnection>&);
+        void reset_browser() {
+            browser_store->clear();
+            combo_connections.set_active(0);
+            combo_schemas.remove_all();
+            combo_schemas.set_active(0);
+            san::Connections::instance()->current_connection = nullptr;
+        };
 
         Glib::RefPtr<Gtk::Builder> res_builder;
         Glib::RefPtr<Gio::SimpleActionGroup> menu_group;

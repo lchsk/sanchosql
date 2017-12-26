@@ -187,20 +187,22 @@ namespace san
 
     void PostgresConnection::init_connection()
     {
-        std::cout << "Trying to connect to: " << conn_details->postgres_string() << std::endl;
+        g_debug("Initiating postgres connection: %s", conn_details->postgres_string_safe().c_str());
 
         try {
-            conn = std::make_unique<pqxx::connection>(conn_details->postgres_string());
+            conn = std::make_unique<pqxx::connection>(conn_details->postgres_connection_string());
 
             error_message_ = "";
             is_open_ = conn->is_open();
 
             load_oids();
         } catch (const std::exception& e) {
-            std::cerr << "Connection error: " << e.what() << std::endl;
+            g_warning("Postgres connection failed: %s", e.what());
 
             error_message_ = e.what();
             is_open_ = false;
+
+            throw san::NoConnection(e.what());
         }
     }
 
