@@ -2,10 +2,37 @@
 
 namespace san
 {
-    QueryResult::QueryResult(pqxx::connection& conn,
-                             const std::string& query,
-                             const std::string& columns_query,
-                             std::unordered_map<pqxx::oid, san::OidMapping>& oid_names)
+    QueryResult::QueryResult()
+        : success(false),
+          error_message(Glib::ustring())
+    {
+    }
+
+    std::shared_ptr<QueryResult>
+    QueryResult::get(pqxx::connection& conn,
+                     const std::string& query,
+                     const std::string& columns_query,
+                     std::unordered_map<pqxx::oid, san::OidMapping>& oid_names)
+    {
+        auto query_result = std::make_shared<QueryResult>();
+
+        // TODO: Check if further error handling is needed
+
+        try {
+            query_result->run(conn, query, columns_query, oid_names);
+        } catch (const pqxx::sql_error& e) {
+            query_result->set_status(false, e.what());
+        } catch (const std::exception& e) {
+            query_result->set_status(false, e.what());
+        }
+
+        return query_result;
+    }
+
+    void QueryResult::run(pqxx::connection& conn,
+                          const std::string& query,
+                          const std::string& columns_query,
+                          std::unordered_map<pqxx::oid, san::OidMapping>& oid_names)
     {
         pqxx::nontransaction work(conn);
         pqxx::result result = work.exec(query);

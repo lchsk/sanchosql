@@ -12,13 +12,22 @@ namespace san
 {
     struct QueryResult
     {
-        QueryResult(pqxx::connection& conn,
-                    const std::string& query,
-                    const std::string& columns_query,
-                    std::unordered_map<pqxx::oid, san::OidMapping>& oid_names);
+        QueryResult();
+
+        static std::shared_ptr<QueryResult>
+        get(pqxx::connection& conn,
+            const std::string& query,
+            const std::string& columns_query,
+            std::unordered_map<pqxx::oid,
+            san::OidMapping>& oid_names);
 
         std::vector<san::Column> columns;
         std::vector<std::vector<std::string> > data;
+
+        void run(pqxx::connection& conn,
+                 const std::string& query,
+                 const std::string& columns_query,
+                 std::unordered_map<pqxx::oid, san::OidMapping>& oid_names);
 
         const std::map<std::string, san::ColumnMetadata>
         get_columns_data(pqxx::connection& conn, const std::string& columns_query) const  {
@@ -47,6 +56,14 @@ namespace san
 
             return columns;
         }
+
+        void set_status(bool p_success, const Glib::ustring& p_error_message) {
+            success = p_success;
+            error_message = p_error_message;
+        }
+
+        bool success;
+        Glib::ustring error_message;
     };
 }
 

@@ -35,7 +35,7 @@ namespace san
             g_debug("Executing columns query: %s", columns_query.c_str());
         }
 
-        return std::make_shared<san::QueryResult>(*conn, query, columns_query, oid_names);
+        return san::QueryResult::get(*conn, query, columns_query, oid_names);
     }
 
     std::shared_ptr<san::QueryResult>
