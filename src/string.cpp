@@ -1,4 +1,5 @@
 #include <string>
+#include <ctime>
 
 #include "string.hpp"
 
@@ -68,6 +69,23 @@ namespace san
         bool is_empty(const Glib::ustring& input)
         {
             return trim(input) == "";
+        }
+    }
+
+    namespace date
+    {
+        Glib::ustring get_current_datetime()
+        {
+            time_t rawtime;
+            struct tm* timeinfo;
+            char buffer[80];
+
+            time(&rawtime);
+            timeinfo = localtime(&rawtime);
+
+            strftime(buffer, sizeof(buffer), "%Y-%m-%d %H:%M:%S", timeinfo);
+
+            return Glib::ustring(buffer);
         }
     }
 }

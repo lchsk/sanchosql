@@ -1,4 +1,5 @@
 #include "tab.hpp"
+#include "string.hpp"
 
 namespace san
 {
@@ -11,8 +12,10 @@ namespace san
             log_buffer->set_text(log_buffer->get_text().substr(0, LOG_BUFFER_MAX_SIZE));
         }
 
+        const Glib::ustring dated_message = san::date::get_current_datetime() + " " + message;
+
         // Add the message at the beginning
-        log_buffer->insert(log_buffer->begin(), message);
+        log_buffer->insert(log_buffer->begin(), dated_message);
     }
 
     QueryTab::QueryTab()

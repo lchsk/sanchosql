@@ -24,6 +24,11 @@ namespace san
 
         bool is_empty(const Glib::ustring& input);
     }
+
+    namespace date
+    {
+        Glib::ustring get_current_datetime();
+    }
 }
 
 #endif
