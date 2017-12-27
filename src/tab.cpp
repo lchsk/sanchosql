@@ -129,6 +129,29 @@ namespace san
         tree->set_model(list_store);
 
         tree_scrolled_window = Gtk::manage(new Gtk::ScrolledWindow);
+        log_scrolled_window = Gtk::manage(new Gtk::ScrolledWindow);
+        data_scrolled_window = Gtk::manage(new Gtk::ScrolledWindow);
+
+        // Set up log source view
+
+        Glib::RefPtr<Gsv::StyleSchemeManager> sm = Gsv::StyleSchemeManager::get_default();
+        Glib::RefPtr<Gsv::StyleScheme> style = sm->get_scheme("cobalt");
+
+        log = Gtk::manage(new Gsv::View);
+        log_buffer = log->get_source_buffer();
+
+        if (! log_buffer) {
+            g_warning("Gsv::View::get_source_buffer() failed for listview log");
+        }
+
+        log->property_editable() = false;
+        log_buffer->set_style_scheme(style);
+
+        log_scrolled_window->add(*log);
+        log_scrolled_window->set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
+
+        data_scrolled_window->add(*tree);
+        data_scrolled_window->set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
 
         box = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
 
@@ -163,8 +186,11 @@ namespace san
         browse_box->pack_start(*label_limit);
         browse_box->pack_start(*number_limit);
 
+        paned_main.pack1(*data_scrolled_window);
+        paned_main.pack2(*log_scrolled_window);
+
         box->pack_start(*toolbar, Gtk::PACK_SHRINK);
-        box->pack_start(*tree);
+        box->pack_start(paned_main);
         box->pack_start(*browse_box, Gtk::PACK_SHRINK);
 
         tree_scrolled_window->add(*box);

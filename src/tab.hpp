@@ -75,10 +75,17 @@ namespace san
         san::NumberEntry* number_offset;
         san::NumberEntry* number_limit;
         Gtk::TreeView* tree;
+        Gtk::ScrolledWindow* data_scrolled_window;
 
         Gtk::Menu popup;
 
         Gtk::MenuItem* popup_item_delete_rows;
+
+        Glib::RefPtr<Gsv::Buffer> log_buffer;
+        Gsv::View* log;
+        Gtk::ScrolledWindow* log_scrolled_window;
+
+        Gtk::VPaned paned_main;
 
         std::shared_ptr<san::SimpleTabModel> model;
     };
