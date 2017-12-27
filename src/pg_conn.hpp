@@ -32,7 +32,7 @@ namespace san
 
     class PostgresConnection {
     public:
-        PostgresConnection(const std::shared_ptr<san::ConnectionDetails>& conn_details);
+        explicit PostgresConnection(const std::shared_ptr<san::ConnectionDetails>& conn_details);
         virtual ~PostgresConnection();
 
         virtual std::shared_ptr<san::QueryResult> run_query(const std::string& query, const std::string& columns_query);

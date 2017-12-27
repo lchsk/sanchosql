@@ -1,7 +1,6 @@
 #include <iostream>
 
 #include "win_new_connection.hpp"
-#include "pg_conn.hpp"
 
 #include "string.hpp"
 
@@ -133,8 +132,19 @@ namespace san
 		conn->port = text_port->get_text();;
 
 		san::PostgresConnection pg_conn(conn);
-		pg_conn.init_connection();
 
+		try {
+			pg_conn.init_connection();
+			g_debug("Test connection OK: %s", conn->postgres_string_safe().c_str());
+		} catch(const san::NoConnection& e) {
+			g_debug("Test connection failed: %s", conn->postgres_string_safe().c_str());
+		}
+
+		update_connection_status(pg_conn);
+	}
+
+	void NewConnectionWindow::update_connection_status(const san::PostgresConnection& pg_conn)
+	{
 		if (pg_conn.is_open()) {
 			label_connection_status->set_text("Success");
 			label_connection_status->override_color

@@ -3,6 +3,8 @@
 
 #include <gtkmm.h>
 
+#include "pg_conn.hpp"
+
 namespace san
 {
     class NewConnectionWindow : public Gtk::Window
@@ -18,6 +20,8 @@ namespace san
         Mode mode;
         // Name of the connection currently being edited
         Glib::ustring edited_conn_name;
+
+        void update_connection_status(const san::PostgresConnection& pg_conn);
 
         void set_adding_mode();
         void set_editing_mode();
