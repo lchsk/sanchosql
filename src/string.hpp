@@ -29,6 +29,11 @@ namespace san
     {
         Glib::ustring get_current_datetime();
     }
+
+    namespace user
+    {
+        std::string get_user_name();
+    }
 }
 
 #endif

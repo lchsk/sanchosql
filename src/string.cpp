@@ -88,4 +88,12 @@ namespace san
             return Glib::ustring(buffer);
         }
     }
+
+    namespace user
+    {
+        std::string get_user_name()
+        {
+            return Glib::get_user_name();
+        }
+    }
 }
