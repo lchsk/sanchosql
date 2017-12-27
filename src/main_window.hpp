@@ -195,11 +195,13 @@ namespace san
         void refresh_connections_list();
         void refresh_browser(const std::shared_ptr<san::PostgresConnection>&);
         void reset_browser() {
+            // Reset current_connection first before triggering events
+            san::Connections::instance()->current_connection = nullptr;
+
             browser_store->clear();
             combo_connections.set_active(0);
             combo_schemas.remove_all();
             combo_schemas.set_active(0);
-            san::Connections::instance()->current_connection = nullptr;
         };
 
         Glib::RefPtr<Gtk::Builder> res_builder;
