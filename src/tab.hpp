@@ -12,6 +12,8 @@
 
 namespace san
 {
+    void insert_log_message(Glib::RefPtr<Gsv::Buffer>& log_buffer, const Glib::ustring& message);
+
     class AbstractTab
     {
     public:

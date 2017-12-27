@@ -2,6 +2,19 @@
 
 namespace san
 {
+    const unsigned LOG_BUFFER_MAX_SIZE = 2000; // characters
+
+    void insert_log_message(Glib::RefPtr<Gsv::Buffer>& log_buffer, const Glib::ustring& message)
+    {
+        // Limit the size of the buffer
+        if (log_buffer->get_char_count() > LOG_BUFFER_MAX_SIZE) {
+            log_buffer->set_text(log_buffer->get_text().substr(0, LOG_BUFFER_MAX_SIZE));
+        }
+
+        // Add the message at the beginning
+        log_buffer->insert(log_buffer->begin(), message);
+    }
+
     QueryTab::QueryTab()
     {
         hb = Gtk::manage(new Gtk::HBox);

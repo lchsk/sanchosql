@@ -341,7 +341,7 @@ sigc::mem_fun(*this, &MainWindow::cellrenderer_validated_on_editing_started), &t
         std::shared_ptr<san::QueryResult> result = pc.run_query(model.get_query());
 
         if (! result->success) {
-            tab.log_buffer->insert(tab.log_buffer->begin(), result->error_message);
+            san::insert_log_message(tab.log_buffer, result->error_message);
 
             return;
         }
@@ -787,7 +787,7 @@ sigc::mem_fun(*this, &MainWindow::cellrenderer_validated_on_editing_started), &t
                 auto result = model->accept_pk_change();
 
                 if (! result->success) {
-                    tab->log_buffer->insert(tab->log_buffer->begin(), result->error_message);
+                    san::insert_log_message(tab->log_buffer, result->error_message);
 
                     show_warning("Changing primary key failed", result->error_message);
 
@@ -830,7 +830,7 @@ sigc::mem_fun(*this, &MainWindow::cellrenderer_validated_on_editing_started), &t
         std::shared_ptr<san::QueryResult> result = model->accept_changes();
 
         if (! result->success) {
-            tab->log_buffer->insert(tab->log_buffer->begin(), result->error_message);
+            san::insert_log_message(tab->log_buffer, result->error_message);
 
             show_warning("Committing changes failed", result->error_message);
 
@@ -857,7 +857,7 @@ sigc::mem_fun(*this, &MainWindow::cellrenderer_validated_on_editing_started), &t
                         model->db_rows_cnt++;
                     }
                 } else {
-                    tab->log_buffer->insert(tab->log_buffer->begin(), result->error_message);
+                    san::insert_log_message(tab->log_buffer, result->error_message);
 
                     show_warning("Inserting new row failed", result->error_message);
                 }
