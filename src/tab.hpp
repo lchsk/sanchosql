@@ -42,6 +42,10 @@ namespace san
 
         Glib::RefPtr<Gsv::Buffer> buffer;
         Gsv::View* source_view;
+
+        Glib::RefPtr<Gsv::Buffer> log_buffer;
+        Gsv::View* log;
+
         Gtk::TreeView* tree;
         Gtk::ToolButton* btn_execute_editor_query;
     };

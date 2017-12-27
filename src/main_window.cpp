@@ -338,8 +338,13 @@ sigc::mem_fun(*this, &MainWindow::cellrenderer_validated_on_editing_started), &t
         san::QueryTab& tab = get_query_tab(window);
         san::QueryTabModel& model = get_query_tab_model(window);
 
-        std::shared_ptr<san::QueryResult> result
-            = pc.run_query(model.get_query());
+        std::shared_ptr<san::QueryResult> result = pc.run_query(model.get_query());
+
+        if (! result->success) {
+            tab.log_buffer->insert(tab.log_buffer->end(), result->error_message);
+
+            return;
+        }
 
         tab.col_names.clear();
         tab.tree->remove_all_columns();

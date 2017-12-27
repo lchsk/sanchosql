@@ -31,12 +31,12 @@ namespace san
 
         tree_scrolled_window = Gtk::manage(new Gtk::ScrolledWindow);
 
+        // Set up code source view
         source_view = Gtk::manage(new Gsv::View);
-
         buffer = source_view->get_source_buffer();
 
         if (! buffer) {
-            std::cerr << "Gsv::View::get_source_buffer () failed" << std::endl;
+            g_warning("Gsv::View::get_source_buffer() failed for source_view");
         }
 
         source_view->set_show_line_numbers();
@@ -50,15 +50,24 @@ namespace san
 
         buffer->set_language(lang);
         buffer->set_style_scheme(style);
-        buffer->set_text("select * from country") ;
+        buffer->set_text("select * from country");
 
-        const std::string s = buffer->get_text();
-        std::cout << s << std::endl;
+        // Set up log source view
+        log = Gtk::manage(new Gsv::View);
+        log_buffer = log->get_source_buffer();
+
+        if (! log_buffer) {
+            g_warning("Gsv::View::get_source_buffer() failed for log");
+        }
+
+        log->property_editable() = false;
+        log_buffer->set_style_scheme(style);
 
         box = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
         box->pack_start(*toolbar, Gtk::PACK_SHRINK);
         box->pack_start(*source_view);
         box->pack_start(*tree);
+        box->pack_start(*log);
 
         tree_scrolled_window->add(*box);
         tree_scrolled_window->set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
