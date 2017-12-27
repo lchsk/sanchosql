@@ -40,13 +40,19 @@ namespace san
     public:
         QueryTab();
 
+        Gtk::VPaned paned_source;
+        Gtk::VPaned paned_results;
+
         Glib::RefPtr<Gsv::Buffer> buffer;
         Gsv::View* source_view;
+        Gtk::ScrolledWindow* source_scrolled_window;
 
         Glib::RefPtr<Gsv::Buffer> log_buffer;
         Gsv::View* log;
+        Gtk::ScrolledWindow* log_scrolled_window;
 
         Gtk::TreeView* tree;
+        Gtk::ScrolledWindow* data_scrolled_window;
         Gtk::ToolButton* btn_execute_editor_query;
     };
 

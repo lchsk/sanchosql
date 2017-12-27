@@ -30,6 +30,9 @@ namespace san
         tree->set_model(list_store);
 
         tree_scrolled_window = Gtk::manage(new Gtk::ScrolledWindow);
+        source_scrolled_window = Gtk::manage(new Gtk::ScrolledWindow);
+        log_scrolled_window = Gtk::manage(new Gtk::ScrolledWindow);
+        data_scrolled_window = Gtk::manage(new Gtk::ScrolledWindow);
 
         // Set up code source view
         source_view = Gtk::manage(new Gsv::View);
@@ -63,11 +66,31 @@ namespace san
         log->property_editable() = false;
         log_buffer->set_style_scheme(style);
 
+        source_scrolled_window->add(*source_view);
+        source_scrolled_window->set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
+
+        log_scrolled_window->add(*log);
+        log_scrolled_window->set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
+
+        data_scrolled_window->add(*tree);
+        data_scrolled_window->set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
+
+        paned_source.pack1(*source_scrolled_window);
+        paned_source.pack2(paned_results);
+
+        source_scrolled_window->set_valign(Gtk::Align::ALIGN_FILL);
+        paned_results.set_valign(Gtk::Align::ALIGN_BASELINE);
+
+        data_scrolled_window->set_valign(Gtk::Align::ALIGN_FILL);
+        log_scrolled_window->set_valign(Gtk::Align::ALIGN_BASELINE);
+
+        paned_results.pack1(*data_scrolled_window);
+        paned_results.pack2(*log_scrolled_window);
+
         box = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
         box->pack_start(*toolbar, Gtk::PACK_SHRINK);
-        box->pack_start(*source_view);
-        box->pack_start(*tree);
-        box->pack_start(*log);
+
+        box->pack_start(paned_source);
 
         tree_scrolled_window->add(*box);
         tree_scrolled_window->set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
