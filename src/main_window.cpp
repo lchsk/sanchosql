@@ -778,7 +778,16 @@ sigc::mem_fun(*this, &MainWindow::cellrenderer_validated_on_editing_started), &t
 
             if (result == Gtk::RESPONSE_OK) {
                 model->pk_changes[column_name].second = new_text;
-                model->accept_pk_change();
+
+                auto result = model->accept_pk_change();
+
+                if (! result->success) {
+                    show_warning("Changing primary key failed", result->error_message);
+
+                    row[model->cols[column_name]] = model->pk_changes[column_name].first;
+
+                    return;
+                }
             } else {
                 row[model->cols[column_name]] = model->pk_changes[column_name].first;
             }
@@ -811,7 +820,13 @@ sigc::mem_fun(*this, &MainWindow::cellrenderer_validated_on_editing_started), &t
 
     void MainWindow::on_btn_accept_changes_clicked(san::SimpleTab* tab, san::SimpleTabModel* model)
     {
-        model->accept_changes();
+        std::shared_ptr<san::QueryResult> result = model->accept_changes();
+
+        if (! result->success) {
+            show_warning("Committing changes failed", result->error_message);
+
+            return;
+        }
 
         // Reset the background color of highlighted rows
 
@@ -822,11 +837,15 @@ sigc::mem_fun(*this, &MainWindow::cellrenderer_validated_on_editing_started), &t
 
             const Glib::ustring val = row.get_value(model->cols["#"]);
 
-            if (std::atol(val.c_str()) > model->db_rows_cnt) {
-                bool inserted = model->insert_row(row);
+            // Handle inserted row
 
-                if (inserted) {
+            if (std::atol(val.c_str()) > model->db_rows_cnt) {
+                std::shared_ptr<san::QueryResult> result = model->insert_row(row);
+
+                if (result->success) {
                     row[*model->col_color] = model->col_white;
+                } else {
+                    show_warning("Inserting new row failed", result->error_message);
                 }
             } else {
                 row[*model->col_color] = model->col_white;

@@ -149,8 +149,13 @@ namespace san
                     }
                 }
 
-                model->delete_rows(rows_to_delete);
-                load_list_results(window);
+                auto result = model->delete_rows(rows_to_delete);
+
+                if (result->success) {
+                    load_list_results(window);
+                } else {
+                    show_warning("Deleting rows failed", result->error_message);
+                }
             }
             }
         }

@@ -15,6 +15,19 @@ namespace san
         QueryResult();
 
         static std::shared_ptr<QueryResult>
+        get() {
+            return std::make_shared<QueryResult>();
+        }
+
+        static std::shared_ptr<QueryResult>
+        get(const bool success) {
+            auto result = std::make_shared<QueryResult>();
+            result->success = success;
+
+            return result;
+        }
+
+        static std::shared_ptr<QueryResult>
         get(pqxx::connection& conn,
             const std::string& query,
             const std::string& columns_query,

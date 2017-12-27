@@ -99,9 +99,11 @@ namespace san
 		return query.str();
 	}
 
-	void SimpleTabModel::accept_changes()
+	std::shared_ptr<san::QueryResult> SimpleTabModel::accept_changes()
 	{
-		if (! map_test.size()) return;
+		if (! map_test.size()) {
+			return san::QueryResult::get(true);
+		}
 
 		std::stringstream query;
 
@@ -145,20 +147,26 @@ namespace san
 
 		g_debug("Accept query: %s", query.str().c_str());
 
-		conn().run_query(query.str());
+		auto result = conn().run_query(query.str());
 
-		map_test.clear();
+		if (result->success) {
+			map_test.clear();
+		}
+
+		return result;
 	}
 
-	void SimpleTabModel::accept_pk_change() {
-		if (pk_changes.empty())
-			return;
+	std::shared_ptr<san::QueryResult> SimpleTabModel::accept_pk_change() {
+		if (pk_changes.empty()) {
+			return san::QueryResult::get(true);
+		}
+
 
 		if (pk_changes.size() > 1) {
 			pk_changes.clear();
 			pk_hist.clear();
 
-			return;
+			return san::QueryResult::get(true);
 		};
 
 		std::stringstream query;
@@ -191,14 +199,15 @@ namespace san
 
 		g_debug("Accept PK change query: %s", query.str().c_str());
 
-		conn().run_query(query.str());
+		return conn().run_query(query.str());
 	};
 
-	void SimpleTabModel::delete_rows(const std::vector<std::vector<std::pair<Glib::ustring, Glib::ustring>>>& rows_to_delete) {
-		if (rows_to_delete.empty())
-			return;
+	std::shared_ptr<san::QueryResult> SimpleTabModel::delete_rows(const std::vector<std::vector<std::pair<Glib::ustring, Glib::ustring>>>& rows_to_delete) {
+		if (rows_to_delete.empty()) {
+			return san::QueryResult::get(true);
+		}
 
-		std::cout << "Removing " << rows_to_delete.size() << " rows" << std::endl;
+		g_debug("Removing %d rows", rows_to_delete.size());
 
 		std::stringstream query;
 
@@ -231,10 +240,11 @@ namespace san
 
 		g_debug("Executing delete query: %s", query.str().c_str());
 
-		conn().run_query(query.str());
+		return conn().run_query(query.str());
 	}
 
-	bool SimpleTabModel::insert_row(const Gtk::TreeModel::Row& row) {
+	std::shared_ptr<san::QueryResult>
+	SimpleTabModel::insert_row(const Gtk::TreeModel::Row& row) {
 		std::stringstream query;
 
 		query << "insert into "
@@ -262,7 +272,7 @@ namespace san
 		}
 
 		if (! i) {
-			return false;
+			return san::QueryResult::get(false);
 		}
 
 		i = 0;
@@ -288,9 +298,7 @@ namespace san
 
 		g_debug("Insert row query: %s", query.str().c_str());
 
-		conn().run_query(query.str());
-
-		return true;
+		return conn().run_query(query.str());
 	}
 
 	const std::string SimpleTabModel::get_order_by_query() const

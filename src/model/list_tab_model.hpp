@@ -68,10 +68,10 @@ namespace san
 
 		// Run UPDATE query to save pending changes in the DB
 		// Doesn't include changes to Primary Key
-		void accept_changes();
-		void accept_pk_change();
-		void delete_rows(const std::vector<std::vector<std::pair<Glib::ustring, Glib::ustring>>>& rows_to_delete);
-		bool insert_row(const Gtk::TreeModel::Row& row);
+		std::shared_ptr<san::QueryResult> accept_changes();
+		std::shared_ptr<san::QueryResult> accept_pk_change();
+		std::shared_ptr<san::QueryResult> delete_rows(const std::vector<std::vector<std::pair<Glib::ustring, Glib::ustring>>>& rows_to_delete);
+		std::shared_ptr<san::QueryResult> insert_row(const Gtk::TreeModel::Row& row);
 
 		unsigned db_rows_cnt;
 
