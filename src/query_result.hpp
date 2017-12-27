@@ -108,6 +108,16 @@ namespace san
         // Optional query to obtain information about columns
         std::string columns_query;
 
+		pqxx::result::size_type size;
+
+        // Only for INSERT, UPDATE, DELETE
+		pqxx::result::size_type affected_rows;
+
+        // True if we need to show results of the query.
+        // It does not necessarily mean we have > 1 row - it means that it was
+        // some kind of SELECT query that didn't error.
+        bool show_results;
+
         std::map<std::string, san::ColumnMetadata> columns_data;
 
         std::shared_ptr<std::unordered_map<pqxx::oid, san::OidMapping>> oid_names;

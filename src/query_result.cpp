@@ -6,6 +6,9 @@ namespace san
         : success(false),
           error_message(Glib::ustring()),
           inserted_empty_row(false),
+          size(0),
+          affected_rows(0),
+          show_results(false),
           oid_names(std::make_shared<std::unordered_map<pqxx::oid, san::OidMapping>>())
     {
     }
@@ -39,6 +42,11 @@ namespace san
 
     void QueryResult::handle_results(const pqxx::result& result)
     {
+        size = result.size();
+        affected_rows = result.affected_rows();
+
+        show_results = result.columns();
+
         bool use_columns = columns_data.size();
 
         for (unsigned i = 0; i < result.columns(); i++) {

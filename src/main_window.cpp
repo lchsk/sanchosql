@@ -340,8 +340,36 @@ sigc::mem_fun(*this, &MainWindow::cellrenderer_validated_on_editing_started), &t
 
         std::shared_ptr<san::QueryResult> result = pc.run_query(model.get_query());
 
-        if (! result->success) {
+        tab.data_scrolled_window->set_visible(result->show_results);
+
+        if (result->success) {
+            std::stringstream message;
+            message << "Query ";
+
+            if (result->show_results) {
+                message << "returned " << result->size;
+
+                if (result->size == 1) {
+                    message << " row";
+                } else {
+                    message << " rows";
+                }
+            } else {
+                message << "affected " << result->affected_rows;
+
+                if (result->affected_rows == 1) {
+                    message << " row";
+                } else {
+                    message << " rows";
+                }
+            }
+
+            message << "\n";
+
+            san::insert_log_message(tab.log_buffer, message.str());
+        } else {
             san::insert_log_message(tab.log_buffer, result->error_message);
+            tab.data_scrolled_window->hide();
 
             return;
         }
@@ -518,6 +546,9 @@ sigc::mem_fun(*this, &MainWindow::cellrenderer_validated_on_editing_started), &t
         notebook.append_page(*window, *(tab->hb));
 
         show_all_children();
+
+        // Hide initially because we don't have any data
+        tab->data_scrolled_window->hide();
 
         notebook.next_page();
     }
