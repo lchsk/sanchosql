@@ -5,6 +5,7 @@ namespace san
     QueryResult::QueryResult()
         : success(false),
           error_message(Glib::ustring()),
+          inserted_empty_row(false),
           oid_names(std::make_shared<std::unordered_map<pqxx::oid, san::OidMapping>>())
     {
     }

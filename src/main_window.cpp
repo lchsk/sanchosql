@@ -848,7 +848,10 @@ sigc::mem_fun(*this, &MainWindow::cellrenderer_validated_on_editing_started), &t
                 std::shared_ptr<san::QueryResult> result = model->insert_row(row);
 
                 if (result->success) {
-                    row[*model->col_color] = model->col_white;
+                    if (! result->inserted_empty_row) {
+                        row[*model->col_color] = model->col_white;
+                        model->db_rows_cnt++;
+                    }
                 } else {
                     show_warning("Inserting new row failed", result->error_message);
                 }

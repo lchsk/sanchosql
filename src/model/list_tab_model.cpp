@@ -272,7 +272,10 @@ namespace san
 		}
 
 		if (! i) {
-			return san::QueryResult::get(false);
+			auto result = san::QueryResult::get(true);
+			result->inserted_empty_row = true;
+
+			return result;
 		}
 
 		i = 0;

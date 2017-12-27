@@ -103,6 +103,7 @@ namespace san
 
         bool success;
         Glib::ustring error_message;
+        bool inserted_empty_row;
 
         // Optional query to obtain information about columns
         std::string columns_query;
