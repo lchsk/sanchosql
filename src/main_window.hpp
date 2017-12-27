@@ -154,6 +154,8 @@ namespace san
                 if (result->success) {
                     load_list_results(window);
                 } else {
+                    tab->log_buffer->insert(tab->log_buffer->begin(), result->error_message);
+
                     show_warning("Deleting rows failed", result->error_message);
                 }
             }
