@@ -543,14 +543,14 @@ sigc::mem_fun(*this, &MainWindow::cellrenderer_validated_on_editing_started), &t
 
         tab_models[window] = std::make_shared<san::QueryTabModel>(current_connection);
 
+        tab->show();
+
         notebook.append_page(*window, *(tab->hb));
 
-        tab->show();
+        notebook.set_current_page(notebook.get_n_pages() - 1);
 
         // Hide initially because we don't have any data
         tab->data_scrolled_window->hide();
-
-        notebook.next_page();
     }
 
     void MainWindow::on_browser_row_activated(const Gtk::TreeModel::Path& path,
@@ -631,11 +631,11 @@ sigc::mem_fun(*this, &MainWindow::cellrenderer_validated_on_editing_started), &t
               window));
 
         load_list_results(window);
-        notebook.append_page(*window, *(tab->hb));
 
         tab->show();
 
-        notebook.next_page();
+        notebook.append_page(*window, *(tab->hb));
+        notebook.set_current_page(notebook.get_n_pages() - 1);
 
         if (shared_tab_model->has_primary_key()) {
             tab->btn_primary_key_warning->hide();
