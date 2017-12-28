@@ -70,12 +70,14 @@ namespace san
 
         const std::map<std::string, san::ColumnMetadata>
         get_columns_data(pqxx::connection& conn, const std::string& columns_query) const  {
+			// TODO: Make sure only SELECT can be run here
             pqxx::nontransaction work(conn);
             pqxx::result result = work.exec(columns_query);
             work.commit();
 
             std::map<std::string, san::ColumnMetadata> columns;
 
+            // TODO: Handle cases when 'row' does not contain the columns mentioned below
             for (const auto& row : result) {
                 const auto column_name = row["column_name"].as<std::string>();
 
