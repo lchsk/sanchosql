@@ -545,7 +545,7 @@ sigc::mem_fun(*this, &MainWindow::cellrenderer_validated_on_editing_started), &t
 
         notebook.append_page(*window, *(tab->hb));
 
-        show_all_children();
+        tab->show();
 
         // Hide initially because we don't have any data
         tab->data_scrolled_window->hide();
@@ -633,7 +633,8 @@ sigc::mem_fun(*this, &MainWindow::cellrenderer_validated_on_editing_started), &t
         load_list_results(window);
         notebook.append_page(*window, *(tab->hb));
 
-        show_all_children();
+        tab->show();
+
         notebook.next_page();
 
         if (shared_tab_model->has_primary_key()) {

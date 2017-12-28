@@ -110,8 +110,6 @@ namespace san
 
         tree_scrolled_window->add(*box);
         tree_scrolled_window->set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
-
-        hb->show_all_children();
     }
 
     SimpleTab::SimpleTab(std::shared_ptr<san::SimpleTabModel>& model)
@@ -211,7 +209,5 @@ namespace san
 
         tree_scrolled_window->add(*box);
         tree_scrolled_window->set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
-
-        hb->show_all_children();
     }
 }

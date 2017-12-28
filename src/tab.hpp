@@ -17,6 +17,12 @@ namespace san
     class AbstractTab
     {
     public:
+        void show() const {
+            tree_scrolled_window->show();
+            tree_scrolled_window->show_all_children();
+            hb->show_all_children();
+        };
+
         Gtk::HBox* hb;
         Gtk::Button* b;
         Gtk::Label* l;
