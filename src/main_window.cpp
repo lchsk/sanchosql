@@ -222,9 +222,9 @@ namespace san
         tab.cr->add(model.cols["#"]);
 
         Gtk::TreeViewColumn* tree_view_column
-            = Gtk::manage(new Gtk::TreeViewColumn("#", model.cols["#"]));
+            = Gtk::manage(new Gtk::TreeViewColumn("", model.cols["#"]));
         tab.tree->append_column(*tree_view_column);
-        tab.col_names[tree_view_column] = "#";
+        tab.col_names[tree_view_column] = "";
 
         tree_view_column->add_attribute(*tree_view_column->get_first_cell(),
                                         "background-rgba",
@@ -385,9 +385,9 @@ sigc::mem_fun(*this, &MainWindow::cellrenderer_validated_on_editing_started), &t
         tab.cr->add(model.cols["#"]);
 
         Gtk::TreeViewColumn* tree_view_column
-            = Gtk::manage(new Gtk::TreeViewColumn("#", model.cols["#"]));
+            = Gtk::manage(new Gtk::TreeViewColumn("", model.cols["#"]));
         tab.tree->append_column(*tree_view_column);
-        tab.col_names[tree_view_column] = "#";
+        tab.col_names[tree_view_column] = "";
 
         // Column records must be added before setting the model
         for (const auto& column : result->columns) {
