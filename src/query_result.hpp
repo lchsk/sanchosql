@@ -15,6 +15,15 @@ namespace san
         QueryResult();
         QueryResult(const san::QueryType& query_type) : query_type(query_type) {};
 
+        ~QueryResult() {
+            // In theory that should never happen but if the transaction is left
+            // unfinished, explicitly roll it back.
+            if (query_type == san::QueryType::Transaction && transaction) {
+                g_debug("Destroying san::QueryResult - rolling back");
+                rollback();
+            }
+        }
+
         static std::shared_ptr<QueryResult>
         get() {
             return std::make_shared<QueryResult>();
@@ -110,6 +119,8 @@ namespace san
             if (query_type == san::QueryType::Transaction && transaction) {
                 try {
                     transaction->commit();
+                    transaction.reset();
+                    g_assert(transaction == nullptr);
                     g_debug("Transaction committed");
                 } catch (const std::exception& e) {
                     g_warning("Commit failed: %s", e.what());
@@ -124,6 +135,8 @@ namespace san
             if (query_type == san::QueryType::Transaction && transaction) {
                 try {
                     transaction->abort();
+                    transaction.reset();
+                    g_assert(transaction == nullptr);
                     g_debug("Transaction rolled back");
                 } catch (const std::exception& e) {
                     g_warning("Rollback failed: %s", e.what());
