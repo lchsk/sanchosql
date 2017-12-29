@@ -143,14 +143,17 @@ namespace san
 			query << "; ";
 		}
 
-		query << "commit;";
+		g_debug("Executing UPDATE value query: %s", query.str().c_str());
 
-		g_debug("Accept query: %s", query.str().c_str());
+		auto result = conn().run_query(san::QueryType::Transaction, query.str());
 
-		auto result = conn().run_query(query.str());
-
+		// We can't use affected rows information here because we're sending
+		// several UPDATE queries in one.
 		if (result->success) {
+			result->commit();
 			map_test.clear();
+		} else {
+			result->rollback();
 		}
 
 		return result;
@@ -160,7 +163,6 @@ namespace san
 		if (pk_changes.empty()) {
 			return san::QueryResult::get(true);
 		}
-
 
 		if (pk_changes.size() > 1) {
 			pk_changes.clear();
@@ -195,11 +197,28 @@ namespace san
 			i++;
 		}
 
-		query << "; commit;";
+		g_debug("Executing PRIMARY KEY change query: %s", query.str().c_str());
 
-		g_debug("Accept PK change query: %s", query.str().c_str());
+		auto result = conn().run_query(san::QueryType::Transaction, query.str());
 
-		return conn().run_query(query.str());
+		if (result->affected_rows > 1) {
+			// That should never happen unless primary key / unique constraint
+			// was removed from the column in the meantime.
+			g_warning("More than 1 row was affected by the primary key change, attempting rollback");
+			result->set_status(false, "Looks like primary key constraint was recently changed, rolling back, please reload the tab");
+
+			result->rollback();
+
+			return result;
+		}
+
+		if (result->success) {
+			result->commit();
+		} else {
+			result->rollback();
+		}
+
+		return result;
 	};
 
 	std::shared_ptr<san::QueryResult> SimpleTabModel::delete_rows(const std::vector<std::vector<std::pair<Glib::ustring, Glib::ustring>>>& rows_to_delete) {
@@ -236,11 +255,20 @@ namespace san
 			query << row_query.str();
 		}
 
-		query << "commit;";
+		g_debug("Executing DELETE query: %s", query.str().c_str());
 
-		g_debug("Executing delete query: %s", query.str().c_str());
+		auto result = conn().run_query(san::QueryType::Transaction, query.str());
 
-		return conn().run_query(query.str());
+		// Number of affected rows doesn't help here because we're sending all
+		// DELETE queries in one batch.
+
+		if (result->success) {
+			result->commit();
+		} else {
+			result->rollback();
+		}
+
+		return result;
 	}
 
 	std::shared_ptr<san::QueryResult>
@@ -297,11 +325,30 @@ namespace san
 			}
 		}
 
-		query << "); commit;";
+		query << "); ";
 
-		g_debug("Insert row query: %s", query.str().c_str());
+		g_debug("Executing INSERT query: %s", query.str().c_str());
 
-		return conn().run_query(query.str());
+		auto result = conn().run_query(san::QueryType::Transaction, query.str());
+
+		// We're executing INSERT queries one by one so we can check if there's
+		// exactly one affected row.
+		if (result->affected_rows != 1) {
+			g_warning("There should be exactly 1 affected row, instead: %d", result->affected_rows);
+			result->set_status(false, "There should be exactly 1 affected row, instead: " + result->affected_rows);
+
+			result->rollback();
+
+			return result;
+		}
+
+		if (result->success) {
+			result->commit();
+		} else {
+			result->rollback();
+		}
+
+		return result;
 	}
 
 	const std::string SimpleTabModel::get_order_by_query() const

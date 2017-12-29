@@ -9,7 +9,8 @@ namespace san
           size(0),
           affected_rows(0),
           show_results(false),
-          oid_names(std::make_shared<std::unordered_map<pqxx::oid, san::OidMapping>>())
+          oid_names(std::make_shared<std::unordered_map<pqxx::oid, san::OidMapping>>()),
+          query_type(san::QueryType::None)
     {
     }
 
@@ -89,11 +90,12 @@ namespace san
 
     std::shared_ptr<QueryResult>
     QueryResult::get(pqxx::connection& conn,
+                     const san::QueryType& query_type,
                      const std::string& query,
                      const std::string& columns_query,
                      std::shared_ptr<std::unordered_map<pqxx::oid, san::OidMapping>>& oid_names)
     {
-        auto query_result = std::make_shared<QueryResult>();
+        auto query_result = std::make_shared<QueryResult>(query_type);
         query_result->oid_names = oid_names;
         query_result->columns_query = columns_query;
 
@@ -101,7 +103,7 @@ namespace san
 
         try {
             query_result->columns_data = query_result->get_columns_data(conn, columns_query);
-            query_result->run(conn, query, columns_query);
+            query_result->run(conn, query_type, query, columns_query);
             query_result->set_status(true, "");
         } catch (const pqxx::sql_error& e) {
             query_result->set_status(false, e.what());
@@ -113,13 +115,18 @@ namespace san
     }
 
     void QueryResult::run(pqxx::connection& conn,
+                          const san::QueryType& query_type,
                           const std::string& query,
                           const std::string& columns_query)
     {
-        pqxx::nontransaction work(conn);
-        pqxx::result result = work.exec(query);
-        work.commit();
-
-        handle_results(result);
+        if (query_type == san::QueryType::Transaction) {
+            transaction = std::make_unique<pqxx::work>(conn);
+            handle_results(transaction->exec(query));
+        } else if (query_type == san::QueryType::NonTransaction) {
+            pqxx::nontransaction work(conn);
+            handle_results(work.exec(query));
+        } else {
+            throw std::invalid_argument("Invalid query type");
+        }
     }
 }

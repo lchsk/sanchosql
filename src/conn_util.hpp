@@ -32,6 +32,8 @@ namespace san
     const std::string get_data_type(
         const pqxx::oid oid,
         std::unordered_map<pqxx::oid, san::OidMapping>& oid_names);
+
+    enum class QueryType { Transaction, NonTransaction, None };
 }
 
 #endif

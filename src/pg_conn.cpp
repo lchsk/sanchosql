@@ -28,7 +28,7 @@ namespace san
     }
 
     std::shared_ptr<san::QueryResult>
-    PostgresConnection::run_query(const std::string& query, const std::string& columns_query)
+    PostgresConnection::run_query(const san::QueryType& query_type, const std::string& query, const std::string& columns_query)
     {
         g_debug("Executing query: %s", query.c_str());
 
@@ -36,13 +36,13 @@ namespace san
             g_debug("Executing columns query: %s", columns_query.c_str());
         }
 
-        return san::QueryResult::get(*conn, query, columns_query, oid_names);
+        return san::QueryResult::get(*conn, query_type, query, columns_query, oid_names);
     }
 
     std::shared_ptr<san::QueryResult>
-    PostgresConnection::run_query(const std::string& query)
+    PostgresConnection::run_query(const san::QueryType& query_type, const std::string& query)
     {
-        return run_query(query, "");
+        return run_query(query_type, query, "");
     }
 
     std::vector<std::string> PostgresConnection::get_db_tables(const Glib::ustring& schema_name) const noexcept
@@ -80,7 +80,7 @@ namespace san
         const std::string sql = R"(SELECT nspname FROM pg_catalog.pg_namespace;)";
 
         // TODO: Remove oid_names - it is not used here
-        auto query_result = san::QueryResult::get(*conn, sql, "", oid_names);
+        auto query_result = san::QueryResult::get(*conn, san::QueryType::NonTransaction, sql, "", oid_names);
 
         if (! query_result->success)
             return std::move(schemas);
@@ -159,7 +159,7 @@ namespace san
                 on t.typname = c.udt_name
         )";
 
-        auto query_result = san::QueryResult::get(*conn, sql, "", oid_names);
+        auto query_result = san::QueryResult::get(*conn, san::QueryType::NonTransaction, sql, "", oid_names);
 
         if (! query_result->success)
             return;

@@ -203,7 +203,7 @@ namespace san
         san::SimpleTabModel& model = get_simple_tab_model(window);
 
         std::shared_ptr<san::QueryResult> result
-            = pc.run_query(model.get_query(), model.get_columns_query());
+            = pc.run_query(san::QueryType::NonTransaction, model.get_query(), model.get_columns_query());
 
         tab.col_names.clear();
         tab.tree->remove_all_columns();
@@ -338,7 +338,7 @@ sigc::mem_fun(*this, &MainWindow::cellrenderer_validated_on_editing_started), &t
         san::QueryTab& tab = get_query_tab(window);
         san::QueryTabModel& model = get_query_tab_model(window);
 
-        std::shared_ptr<san::QueryResult> result = pc.run_query(model.get_query());
+        std::shared_ptr<san::QueryResult> result = pc.run_query(san::QueryType::NonTransaction, model.get_query());
 
         tab.data_scrolled_window->set_visible(result->show_results);
 

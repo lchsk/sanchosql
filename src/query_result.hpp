@@ -13,6 +13,7 @@ namespace san
     struct QueryResult
     {
         QueryResult();
+        QueryResult(const san::QueryType& query_type) : query_type(query_type) {};
 
         static std::shared_ptr<QueryResult>
         get() {
@@ -29,6 +30,7 @@ namespace san
 
         static std::shared_ptr<QueryResult>
         get(pqxx::connection& conn,
+            const san::QueryType& query_type,
             const std::string& query,
             const std::string& columns_query,
             std::shared_ptr<std::unordered_map<pqxx::oid, san::OidMapping>>& oid_names);
@@ -65,6 +67,7 @@ namespace san
         void handle_results(const pqxx::result&);
 
         void run(pqxx::connection& conn,
+                 const san::QueryType& query_type,
                  const std::string& query,
                  const std::string& columns_query);
 
@@ -103,6 +106,32 @@ namespace san
             error_message = p_error_message;
         }
 
+        void commit() noexcept {
+            if (query_type == san::QueryType::Transaction && transaction) {
+                try {
+                    transaction->commit();
+                    g_debug("Transaction committed");
+                } catch (const std::exception& e) {
+                    g_warning("Commit failed: %s", e.what());
+                    set_status(false, Glib::ustring("Commit failed, attempting to rollback: ") + Glib::ustring(e.what()));
+
+                    rollback();
+                }
+            }
+        }
+
+        void rollback() noexcept {
+            if (query_type == san::QueryType::Transaction && transaction) {
+                try {
+                    transaction->abort();
+                    g_debug("Transaction rolled back");
+                } catch (const std::exception& e) {
+                    g_warning("Rollback failed: %s", e.what());
+                    set_status(false, Glib::ustring("Rollback failed: ") + Glib::ustring(e.what()));
+                }
+            }
+        }
+
         bool success;
         Glib::ustring error_message;
         bool inserted_empty_row;
@@ -123,6 +152,9 @@ namespace san
         std::map<std::string, san::ColumnMetadata> columns_data;
 
         std::shared_ptr<std::unordered_map<pqxx::oid, san::OidMapping>> oid_names;
+
+        std::unique_ptr<pqxx::work> transaction;
+        const san::QueryType query_type;
     };
 }
 
