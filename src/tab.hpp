@@ -17,6 +17,8 @@ namespace san
     class AbstractTab
     {
     public:
+        AbstractTab(const Glib::ustring& tab_name);
+
         void show() const {
             tree_scrolled_window->show();
             tree_scrolled_window->show_all_children();
@@ -41,12 +43,14 @@ namespace san
         std::unordered_map<Gtk::TreeViewColumn*, std::string> col_names;
 
         Gtk::Box* box;
+
+        const Glib::ustring tab_name;
     };
 
     class QueryTab : public AbstractTab
     {
     public:
-        QueryTab();
+        QueryTab(const Glib::ustring& tab_name);
 
         Gtk::VPaned paned_source;
         Gtk::VPaned paned_results;
@@ -67,7 +71,7 @@ namespace san
     class SimpleTab : public AbstractTab
     {
     public:
-        SimpleTab(std::shared_ptr<san::SimpleTabModel>& model);
+        SimpleTab(const Glib::ustring& tab_name, std::shared_ptr<san::SimpleTabModel>& model);
 
         // Browse box
         Gtk::Box* browse_box;

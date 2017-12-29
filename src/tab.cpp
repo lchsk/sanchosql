@@ -18,11 +18,13 @@ namespace san
         log_buffer->insert(log_buffer->begin(), dated_message);
     }
 
-    QueryTab::QueryTab()
+    AbstractTab::AbstractTab(const Glib::ustring& tab_name) : tab_name(tab_name) {}
+
+    QueryTab::QueryTab(const Glib::ustring& tab_name) : AbstractTab(tab_name)
     {
         hb = Gtk::manage(new Gtk::HBox);
         b = Gtk::manage(new Gtk::Button);
-        l = Gtk::manage(new Gtk::Label("SQL Editor"));
+        l = Gtk::manage(new Gtk::Label(tab_name));
 
         i = Gtk::manage(new Gtk::Image(Gtk::Stock::CLOSE, Gtk::ICON_SIZE_MENU));
 
@@ -112,13 +114,14 @@ namespace san
         tree_scrolled_window->set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
     }
 
-    SimpleTab::SimpleTab(std::shared_ptr<san::SimpleTabModel>& model)
-        : tree(Gtk::manage(new Gtk::TreeView)),
+    SimpleTab::SimpleTab(const Glib::ustring& tab_name, std::shared_ptr<san::SimpleTabModel>& model)
+        : AbstractTab(tab_name),
+          tree(Gtk::manage(new Gtk::TreeView)),
           model(model)
     {
         hb = Gtk::manage(new Gtk::HBox);
         b = Gtk::manage(new Gtk::Button);
-        l = Gtk::manage(new Gtk::Label("SQL Editor"));
+        l = Gtk::manage(new Gtk::Label(tab_name));
 
         i = Gtk::manage(new Gtk::Image(Gtk::Stock::CLOSE, Gtk::ICON_SIZE_MENU));
 

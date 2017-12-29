@@ -525,7 +525,9 @@ sigc::mem_fun(*this, &MainWindow::cellrenderer_validated_on_editing_started), &t
 
         if (! current_connection) return;
 
-        auto tab = std::make_shared<san::QueryTab>();
+        const Glib::ustring tab_name = current_connection->name + " (editor)";
+
+        auto tab = std::make_shared<san::QueryTab>(tab_name);
 
         Gtk::ScrolledWindow* window = tab->tree_scrolled_window;
 
@@ -574,7 +576,7 @@ sigc::mem_fun(*this, &MainWindow::cellrenderer_validated_on_editing_started), &t
         auto shared_tab_model
             = std::make_shared<san::SimpleTabModel>(current_connection, table_name, schema_name);
 
-        auto tab = std::make_shared<san::SimpleTab>(shared_tab_model);
+        auto tab = std::make_shared<san::SimpleTab>(table_name, shared_tab_model);
         Gtk::ScrolledWindow* window = tab->tree_scrolled_window;
 
         tab->tree->get_selection()->set_mode(Gtk::SELECTION_MULTIPLE);
