@@ -739,6 +739,9 @@ sigc::mem_fun(*this, &MainWindow::cellrenderer_validated_on_editing_started), &t
     {
         auto pc = handle_connect();
 
+		if (! pc)
+            return;
+
         refresh_browser(pc);
     }
 

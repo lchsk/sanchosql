@@ -171,7 +171,12 @@ namespace san
         };
 
         void on_browser_refresh_clicked() {
+			auto pc = handle_connect();
 
+			if (! pc)
+				return;
+
+			refresh_browser(pc);
         }
 
         std::shared_ptr<san::ConnectionDetails>& find_current_connection() {
