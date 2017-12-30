@@ -32,8 +32,6 @@ namespace san
 		builder->get_widget("text_username", text_user);
 		builder->get_widget("text_password", text_password);
 
-		text_password->set_sensitive(false);
-
 		// After widgets were loaded
 		set_adding_mode();
 		NewConnectionWindow::reset_connection_status();
@@ -109,18 +107,20 @@ namespace san
 				text_connection_name->get_text(),
 				text_host->get_text(),
 				text_user->get_text(),
-				get_password(),
+				text_password->get_text(),
 				text_db->get_text(),
-				text_port->get_text());
+				text_port->get_text(),
+				checkbox_save_password->get_active());
 		} else if (mode == Mode::Editing) {
 			san::Connections::instance()->update_conn(
 				edited_conn_name,
 				text_connection_name->get_text(),
 				text_host->get_text(),
 				text_user->get_text(),
-				get_password(),
+				text_password->get_text(),
 				text_db->get_text(),
-				text_port->get_text());
+				text_port->get_text(),
+				checkbox_save_password->get_active());
 		}
 
 		on_win_show();
@@ -220,12 +220,11 @@ namespace san
 
 	void NewConnectionWindow::on_win_hide()
 	{
-		san::Connections::instance()->save_connections(checkbox_save_password->get_active());
+		san::Connections::instance()->save_connections();
 	}
 
 	void NewConnectionWindow::on_checkbox_save_password_toggled()
 	{
-		text_password->set_sensitive(checkbox_save_password->get_active());
 		update_save_btn();
 	}
 
@@ -257,7 +256,7 @@ namespace san
 		text_db->set_text(connection_details->dbname);
 		text_port->set_text(connection_details->port);
 
-		checkbox_save_password->set_active(connection_details->password.size());
+		checkbox_save_password->set_active(connection_details->save_password);
 
 		btn_del_connection->set_sensitive(true);
 
@@ -330,7 +329,7 @@ namespace san
 		text_user->set_text("");
 		text_password->set_text("");
 
-		label_connection_status->set_text("");
+		reset_connection_status();
 	}
 
 	void NewConnectionWindow::prepare_adding()

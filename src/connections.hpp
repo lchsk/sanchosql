@@ -30,7 +30,8 @@ namespace san
                  const std::string& user,
                  const std::string& password,
                  const std::string& dbname,
-                 const std::string& port);
+                 const std::string& port,
+                 bool save_password);
 
         static Connections* instance() { return &ins; }
 
@@ -74,7 +75,8 @@ namespace san
             const std::string& user,
             const std::string& password,
             const std::string& dbname,
-            const std::string& port);
+            const std::string& port,
+            bool save_password);
 
         bool any_fields_empty(
             const Glib::ustring& host,
@@ -84,7 +86,7 @@ namespace san
             const Glib::ustring& connection_name) const;
 
         void init_connections();
-        void save_connections(bool save_password);
+        void save_connections();
 
         Glib::ustring CONN_PATH = "connections";
 
@@ -95,6 +97,8 @@ namespace san
         void load_connections();
         const Glib::ustring get_conn_value(const Glib::ustring&,
                                            const Glib::ustring&) const;
+        const bool get_conn_value_bool(const Glib::ustring&,
+                                       const Glib::ustring&) const;
 
         std::shared_ptr<san::ConnectionDetails> conn;
         std::map<Glib::ustring,

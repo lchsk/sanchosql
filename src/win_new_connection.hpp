@@ -24,10 +24,6 @@ namespace san
         void update_connection_status(const san::PostgresConnection& pg_conn);
         void reset_connection_status();
 
-        Glib::ustring get_password() const {
-            return checkbox_save_password->get_active() ? text_password->get_text() : "";
-        }
-
         void set_adding_mode();
         void set_editing_mode();
 

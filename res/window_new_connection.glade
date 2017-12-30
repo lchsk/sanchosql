@@ -316,7 +316,6 @@
                     <child>
                       <object class="GtkEntry" id="text_password">
                         <property name="visible">True</property>
-                        <property name="sensitive">False</property>
                         <property name="can_focus">True</property>
                         <property name="visibility">False</property>
                         <property name="invisible_char">●</property>

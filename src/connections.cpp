@@ -13,6 +13,7 @@ namespace san
         conn->password = "sancho";
         conn->dbname = "sancho";
         conn->port = "5432";
+        conn->save_password = false;
     }
 
     void Connections::init_connections()
@@ -39,10 +40,22 @@ namespace san
         try {
             return conn_file.get_value(group, key);
         } catch (const Glib::KeyFileError& ex) {
-            std::cerr << "Cannot find " << group << "." << key << std::endl;
+            g_warning("Cannot find %s.%s", group.c_str(), key.c_str());
         }
 
         return "";
+    }
+
+    const bool Connections::get_conn_value_bool(const Glib::ustring& group,
+                                                const Glib::ustring& key) const
+    {
+        try {
+            return conn_file.get_boolean(group, key);
+        } catch (const Glib::KeyFileError& ex) {
+            g_warning("Cannot find %s.%s", group.c_str(), key.c_str());
+        }
+
+        return false;
     }
 
     void Connections::load_connections()
@@ -61,14 +74,15 @@ namespace san
             const Glib::ustring password = get_conn_value(group, "password");
             const Glib::ustring dbname = get_conn_value(group, "dbname");
             const Glib::ustring port = get_conn_value(group, "port");
+            const bool save_password = get_conn_value_bool(group, "save_password");
 
             if (san::string::is_empty(name)) continue;
 
-            add(name, host, user, password, dbname, port);
+            add(name, host, user, password, dbname, port, save_password);
         }
     }
 
-    void Connections::save_connections(bool save_password)
+    void Connections::save_connections()
     {
         for (int i = 1; i <= 1000; i++) {
             const Glib::ustring group = Glib::ustring::compose("conn_%1", i);
@@ -92,7 +106,7 @@ namespace san
 
         for (const auto& conn_details : connections) {
             const Glib::ustring group = Glib::ustring::compose("conn_%1", i);
-            const Glib::ustring password = save_password ? conn_details.second->password : "";
+            const Glib::ustring password = conn_details.second->save_password ? conn_details.second->password : "";
 
             conn_file.set_string(group, "name", conn_details.second->name);
             conn_file.set_string(group, "host", conn_details.second->host);
@@ -100,6 +114,7 @@ namespace san
             conn_file.set_string(group, "password", password);
             conn_file.set_string(group, "dbname", conn_details.second->dbname);
             conn_file.set_string(group, "port", conn_details.second->port);
+            conn_file.set_boolean(group, "save_password", conn_details.second->save_password);
 
             i++;
         }
@@ -112,7 +127,8 @@ namespace san
                           const std::string& user,
                           const std::string& password,
                           const std::string& dbname,
-                          const std::string& port)
+                          const std::string& port,
+                          bool save_password)
     {
         auto conn = std::make_shared<san::ConnectionDetails>();
 
@@ -122,6 +138,7 @@ namespace san
         conn->password = password;
         conn->dbname = dbname;
         conn->port = port;
+        conn->save_password = save_password;
 
         connections[name] = conn;
     }
@@ -133,7 +150,8 @@ namespace san
         const std::string& user,
         const std::string& password,
         const std::string& dbname,
-        const std::string& port)
+        const std::string& port,
+        bool save_password)
     {
         if (! exists(old_conn_name))
             return;
@@ -148,6 +166,7 @@ namespace san
         conn->password = password;
         conn->dbname = dbname;
         conn->port = port;
+        conn->save_password = save_password;
 
         connections[new_conn_name] = conn;
     }
@@ -199,14 +218,10 @@ namespace san
 
         if (old_conn_name != new_conn_name) return true;
 
-        if (conn->password.size() && ! save_password)
-            return true;
-
-        if (save_password && conn->password != password)
-            return true;
-
         if (conn->host != host ||
             conn->user != user ||
+            conn->password != password ||
+            conn->save_password != save_password ||
             conn->dbname != dbname ||
             conn->port != port) return true;
 
