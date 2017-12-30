@@ -26,6 +26,8 @@ namespace san
         b = Gtk::manage(new Gtk::Button);
         l = Gtk::manage(new Gtk::Label(tab_name));
 
+        b->set_margin_left(4);
+
         i = Gtk::manage(new Gtk::Image(Gtk::Stock::CLOSE, Gtk::ICON_SIZE_MENU));
 
         b->add(*i);
@@ -133,6 +135,8 @@ namespace san
         hb = Gtk::manage(new Gtk::HBox);
         b = Gtk::manage(new Gtk::Button);
         l = Gtk::manage(new Gtk::Label(tab_name));
+
+        b->set_margin_left(4);
 
         i = Gtk::manage(new Gtk::Image(Gtk::Stock::CLOSE, Gtk::ICON_SIZE_MENU));
 
