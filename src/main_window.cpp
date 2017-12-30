@@ -56,6 +56,18 @@ namespace san
         browser_scrolled_window.add(browser);
         browser_scrolled_window.set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
 
+        popup_item_refresh_browser = Gtk::manage(new Gtk::MenuItem("_Refresh", true));
+        auto slot_browser_refresh = sigc::mem_fun(*this, &MainWindow::on_browser_refresh_clicked);
+		popup_item_refresh_browser->signal_activate().connect(slot_browser_refresh);
+
+        popup_browser_header.append(*popup_item_refresh_browser);
+        popup_browser_header.accelerate(*this);
+        popup_browser_header.show_all();
+
+        auto slot_button_released = sigc::mem_fun(*this, &MainWindow::on_browser_button_released);
+
+        browser.signal_button_release_event().connect(slot_button_released);
+
         combo_connections.set_title("Active connection");
         combo_schemas.set_title("Schema");
 

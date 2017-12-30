@@ -170,6 +170,36 @@ namespace san
             return true;
         };
 
+        void on_browser_refresh_clicked() {
+
+        }
+
+        bool on_browser_button_released(GdkEventButton* button_event) {
+            if (button_event->button == 3) {
+                Gtk::TreeModel::Path path;
+
+                bool found = browser.get_path_at_pos(button_event->x, button_event->y, path);
+
+                if (! found)
+                    return false;
+
+                Gtk::TreeModel::iterator iter = browser_store->get_iter(path);
+
+                if (! iter)
+                    return false;
+
+                Gtk::TreeModel::Row current_row = *iter;
+
+                if (current_row[browser_model.type] == san::BrowserItemType::Header) {
+                    popup_browser_header.popup_at_pointer((GdkEvent*) button_event);
+
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         void on_results_column_clicked(Gtk::ScrolledWindow*, Gtk::TreeViewColumn*);
         void on_tab_close_button_clicked(Gtk::ScrolledWindow*);
         void on_reload_table_clicked(Gtk::ScrolledWindow*);
@@ -209,6 +239,9 @@ namespace san
 
         Gtk::Box main_box;
         Gtk::TreeView browser;
+        Gtk::Menu popup_browser_header;
+        Gtk::MenuItem* popup_item_refresh_browser;
+
         Glib::RefPtr<Gtk::TreeStore> browser_store;
         Gtk::ScrolledWindow browser_scrolled_window;
         Gtk::ScrolledWindow notebook_scrolled_window;
