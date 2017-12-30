@@ -699,7 +699,16 @@ sigc::mem_fun(*this, &MainWindow::cellrenderer_validated_on_editing_started), &t
         try {
             pc = connect(current_connection);
         } catch (const san::NoConnection& e) {
-            show_warning("Connection failed", e.what());
+            Glib::ustring error_message;
+
+            if (current_connection->password.empty()) {
+                error_message = "Password for connection \"" + current_connection->name + "\" is empty. Please edit the connection and provide password.";
+            } else {
+                error_message = e.what();
+            }
+
+            show_warning("Connection failed", error_message);
+
             reset_browser();
 
             return;
@@ -737,7 +746,16 @@ sigc::mem_fun(*this, &MainWindow::cellrenderer_validated_on_editing_started), &t
         try {
             pc = connect(current_connection);
         } catch (const san::NoConnection& e) {
-            show_warning("Connection failed", e.what());
+            Glib::ustring error_message;
+
+            if (current_connection->password.empty()) {
+                error_message = "Password for connection \"" + current_connection->name + "\" is empty. Please edit the connection and provide password.";
+            } else {
+                error_message = e.what();
+            }
+
+            show_warning("Connection failed", error_message);
+
             reset_browser();
 
             return;
