@@ -568,6 +568,10 @@ sigc::mem_fun(*this, &MainWindow::cellrenderer_validated_on_editing_started), &t
 
         Gtk::TreeModel::Row current_row = *iter;
 
+        if (current_row[browser_model.type] == san::BrowserItemType::Header) {
+            return;
+        }
+
         Glib::ustring table_name = current_row[browser_model.table];
 
         const auto current_connection = san::Connections::instance()->current_connection;
@@ -777,10 +781,12 @@ sigc::mem_fun(*this, &MainWindow::cellrenderer_validated_on_editing_started), &t
 
         Gtk::TreeModel::Row row = *(browser_store->append());
         row[browser_model.table] = "Tables";
+        row[browser_model.type] = san::BrowserItemType::Header;
 
         for (const std::string& table_name : tables) {
             Gtk::TreeModel::Row table_row = *(browser_store->append(row.children()));
             table_row[browser_model.table] = table_name;
+            table_row[browser_model.type] = san::BrowserItemType::Table;
         }
 
         browser.expand_all();

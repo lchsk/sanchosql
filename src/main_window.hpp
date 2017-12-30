@@ -13,6 +13,8 @@
 
 namespace san
 {
+    enum class BrowserItemType { Header, Table };
+
     class MainWindow : public Gtk::Window
     {
     public:
@@ -26,13 +28,11 @@ namespace san
             BrowserModel()
             {
                 add(table);
-                add(table_catalog);
-                add(table_schema);
+                add(type);
             }
 
             Gtk::TreeModelColumn<Glib::ustring> table;
-            Gtk::TreeModelColumn<Glib::ustring> table_catalog;
-            Gtk::TreeModelColumn<Glib::ustring> table_schema;
+            Gtk::TreeModelColumn<san::BrowserItemType> type;
         };
 
     private:
