@@ -71,6 +71,7 @@ namespace san
 
         browser_store = Gtk::TreeStore::create(browser_model);
         browser.set_model(browser_store);
+        browser.set_headers_visible(false);
 
         browser.append_column("Table", browser_model.table);
 
