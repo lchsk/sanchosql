@@ -553,6 +553,8 @@ sigc::mem_fun(*this, &MainWindow::cellrenderer_validated_on_editing_started), &t
 
         // Hide initially because we don't have any data
         tab->data_scrolled_window->hide();
+
+        tab->source_view->grab_focus();
     }
 
     void MainWindow::on_browser_row_activated(const Gtk::TreeModel::Path& path,

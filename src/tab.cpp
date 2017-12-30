@@ -71,15 +71,26 @@ namespace san
 
         buffer->set_language(lang);
         buffer->set_style_scheme(style);
-        buffer->set_text("select * from country");
+
+        const Glib::ustring default_text = Glib::ustring::compose(
+            "-- Opened %1 by %2\n-- Code executed in this editor is "
+            "automatically committed\n\n",
+            san::date::get_current_datetime(),
+            san::user::get_user_name());
+
+        buffer->set_text(default_text);
+        source_view->set_monospace();
 
         // Set up log source view
         log = Gtk::manage(new Gsv::View);
         log_buffer = log->get_source_buffer();
+        log->set_monospace();
 
         if (! log_buffer) {
             g_warning("Gsv::View::get_source_buffer() failed for log");
         }
+
+        insert_log_message(log_buffer, Glib::ustring::compose("Editor opened by %1", san::user::get_user_name()));
 
         log->property_editable() = false;
         log_buffer->set_style_scheme(style);
@@ -156,6 +167,7 @@ namespace san
 
         log = Gtk::manage(new Gsv::View);
         log_buffer = log->get_source_buffer();
+        log->set_monospace();
 
         if (! log_buffer) {
             g_warning("Gsv::View::get_source_buffer() failed for listview log");
