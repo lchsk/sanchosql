@@ -6,14 +6,14 @@ namespace san
 {
     Connections::Connections()
     {
-        conn = std::make_shared<san::ConnectionDetails>();
+        conn_end = std::make_shared<san::ConnectionDetails>();
 
-        conn->host = "127.0.0.1";
-        conn->user = "sancho";
-        conn->password = "sancho";
-        conn->dbname = "sancho";
-        conn->port = "5432";
-        conn->save_password = false;
+        conn_end->host = "";
+        conn_end->user = "";
+        conn_end->password = "";
+        conn_end->dbname = "";
+        conn_end->port = "";
+        conn_end->save_password = false;
     }
 
     void Connections::init_connections()

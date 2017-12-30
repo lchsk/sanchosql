@@ -705,33 +705,15 @@ sigc::mem_fun(*this, &MainWindow::cellrenderer_validated_on_editing_started), &t
 
     void MainWindow::on_connection_changed()
     {
-        const Glib::ustring connection_name = combo_connections.get_active_text();
+        const auto current_connection = find_current_connection();
 
-        if (! san::Connections::instance()->exists(connection_name))
+        if (current_connection == san::Connections::instance()->end())
             return;
 
-        const auto current_connection
-            = san::Connections::instance()->get_connection(connection_name);
+        auto pc = handle_connect();
 
-        std::shared_ptr<san::PostgresConnection> pc = nullptr;
-
-        try {
-            pc = connect(current_connection);
-        } catch (const san::NoConnection& e) {
-            Glib::ustring error_message;
-
-            if (current_connection->password.empty()) {
-                error_message = "Password for connection \"" + current_connection->name + "\" is empty. Please edit the connection and provide password.";
-            } else {
-                error_message = e.what();
-            }
-
-            show_warning("Connection failed", error_message);
-
-            reset_browser();
-
+        if (! pc)
             return;
-        }
 
         current_connection->schemas = pc->get_schemas();
 
@@ -755,30 +737,7 @@ sigc::mem_fun(*this, &MainWindow::cellrenderer_validated_on_editing_started), &t
 
     void MainWindow::on_schema_changed()
     {
-        const auto current_connection = san::Connections::instance()->current_connection;
-
-        if (! current_connection)
-            return;
-
-        std::shared_ptr<san::PostgresConnection> pc = nullptr;
-
-        try {
-            pc = connect(current_connection);
-        } catch (const san::NoConnection& e) {
-            Glib::ustring error_message;
-
-            if (current_connection->password.empty()) {
-                error_message = "Password for connection \"" + current_connection->name + "\" is empty. Please edit the connection and provide password.";
-            } else {
-                error_message = e.what();
-            }
-
-            show_warning("Connection failed", error_message);
-
-            reset_browser();
-
-            return;
-        }
+        auto pc = handle_connect();
 
         refresh_browser(pc);
     }

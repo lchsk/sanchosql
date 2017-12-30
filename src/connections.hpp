@@ -16,12 +16,15 @@ namespace san
     public:
         Connections();
 
-        std::shared_ptr<san::ConnectionDetails>& connection() {
-            return conn;
+        std::shared_ptr<san::ConnectionDetails>& end() {
+            return conn_end;
         }
 
         std::shared_ptr<san::ConnectionDetails>&
-        get_connection(const Glib::ustring& connection_name) {
+        find_connection(const Glib::ustring& connection_name) {
+			if (! exists(connection_name))
+				return end();
+
             return connections[connection_name];
         }
 
@@ -100,7 +103,9 @@ namespace san
         const bool get_conn_value_bool(const Glib::ustring&,
                                        const Glib::ustring&) const;
 
-        std::shared_ptr<san::ConnectionDetails> conn;
+        // Returned if the actual connection was not found
+        std::shared_ptr<san::ConnectionDetails> conn_end;
+
         std::map<Glib::ustring,
                  std::shared_ptr<san::ConnectionDetails>> connections;
 

@@ -174,6 +174,41 @@ namespace san
 
         }
 
+        std::shared_ptr<san::ConnectionDetails>& find_current_connection() {
+            const Glib::ustring connection_name = combo_connections.get_active_text();
+
+            return san::Connections::instance()->find_connection(connection_name);
+        }
+
+        std::shared_ptr<san::PostgresConnection> handle_connect() {
+            auto current_connection = find_current_connection();
+
+            if (current_connection == san::Connections::instance()->end())
+                return nullptr;
+
+            std::shared_ptr<san::PostgresConnection> pc = nullptr;
+
+            try {
+                pc = connect(current_connection);
+            } catch (const san::NoConnection& e) {
+                Glib::ustring error_message;
+
+                if (current_connection->password.empty()) {
+                    error_message = "Password for connection \"" + current_connection->name + "\" is empty. Please edit the connection and provide password.";
+                } else {
+                    error_message = e.what();
+                }
+
+                show_warning("Connection failed", error_message);
+
+                reset_browser();
+
+                return nullptr;
+            }
+
+            return pc;
+        }
+
         bool on_browser_button_released(GdkEventButton* button_event) {
             if (button_event->button == 3) {
                 Gtk::TreeModel::Path path;
