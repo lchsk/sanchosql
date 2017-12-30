@@ -36,6 +36,7 @@ namespace san
 
 		// After widgets were loaded
 		set_adding_mode();
+		NewConnectionWindow::reset_connection_status();
 
 		btn_save->signal_clicked().connect
 			(sigc::mem_fun(*this, &NewConnectionWindow::on_btn_save_clicked));
@@ -77,6 +78,9 @@ namespace san
 		text_user->signal_changed().connect
 			(sigc::mem_fun(*this, &NewConnectionWindow::update_save_btn));
 
+		text_password->signal_changed().connect
+			(sigc::mem_fun(*this, &NewConnectionWindow::update_save_btn));
+
 		tree_connections.signal_cursor_changed().connect
 			(sigc::mem_fun(*this, &NewConnectionWindow::on_selected_connection_changed));
 
@@ -105,7 +109,7 @@ namespace san
 				text_connection_name->get_text(),
 				text_host->get_text(),
 				text_user->get_text(),
-				text_password->get_text(),
+				get_password(),
 				text_db->get_text(),
 				text_port->get_text());
 		} else if (mode == Mode::Editing) {
@@ -114,7 +118,7 @@ namespace san
 				text_connection_name->get_text(),
 				text_host->get_text(),
 				text_user->get_text(),
-				text_password->get_text(),
+				get_password(),
 				text_db->get_text(),
 				text_port->get_text());
 		}
@@ -135,6 +139,8 @@ namespace san
 
 		conn->set_host(text_host->get_text());
 		conn->user = text_user->get_text();
+
+		// Always use actual password value regardless of the checkbox
 		conn->password = text_password->get_text();
 		conn->dbname = text_db->get_text();
 		conn->port = text_port->get_text();;
@@ -149,6 +155,11 @@ namespace san
 		}
 
 		update_connection_status(pg_conn);
+	}
+
+	void NewConnectionWindow::reset_connection_status()
+	{
+		label_connection_status->set_text("");
 	}
 
 	void NewConnectionWindow::update_connection_status(const san::PostgresConnection& pg_conn)
@@ -209,12 +220,13 @@ namespace san
 
 	void NewConnectionWindow::on_win_hide()
 	{
-		san::Connections::instance()->save_connections();
+		san::Connections::instance()->save_connections(checkbox_save_password->get_active());
 	}
 
 	void NewConnectionWindow::on_checkbox_save_password_toggled()
 	{
 		text_password->set_sensitive(checkbox_save_password->get_active());
+		update_save_btn();
 	}
 
 	void NewConnectionWindow::on_selected_connection_changed()
@@ -229,6 +241,7 @@ namespace san
 		};
 
 		set_editing_mode();
+		reset_connection_status();
 
 		Gtk::TreeModel::Row row = *iter;
 
@@ -244,7 +257,11 @@ namespace san
 		text_db->set_text(connection_details->dbname);
 		text_port->set_text(connection_details->port);
 
+		checkbox_save_password->set_active(connection_details->password.size());
+
 		btn_del_connection->set_sensitive(true);
+
+		update_save_btn();
 	}
 
 	void NewConnectionWindow::set_adding_mode()
@@ -280,8 +297,10 @@ namespace san
 			text_host->get_text(),
 			text_user->get_text(),
 			text_password->get_text(),
+			// get_password(),
 			text_db->get_text(),
-			text_port->get_text());
+			text_port->get_text(),
+			checkbox_save_password->get_active());
 	}
 
 	bool NewConnectionWindow::can_add_new_connection() const

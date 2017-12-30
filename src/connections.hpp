@@ -64,7 +64,8 @@ namespace san
             const std::string& user,
             const std::string& password,
             const std::string& dbname,
-            const std::string& port);
+            const std::string& port,
+            bool save_password);
 
         void update_conn(
             const Glib::ustring& old_conn_name,
@@ -83,7 +84,7 @@ namespace san
             const Glib::ustring& connection_name) const;
 
         void init_connections();
-        void save_connections();
+        void save_connections(bool save_password);
 
         Glib::ustring CONN_PATH = "connections";
 
