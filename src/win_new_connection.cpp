@@ -18,6 +18,8 @@ namespace san
 		builder->get_widget("btn_add_connection", btn_add_connection);
 		builder->get_widget("btn_del_connection", btn_del_connection);
 
+		builder->get_widget("checkbox_save_password", checkbox_save_password);
+
 		btn_save->set_sensitive(false);
 		btn_del_connection->set_sensitive(false);
 
@@ -29,6 +31,8 @@ namespace san
 		builder->get_widget("text_db", text_db);
 		builder->get_widget("text_username", text_user);
 		builder->get_widget("text_password", text_password);
+
+		text_password->set_sensitive(false);
 
 		// After widgets were loaded
 		set_adding_mode();
@@ -50,6 +54,10 @@ namespace san
 		btn_del_connection->signal_clicked().connect
 			(sigc::mem_fun
 			 (*this, &NewConnectionWindow::on_btn_del_connection_clicked));
+
+		checkbox_save_password->signal_toggled().connect
+			(sigc::mem_fun
+			 (*this, &NewConnectionWindow::on_checkbox_save_password_toggled));
 
 		signal_show().connect(sigc::mem_fun(*this, &NewConnectionWindow::on_win_show));
 		signal_hide().connect(sigc::mem_fun(*this, &NewConnectionWindow::on_win_hide));
@@ -202,6 +210,11 @@ namespace san
 	void NewConnectionWindow::on_win_hide()
 	{
 		san::Connections::instance()->save_connections();
+	}
+
+	void NewConnectionWindow::on_checkbox_save_password_toggled()
+	{
+		text_password->set_sensitive(checkbox_save_password->get_active());
 	}
 
 	void NewConnectionWindow::on_selected_connection_changed()

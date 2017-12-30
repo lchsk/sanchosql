@@ -43,6 +43,8 @@ namespace san
 
         void on_selected_connection_changed();
 
+        void on_checkbox_save_password_toggled();
+
         Glib::RefPtr<Gtk::Builder> builder;
 
         class ConnectionColumns : public Gtk::TreeModel::ColumnRecord
@@ -68,6 +70,8 @@ namespace san
         Gtk::Button* btn_test_connection;
         Gtk::Button* btn_add_connection;
         Gtk::Button* btn_del_connection;
+
+		Gtk::CheckButton* checkbox_save_password;
 
         Gtk::Label* label_connection_status;
 
