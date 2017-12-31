@@ -27,7 +27,9 @@ namespace san
         gint r = g_mkdir_with_parents(path.c_str(), 0755);
 
         if (r == 0) {
-            std::cout << "Created\n";
+            g_debug("Config directory OK");
+        } else {
+            g_warning("Could not create config directory: %d", r);
         }
 
         g_free(tmp);
@@ -694,8 +696,6 @@ sigc::mem_fun(*this, &MainWindow::cellrenderer_validated_on_editing_started), &t
     (Gtk::ScrolledWindow* tree_scrolled_window, Glib::RefPtr<Gsv::Buffer>& buffer)
     {
         const std::string query = buffer->get_text();
-
-        std::cout << query << std::endl;
 
         auto& model = get_query_tab_model(tree_scrolled_window);
         model.query = query;
