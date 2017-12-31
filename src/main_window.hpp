@@ -261,6 +261,7 @@ namespace san
 
         void on_action_file_new();
         void on_action_file_quit();
+        void on_action_file_about();
 
         void refresh_connections_list();
         void refresh_browser(const std::shared_ptr<san::PostgresConnection>&);

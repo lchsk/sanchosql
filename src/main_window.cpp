@@ -151,6 +151,12 @@ namespace san
         menu_item_quit->signal_activate().connect
             (sigc::mem_fun(*this, &MainWindow::on_action_file_quit));
 
+        Gtk::ImageMenuItem* menu_item_about;
+        res_builder->get_widget("menu_item_about", menu_item_about);
+
+        menu_item_about->signal_activate().connect
+            (sigc::mem_fun(*this, &MainWindow::on_action_file_about));
+
         Gtk::Toolbar* toolbar = nullptr;
         res_builder->get_widget("toolbar", toolbar);
 
@@ -187,6 +193,20 @@ namespace san
         if (win_connections) {
             win_connections->show();
         }
+    }
+
+    void MainWindow::on_action_file_about()
+    {
+        Gtk::MessageDialog dialog(*this, "SanchoSQL", false /* use_markup */, Gtk::MESSAGE_INFO, Gtk::BUTTONS_OK);
+        std::stringstream q;
+
+        q << "Database client"
+          << "\n\n"
+          << "http://sanchosql.com";
+
+        dialog.set_secondary_text(q.str());
+
+        dialog.run();
     }
 
     void MainWindow::on_win_connections_hide()
