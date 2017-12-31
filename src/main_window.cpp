@@ -107,6 +107,7 @@ namespace san
         try {
             res_builder->add_from_resource("/res/toolbar.glade");
             res_builder->add_from_resource("/res/main_menu.glade");
+            res_builder->add_from_resource("/res/test.glade");
             res_builder->add_from_resource("/res/window_new_connection.glade");
         } catch(const Glib::Error& e) {
             std::cerr << "Building menus and toolbar failed: " <<  e.what();
@@ -121,16 +122,32 @@ namespace san
         auto theme = Gtk::IconTheme::get_default();
         theme->add_resource_path("/icons/64x64/res/icons");
 
-        auto object = res_builder->get_object("menubar");
-        auto menu = Glib::RefPtr<Gio::Menu>::cast_dynamic(object);
+        Gtk::MenuBar* menu = nullptr;
+        res_builder->get_widget("menubar", menu);
 
         if (menu) {
-            auto pMenuBar = Gtk::manage(new Gtk::MenuBar(menu));
-
-            main_box.pack_start(*pMenuBar, Gtk::PACK_SHRINK);
+            main_box.pack_start(*menu, Gtk::PACK_SHRINK);
         } else {
-            g_warning("Menu not found");
+            g_critical("Menu not found");
         }
+
+        Gtk::ImageMenuItem* menu_item_connections;
+        res_builder->get_widget("menu_item_connections", menu_item_connections);
+
+        menu_item_connections->signal_activate().connect
+            (sigc::mem_fun(*this, &MainWindow::on_action_file_new));
+
+        Gtk::ImageMenuItem* menu_item_sql_editor;
+        res_builder->get_widget("menu_item_sql_editor", menu_item_sql_editor);
+
+        menu_item_sql_editor->signal_activate().connect
+            (sigc::mem_fun(*this, &MainWindow::on_open_sql_editor_clicked));
+
+        Gtk::ImageMenuItem* menu_item_quit;
+        res_builder->get_widget("menu_item_quit", menu_item_quit);
+
+        menu_item_quit->signal_activate().connect
+            (sigc::mem_fun(*this, &MainWindow::on_action_file_quit));
 
         Gtk::Toolbar* toolbar = nullptr;
         res_builder->get_widget("toolbar", toolbar);
