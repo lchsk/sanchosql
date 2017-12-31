@@ -553,7 +553,10 @@ sigc::mem_fun(*this, &MainWindow::cellrenderer_validated_on_editing_started), &t
     {
         const auto current_connection = san::Connections::instance()->current_connection;
 
-        if (! current_connection) return;
+        if (! current_connection) {
+            show_warning("Please select a connection first!");
+            return;
+        };
 
         const Glib::ustring tab_name = current_connection->name + " (editor)";
 
