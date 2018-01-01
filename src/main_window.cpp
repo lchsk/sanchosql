@@ -201,6 +201,9 @@ namespace san
         std::stringstream q;
 
         q << "Database client"
+		  << "\n\n"
+		  << "Version: "
+		  << get_version()
           << "\n\n"
           << "http://sanchosql.com";
 

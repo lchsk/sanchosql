@@ -54,6 +54,10 @@ namespace san
         void on_schema_changed();
         void on_win_connections_hide();
 
+        const std::string get_version() const {
+            return "0.2.0-alpha";
+        }
+
         std::shared_ptr<san::PostgresConnection> connect(const std::shared_ptr<san::ConnectionDetails>& conn_details) {
             std::shared_ptr<san::PostgresConnection> pc
                 = std::make_shared<san::PostgresConnection>(conn_details);
