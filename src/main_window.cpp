@@ -82,6 +82,8 @@ namespace san
 
         notebook_scrolled_window.add(notebook);
         paned.pack2(notebook_scrolled_window);
+        notebook.set_scrollable(true);
+        notebook.popup_enable();
 
         browser_store = Gtk::TreeStore::create(browser_model);
         browser.set_model(browser_store);
@@ -606,7 +608,7 @@ sigc::mem_fun(*this, &MainWindow::cellrenderer_validated_on_editing_started), &t
         tab->show();
 
         notebook.append_page(*window, *(tab->hb));
-
+        notebook.set_menu_label_text(*window, tab_name);
         notebook.set_current_page(notebook.get_n_pages() - 1);
 
         // Hide initially because we don't have any data
@@ -701,6 +703,7 @@ sigc::mem_fun(*this, &MainWindow::cellrenderer_validated_on_editing_started), &t
         tab->show();
 
         notebook.append_page(*window, *(tab->hb));
+        notebook.set_menu_label_text(*window, table_name);
         notebook.set_current_page(notebook.get_n_pages() - 1);
 
         if (shared_tab_model->has_primary_key()) {
