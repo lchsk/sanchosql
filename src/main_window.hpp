@@ -168,7 +168,9 @@ namespace san
 
         bool on_list_press(GdkEventButton* button_event, san::SimpleTab* tab, san::SimpleTabModel* model) {
             if ((button_event->type == GDK_BUTTON_RELEASE) && (button_event->button == 3)) {
-                tab->popup.popup_at_pointer((GdkEvent*) button_event);
+                // gtkmm 3.22 only:
+                // tab->popup.popup_at_pointer((GdkEvent*) button_event);
+                tab->popup.popup(button_event->button, button_event->time);
             }
 
             return true;
@@ -235,7 +237,9 @@ namespace san
                 Gtk::TreeModel::Row current_row = *iter;
 
                 if (current_row[browser_model.type] == san::BrowserItemType::Header) {
-                    popup_browser_header.popup_at_pointer((GdkEvent*) button_event);
+                    // gtkmm 3.22 only:
+                    // popup_browser_header.popup_at_pointer((GdkEvent*) button_event);
+                    popup_browser_header.popup(button_event->button, button_event->time);
 
                     return true;
                 }
