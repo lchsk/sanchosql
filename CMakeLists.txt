@@ -29,6 +29,16 @@ endif ()
 
 project(sanchosql)
 
+set(PROJECT_VERSION "0.2-alpha0")
+
+set(CPACK_GENERATOR "DEB;ZIP;TGZ")
+set(CPACK_DEBIAN_PACKAGE_MAINTAINER "sanchosql.com")
+set(CPACK_PACKAGE_DESCRIPTION_SUMMARY, "Desktop GUI client application for PostgreSQL")
+set(CPACK_PACKAGE_DESCRIPTION, "Desktop GUI client application for PostgreSQL")
+set(CPACK_PACKAGE_VERSION ${PROJECT_VERSION})
+
+include(CPack)
+
 MESSAGE(STATUS "CMAKE_ROOT: " ${CMAKE_ROOT} )
 message(STATUS "CMAKE_SYSTEM_NAME          = ${CMAKE_SYSTEM_NAME}"         )
 MESSAGE( STATUS "CMAKE_SYSTEM: " ${CMAKE_SYSTEM} )
