@@ -740,13 +740,29 @@ sigc::mem_fun(*this, &MainWindow::cellrenderer_validated_on_editing_started), &t
 
     void MainWindow::refresh_connections_list()
     {
+        Glib::ustring name;
+
+        if (Connections::instance()->current_connection) {
+            name = san::Connections::instance()->current_connection->name;
+        }
+
         combo_connections.remove_all();
 
         combo_connections.append("");
 
+        unsigned i = 1, selected = 0;
+
         for (const auto& details : san::Connections::instance()->get_connections()) {
             combo_connections.append(details.second->name);
+
+            if (! name.empty() && details.second->name == name) {
+                selected = i;
+            }
+
+            i++;
         }
+
+        combo_connections.set_active(selected);
     }
 
     void MainWindow::on_connection_changed()
