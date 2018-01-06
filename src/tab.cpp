@@ -44,11 +44,6 @@ namespace san
 
         tree = Gtk::manage(new Gtk::TreeView);
 
-        cr = std::make_unique<Gtk::TreeModel::ColumnRecord>();
-        list_store = Gtk::ListStore::create(*cr);
-
-        tree->set_model(list_store);
-
         tree_scrolled_window = Gtk::manage(new Gtk::ScrolledWindow);
         source_scrolled_window = Gtk::manage(new Gtk::ScrolledWindow);
         log_scrolled_window = Gtk::manage(new Gtk::ScrolledWindow);
@@ -154,11 +149,6 @@ namespace san
 
         toolbar->append(*btn_accept);
         toolbar->append(*btn_primary_key_warning);
-
-        cr = std::make_unique<Gtk::TreeModel::ColumnRecord>();
-        list_store = Gtk::ListStore::create(*cr);
-
-        tree->set_model(list_store);
 
         tree_scrolled_window = Gtk::manage(new Gtk::ScrolledWindow);
         log_scrolled_window = Gtk::manage(new Gtk::ScrolledWindow);
