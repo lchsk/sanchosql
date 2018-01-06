@@ -26,9 +26,21 @@ namespace san
             return san::string::replace_all(str, "'", "''");
         }
 
+        const std::vector<std::pair<std::string, std::string>> special_chars {
+            {"\b", "\\b"},
+            {"\f", "\\f"},
+            {"\n", "\\n"},
+            {"\r", "\\r"},
+            {"\t", "\\t"},
+        };
+
         std::string escape_db_data(std::string str)
         {
-            return Glib::strescape(str, "\"");
+            for (const auto& special_char : special_chars) {
+                str = replace_all(str, special_char.first, special_char.second);
+            }
+
+            return str;
         }
 
         std::string prepare_sql_value(std::string str)
