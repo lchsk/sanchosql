@@ -36,8 +36,8 @@ set(CPACK_DEBIAN_PACKAGE_MAINTAINER "sanchosql.com")
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY, "Desktop GUI client application for PostgreSQL")
 set(CPACK_PACKAGE_DESCRIPTION, "Desktop GUI client application for PostgreSQL")
 set(CPACK_PACKAGE_VERSION ${PROJECT_VERSION})
-set(CPACK_DEBIAN_PACKAGE_ARCHITECTURE "amd64")
-
+# set(CPACK_DEBIAN_PACKAGE_ARCHITECTURE "amd64")
+set(CPACK_DEBIAN_PACKAGE_DEPENDS "libpqxx (>= 4.0)")
 
 include(CPack)
 
