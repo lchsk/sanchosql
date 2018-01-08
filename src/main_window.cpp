@@ -487,6 +487,11 @@ sigc::mem_fun(*this, &MainWindow::cellrenderer_validated_on_editing_started), &t
                 i++;
             }
         }
+
+        int w, h;
+        get_size(w, h);
+        tab.paned_source.set_position(0.2 * h);
+        tab.paned_results.set_position(0.55 * h);
 	}
 
     void MainWindow::on_prev_results_page_clicked(Gtk::ScrolledWindow* window)
