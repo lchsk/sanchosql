@@ -10,6 +10,7 @@ namespace san
     MainWindow::MainWindow()
         : win_connections(nullptr),
           main_box(Gtk::ORIENTATION_VERTICAL),
+          box_main_pane(Gtk::ORIENTATION_VERTICAL),
           box_browser(Gtk::ORIENTATION_VERTICAL)
     {
         Glib::init();
@@ -81,7 +82,8 @@ namespace san
         paned.pack1(box_browser);
 
         notebook_scrolled_window.add(notebook);
-        paned.pack2(notebook_scrolled_window);
+        box_main_pane.pack_start(notebook_scrolled_window);
+        paned.pack2(box_main_pane);
         notebook.set_scrollable(true);
         notebook.popup_enable();
 
@@ -113,8 +115,9 @@ namespace san
             res_builder->add_from_resource("/res/main_menu.glade");
             res_builder->add_from_resource("/res/test.glade");
             res_builder->add_from_resource("/res/window_new_connection.glade");
+            res_builder->add_from_resource("/res/dashboard.glade");
         } catch(const Glib::Error& e) {
-            std::cerr << "Building menus and toolbar failed: " <<  e.what();
+            g_critical("Building menus and toolbar failed: %s", e.what());
         }
 
         Gtk::ToolButton* toolbutton_sql;
@@ -169,6 +172,13 @@ namespace san
 
         main_box.pack_start(paned);
 
+        box_dashboard = nullptr;
+        res_builder->get_widget("box_dashboard", box_dashboard);
+
+        if (box_dashboard) {
+            box_main_pane.add(*box_dashboard);
+        }
+
         res_builder->get_widget_derived("win_new_connection", win_connections);
 
         if (win_connections) {
@@ -179,6 +189,8 @@ namespace san
         }
 
         show_all_children();
+
+        notebook_scrolled_window.hide();
 
         int w, h;
         get_size(w, h);
@@ -573,11 +585,14 @@ sigc::mem_fun(*this, &MainWindow::cellrenderer_validated_on_editing_started), &t
         const unsigned tabs_n = tabs.size();
         const unsigned notebook_tabs = notebook.get_n_pages();
 
+        if (! notebook_tabs) {
+            notebook_scrolled_window.hide();
+            box_dashboard->show();
+        }
+
         if (tabs_n != models || tabs_n != notebook_tabs) {
-            std::cerr << "Tabs != Models != Notebook tabs: "
-                      << tabs_n << " "
-                      << models << " "
-                      << notebook_tabs << std::endl;
+            g_warning("Tabs %d != Models %d != Notebook tabs %d",
+                      tabs_n, models, notebook_tabs);
         }
     }
 
@@ -615,6 +630,9 @@ sigc::mem_fun(*this, &MainWindow::cellrenderer_validated_on_editing_started), &t
         notebook.append_page(*window, *(tab->hb));
         notebook.set_menu_label_text(*window, tab_name);
         notebook.set_current_page(notebook.get_n_pages() - 1);
+
+        box_dashboard->hide();
+        notebook_scrolled_window.show();
 
         // Hide initially because we don't have any data
         tab->data_scrolled_window->hide();
@@ -710,6 +728,8 @@ sigc::mem_fun(*this, &MainWindow::cellrenderer_validated_on_editing_started), &t
         notebook.append_page(*window, *(tab->hb));
         notebook.set_menu_label_text(*window, table_name);
         notebook.set_current_page(notebook.get_n_pages() - 1);
+        box_dashboard->hide();
+        notebook_scrolled_window.show();
 
         if (shared_tab_model->has_primary_key()) {
             tab->btn_primary_key_warning->hide();

@@ -291,6 +291,10 @@ namespace san
         Gtk::Menu popup_browser_header;
         Gtk::MenuItem* popup_item_refresh_browser;
 
+        Gtk::Box box_main_pane;
+
+        Gtk::Box* box_dashboard;
+
         Glib::RefPtr<Gtk::TreeStore> browser_store;
         Gtk::ScrolledWindow browser_scrolled_window;
         Gtk::ScrolledWindow notebook_scrolled_window;

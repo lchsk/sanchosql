@@ -5,6 +5,7 @@
     <file preprocess="xml-stripblanks">res/main_menu.glade</file>
     <file preprocess="xml-stripblanks">res/test.glade</file>
     <file preprocess="xml-stripblanks">res/window_new_connection.glade</file>
+    <file preprocess="xml-stripblanks">res/dashboard.glade</file>
   </gresource>
   <gresource prefix="/icons/64x64">
     <!-- <file>res/icons/icon.png</file> -->
