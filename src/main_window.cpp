@@ -75,7 +75,14 @@ namespace san
         combo_schemas.set_title("Schema");
 
         // expand, fill, padding
+        label_connections.set_text("Connection:");
+        label_connections.set_halign(Gtk::Align::ALIGN_START);
+        label_schemas.set_text("Schema:");
+        label_schemas.set_halign(Gtk::Align::ALIGN_START);
+
+        box_browser.pack_start(label_connections, false, false, 0);
         box_browser.pack_start(combo_connections, false, false, 4);
+        box_browser.pack_start(label_schemas, false, false, 0);
         box_browser.pack_start(combo_schemas, false, false, 4);
         box_browser.pack_start(browser_scrolled_window);
 

@@ -327,6 +327,8 @@ namespace san
         // List of connections
         Gtk::ComboBoxText combo_connections;
         Gtk::ComboBoxText combo_schemas;
+        Gtk::Label label_connections;
+        Gtk::Label label_schemas;
 
         std::unordered_map
         <Gtk::ScrolledWindow*, std::shared_ptr<AbstractTabModel> > tab_models;
