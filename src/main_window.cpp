@@ -181,6 +181,12 @@ namespace san
 
         tree_connections = nullptr;
         res_builder->get_widget("tree_connections", tree_connections);
+		res_builder->get_widget("btn_dashboard_connections", btn_dashboard_connections);
+
+        if (btn_dashboard_connections) {
+            btn_dashboard_connections->signal_clicked().connect
+                (sigc::mem_fun(*this, &MainWindow::on_action_file_new));
+        }
 
         if (tree_connections) {
             store_connections = Gtk::ListStore::create(connections_model);

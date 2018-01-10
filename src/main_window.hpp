@@ -315,6 +315,7 @@ namespace san
         Gtk::Box* box_dashboard;
 		Gtk::TreeView* tree_connections;
         Glib::RefPtr<Gtk::ListStore> store_connections;
+		Gtk::Button* btn_dashboard_connections;
 
         Glib::RefPtr<Gtk::TreeStore> browser_store;
         Gtk::ScrolledWindow browser_scrolled_window;
