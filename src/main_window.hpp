@@ -35,8 +35,26 @@ namespace san
             Gtk::TreeModelColumn<san::BrowserItemType> type;
         };
 
+        class ConnectionsModel : public Gtk::TreeModel::ColumnRecord
+        {
+        public:
+            ConnectionsModel()
+            {
+                add(name);
+                add(host);
+                add(dbname);
+                add(user);
+            }
+
+            Gtk::TreeModelColumn<Glib::ustring> name;
+            Gtk::TreeModelColumn<Glib::ustring> host;
+            Gtk::TreeModelColumn<Glib::ustring> dbname;
+            Gtk::TreeModelColumn<Glib::ustring> user;
+        };
+
     private:
         BrowserModel browser_model;
+        ConnectionsModel connections_model;
         san::NewConnectionWindow* win_connections;
 
         san::SimpleTabModel& get_simple_tab_model(Gtk::ScrolledWindow*);
@@ -273,6 +291,7 @@ namespace san
 
         void refresh_connections_list();
         void refresh_browser(const std::shared_ptr<san::PostgresConnection>&);
+        void refresh_tree_connections();
         void reset_browser() {
             // Reset current_connection first before triggering events
             san::Connections::instance()->current_connection = nullptr;
@@ -294,6 +313,8 @@ namespace san
         Gtk::Box box_main_pane;
 
         Gtk::Box* box_dashboard;
+		Gtk::TreeView* tree_connections;
+        Glib::RefPtr<Gtk::ListStore> store_connections;
 
         Glib::RefPtr<Gtk::TreeStore> browser_store;
         Gtk::ScrolledWindow browser_scrolled_window;

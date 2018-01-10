@@ -179,6 +179,20 @@ namespace san
             box_main_pane.add(*box_dashboard);
         }
 
+        tree_connections = nullptr;
+        res_builder->get_widget("tree_connections", tree_connections);
+
+        if (tree_connections) {
+            store_connections = Gtk::ListStore::create(connections_model);
+            tree_connections->set_model(store_connections);
+            tree_connections->append_column("Name", connections_model.name);
+            tree_connections->append_column("Host", connections_model.host);
+            tree_connections->append_column("Database", connections_model.dbname);
+            tree_connections->append_column("User", connections_model.user);
+
+            refresh_tree_connections();
+        }
+
         res_builder->get_widget_derived("win_new_connection", win_connections);
 
         if (win_connections) {
@@ -229,6 +243,7 @@ namespace san
     void MainWindow::on_win_connections_hide()
     {
         refresh_connections_list();
+        refresh_tree_connections();
     }
 
     san::SimpleTabModel& MainWindow::get_simple_tab_model(Gtk::ScrolledWindow* win)
@@ -830,6 +845,20 @@ sigc::mem_fun(*this, &MainWindow::cellrenderer_validated_on_editing_started), &t
             return;
 
         refresh_browser(pc);
+    }
+
+    void MainWindow::refresh_tree_connections()
+    {
+        store_connections->clear();
+
+        for (const auto& details : san::Connections::instance()->get_connections()) {
+            Gtk::TreeModel::Row row = *(store_connections->append());
+
+            row[connections_model.name] = details.second->name;
+            row[connections_model.host] = details.second->host;
+            row[connections_model.user] = details.second->user;
+            row[connections_model.dbname] = details.second->dbname;
+        }
     }
 
     void MainWindow::refresh_browser(const std::shared_ptr<san::PostgresConnection>& pc)
