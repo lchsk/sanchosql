@@ -9,9 +9,9 @@
       <object class="GtkToolButton" id="toolbutton_new">
         <property name="visible">True</property>
         <property name="can_focus">False</property>
-        <property name="tooltip_text" translatable="yes">New</property>
+        <property name="tooltip_text" translatable="yes">Configure connections</property>
         <property name="action_name">file.new_conn</property>
-        <property name="icon_name">document-new</property>
+        <property name="icon_name">network-server</property>
       </object>
       <packing>
         <property name="expand">False</property>
@@ -22,7 +22,7 @@
       <object class="GtkToolButton" id="toolbutton_sql">
         <property name="visible">True</property>
         <property name="can_focus">False</property>
-        <property name="label" translatable="yes">SQL</property>
+        <property name="tooltip_text" translatable="yes">SQL Editor</property>
         <property name="icon_name">accessories-text-editor</property>
       </object>
       <packing>
