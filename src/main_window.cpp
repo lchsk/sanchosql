@@ -124,7 +124,7 @@ namespace san
             res_builder->add_from_resource("/res/window_new_connection.glade");
             res_builder->add_from_resource("/res/dashboard.glade");
         } catch(const Glib::Error& e) {
-            g_critical("Building menus and toolbar failed: %s", e.what());
+            g_critical("Building menus and toolbar failed: %s", e.what().c_str());
         }
 
         Gtk::ToolButton* toolbutton_sql;
