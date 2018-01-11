@@ -729,7 +729,7 @@ sigc::mem_fun(*this, &MainWindow::cellrenderer_validated_on_editing_started), &t
              (sigc::mem_fun(*this, &MainWindow::on_tab_close_button_clicked),
               window));
 
-        tab->btn_reload->signal_clicked().connect
+        tab->btn_refresh->signal_clicked().connect
             (sigc::bind<Gtk::ScrolledWindow*>
              (sigc::mem_fun(*this, &MainWindow::on_reload_table_clicked),
               window));

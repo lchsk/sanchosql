@@ -38,7 +38,8 @@ namespace san
 
         toolbar = Gtk::manage(new Gtk::Toolbar);
         btn_execute_editor_query = Gtk::manage(new Gtk::ToolButton);
-        btn_execute_editor_query->set_icon_name("document-save");
+        btn_execute_editor_query->set_icon_name("media-playback-start");
+        btn_execute_editor_query->set_tooltip_text("Execute code in editor");
 
         toolbar->append(*btn_execute_editor_query);
 
@@ -142,12 +143,21 @@ namespace san
         tv = Gtk::manage(new Gtk::TextView);
 
         toolbar = Gtk::manage(new Gtk::Toolbar);
+
         btn_accept = Gtk::manage(new Gtk::ToolButton);
-        btn_accept->set_icon_name("document-save");
+        btn_accept->set_icon_name("go-down");
+        btn_accept->set_tooltip_text("Commit");
+
+        btn_refresh = Gtk::manage(new Gtk::ToolButton);
+        btn_refresh->set_icon_name("view-refresh");
+        btn_refresh->set_tooltip_text("Refresh");
+
         btn_primary_key_warning = Gtk::manage(new Gtk::ToolButton);
         btn_primary_key_warning->set_icon_name("dialog-warning");
+        btn_primary_key_warning->set_tooltip_text("The table doesn't have primary key");
 
         toolbar->append(*btn_accept);
+        toolbar->append(*btn_refresh);
         toolbar->append(*btn_primary_key_warning);
 
         tree_scrolled_window = Gtk::manage(new Gtk::ScrolledWindow);
@@ -178,9 +188,6 @@ namespace san
 
         box = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
 
-        btn_reload = Gtk::manage(new Gtk::Button);
-        btn_reload->set_label("Reload");
-        // btn_reload->set_image_from_icon_name("icon");
         btn_insert = Gtk::manage(new Gtk::Button);
         btn_insert->set_label("Insert");
         btn_prev = Gtk::manage(new Gtk::Button);
@@ -198,7 +205,6 @@ namespace san
         number_limit = Gtk::manage(new san::NumberEntry);
         browse_box = Gtk::manage(new Gtk::Box);
 
-        browse_box->pack_start(*btn_reload);
         browse_box->pack_start(*btn_insert);
         browse_box->pack_start(*btn_prev);
         browse_box->pack_start(*btn_next);
