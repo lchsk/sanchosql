@@ -29,7 +29,7 @@ endif ()
 
 project(sanchosql)
 
-set(PROJECT_VERSION "0.2-alpha0")
+set(PROJECT_VERSION "Build 1")
 
 set(CPACK_GENERATOR "DEB;ZIP;TGZ")
 set(CPACK_DEBIAN_PACKAGE_MAINTAINER "sanchosql.com")

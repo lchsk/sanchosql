@@ -73,7 +73,7 @@ namespace san
         void on_win_connections_hide();
 
         const std::string get_version() const {
-            return "0.2.0-alpha";
+            return "Build 1";
         }
 
         std::shared_ptr<san::PostgresConnection> connect(const std::shared_ptr<san::ConnectionDetails>& conn_details) {
