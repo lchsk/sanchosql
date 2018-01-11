@@ -3,7 +3,7 @@
 
 namespace san
 {
-    const unsigned LOG_BUFFER_MAX_SIZE = 2000; // characters
+    const int LOG_BUFFER_MAX_SIZE = 2000; // characters
 
     void insert_log_message(Glib::RefPtr<Gsv::Buffer>& log_buffer, const Glib::ustring& message)
     {
@@ -156,8 +156,8 @@ namespace san
         btn_primary_key_warning->set_icon_name("dialog-warning");
         btn_primary_key_warning->set_tooltip_text("The table doesn't have primary key");
 
-        toolbar->append(*btn_accept);
         toolbar->append(*btn_refresh);
+        toolbar->append(*btn_accept);
         toolbar->append(*btn_primary_key_warning);
 
         tree_scrolled_window = Gtk::manage(new Gtk::ScrolledWindow);
