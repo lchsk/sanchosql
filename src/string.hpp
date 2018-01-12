@@ -10,13 +10,15 @@ namespace san
 {
     namespace string
     {
+        const std::string EMPTY_DB_STRING = "\"\"";
+
         std::string replace_all(std::string str,
                                 const std::string& from,
                                 const std::string& to);
 
         std::string escape_sql(std::string str);
         std::string escape_db_data(std::string str);
-        std::string prepare_sql_value(std::string str);
+        std::string prepare_sql_value(std::string str, bool handle_strings = false);
 
         bool contains_only_numbers(const Glib::ustring& text);
 

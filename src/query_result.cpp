@@ -73,9 +73,16 @@ namespace san
 
             for (unsigned i = 0; i < result.columns(); i++) {
                 if (row[i].is_null()) {
-                    row_data.push_back("null");
+                    // Treat empty string as an SQL NULL value
+                    row_data.push_back("");
                 } else {
-                    row_data.push_back(row[i].as<std::string>());
+                    const std::string value = row[i].as<std::string>();
+
+                    if (value.empty()) {
+                        row_data.push_back(san::string::EMPTY_DB_STRING);
+                    } else {
+                        row_data.push_back(value);
+                    }
                 }
             }
 

@@ -43,15 +43,28 @@ namespace san
             return str;
         }
 
-        std::string prepare_sql_value(std::string str)
+        std::string _prepare_sql_value(std::string str)
         {
-            std::stringstream s;
+            return "'" + san::string::escape_sql(Glib::strcompress(str)) + "'";
+        }
 
-            s << "'"
-              << san::string::escape_sql(Glib::strcompress(str))
-              << "'";
+        std::string prepare_sql_value(std::string str, bool handle_strings)
+        {
+            if (! handle_strings) {
+                return _prepare_sql_value(str);
+            }
 
-            return s.str();
+            // Here, the value might actually be either an empty string or NULL
+            if (str.empty()) {
+                // NULL
+                return "NULL";
+            } else if (str == san::string::EMPTY_DB_STRING) {
+                // Empty string
+                return "''";
+            }
+
+            // Ordinary string
+            return _prepare_sql_value(str);
         }
 
         bool contains_only_numbers(const Glib::ustring& text)

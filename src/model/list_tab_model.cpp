@@ -121,7 +121,7 @@ namespace san
 					query << ", ";
 				}
 
-				query << pk_val.first << " = " << san::string::prepare_sql_value(pk_val.second);
+				query << pk_val.first << " = " << san::string::prepare_sql_value(pk_val.second, true);
 
 				i++;
 			}
