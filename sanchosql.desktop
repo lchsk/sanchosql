@@ -1,0 +1,19 @@
+[Desktop Entry]
+
+Type=Application
+
+Version=1.0
+
+Name=Sancho SQL
+
+Comment=Client application for working with PostgreSQL database
+
+# Path=
+
+Exec=sanchosql
+
+Icon=sanchosql
+
+Terminal=false
+
+Categories=Development;Database;GTK;
