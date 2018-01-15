@@ -134,24 +134,14 @@ namespace san
             (sigc::mem_fun(*this, &MainWindow::on_open_sql_editor_clicked));
 
         auto theme = Gtk::IconTheme::get_default();
-        theme->add_resource_path("/icons/64x64/res/icons");
+        // theme->add_resource_path("/icons/64x64/res/icons");
         theme->add_resource_path("/icons/512x512/res/icons");
-
-        // set_icon_name("sanchosql");
 
         Gtk::Image* icon = Gtk::manage(new Gtk::Image);
         icon->set_from_resource("/icons/512x512/res/icons/sanchosql.png");
-        main_box.pack_start(*icon);
 
         set_icon(icon->get_pixbuf());
-
-
-        // if (set_icon_from_file("/icons/512x512/res/icons/sanchosql.png")) {
-        if (set_icon_from_file("./res/icons/sanchosql.png")) {
-            g_debug("Icon set");
-        } else {
-            g_debug("Icon not set");
-        }
+        set_default_icon(icon->get_pixbuf());
 
         Gtk::MenuBar* menu = nullptr;
         res_builder->get_widget("menubar", menu);
