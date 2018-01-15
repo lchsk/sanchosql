@@ -139,6 +139,12 @@ namespace san
 
         // set_icon_name("sanchosql");
 
+        Gtk::Image* icon = Gtk::manage(new Gtk::Image);
+        icon->set_from_resource("/icons/512x512/res/icons/sanchosql.png");
+        main_box.pack_start(*icon);
+
+        set_icon(icon->get_pixbuf());
+
 
         // if (set_icon_from_file("/icons/512x512/res/icons/sanchosql.png")) {
         if (set_icon_from_file("./res/icons/sanchosql.png")) {
@@ -146,7 +152,6 @@ namespace san
         } else {
             g_debug("Icon not set");
         }
-
 
         Gtk::MenuBar* menu = nullptr;
         res_builder->get_widget("menubar", menu);
