@@ -135,6 +135,9 @@ namespace san
 
         auto theme = Gtk::IconTheme::get_default();
         theme->add_resource_path("/icons/64x64/res/icons");
+        theme->add_resource_path("/icons/512x512/res/icons");
+
+        set_icon_name("sanchosql");
 
         Gtk::MenuBar* menu = nullptr;
         res_builder->get_widget("menubar", menu);

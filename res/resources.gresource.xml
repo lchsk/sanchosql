@@ -8,6 +8,9 @@
     <file preprocess="xml-stripblanks">res/dashboard.glade</file>
   </gresource>
   <gresource prefix="/icons/64x64">
-    <!-- <file>res/icons/icon.png</file> -->
+    <!-- <file>res/icons/sanchosql.png</file> -->
+  </gresource>
+  <gresource prefix="/icons/512x512">
+    <file>res/icons/sanchosql.png</file>
   </gresource>
 </gresources>
