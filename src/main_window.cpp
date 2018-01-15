@@ -137,7 +137,16 @@ namespace san
         theme->add_resource_path("/icons/64x64/res/icons");
         theme->add_resource_path("/icons/512x512/res/icons");
 
-        set_icon_name("sanchosql");
+        // set_icon_name("sanchosql");
+
+
+        // if (set_icon_from_file("/icons/512x512/res/icons/sanchosql.png")) {
+        if (set_icon_from_file("./res/icons/sanchosql.png")) {
+            g_debug("Icon set");
+        } else {
+            g_debug("Icon not set");
+        }
+
 
         Gtk::MenuBar* menu = nullptr;
         res_builder->get_widget("menubar", menu);
