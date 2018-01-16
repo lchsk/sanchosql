@@ -31,13 +31,22 @@ project(sanchosql)
 
 set(PROJECT_VERSION "Build 1")
 
-set(CPACK_GENERATOR "DEB;ZIP;TGZ")
-set(CPACK_DEBIAN_PACKAGE_MAINTAINER "sanchosql.com")
-set(CPACK_PACKAGE_DESCRIPTION_SUMMARY, "Desktop GUI client application for PostgreSQL")
-set(CPACK_PACKAGE_DESCRIPTION, "Desktop GUI client application for PostgreSQL")
+# cpack
+set(CPACK_PACKAGE_CONTACT "sanchosql.com")
+set(CPACK_GENERATOR "DEB;RPM;ZIP;TGZ")
+set(CPACK_PACKAGE_DESCRIPTION, "Client application for PostgreSQL")
 set(CPACK_PACKAGE_VERSION ${PROJECT_VERSION})
-# set(CPACK_DEBIAN_PACKAGE_ARCHITECTURE "amd64")
-set(CPACK_DEBIAN_PACKAGE_DEPENDS "libpqxx (>= 4.0)")
+
+# deb stuff
+set(CPACK_DEBIAN_PACKAGE_HOMEPAGE "http://sanchosql.com")
+set(CPACK_DEBIAN_PACKAGE_DEPENDS "libpqxx-4.0 (>= 4.0), libgtkmm-3.0-1 (>= 3.0), libgtksourceviewmm-3.0-0 (>= 3.0)")
+set(CPACK_DEBIAN_PACKAGE_MAINTAINER "sanchosql.com")
+
+# rpm stuff
+# set(CPACK_RPM_PACKAGE_LICENSE "")
+set(CPACK_RPM_PACKAGE_URL "http://sanchosql.com")
+set(CPACK_RPM_PACKAGE_DESCRIPTION "Client application for PostgreSQL")
+set(CPACK_RPM_PACKAGE_REQUIRES "libpqxx >= 4.0, gtkmm30 >= 3.0, gtksourceviewmm3 >= 3.0")
 
 include(CPack)
 
@@ -61,9 +70,11 @@ set(CMAKE_CXX_STANDARD 14)
 if (CMAKE_BUILD_TYPE STREQUAL Debug)
   message(STATUS "Setting definition -O0")
   add_definitions(-O0)
+  set(CMAKE_CXX_FLAGS "-g -Wall -pedantic")
 else()
   message(STATUS "Setting definition -O3")
   add_definitions(-O3)
+  set(CMAKE_CXX_FLAGS "-Wall -pedantic")
 endif()
 
 find_package(PkgConfig)
