@@ -35,7 +35,7 @@ namespace san
 {
 	namespace config
 	{
-		const std::string current_version = "Build 1";
+		const std::string current_version = "0.0.1";
 	}
 }
 
