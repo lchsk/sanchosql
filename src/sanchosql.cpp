@@ -18,27 +18,21 @@ static bool get_arg_value(const Glib::RefPtr<Glib::VariantDict>& options,
     return options->lookup_value(arg_name, arg_value);
 }
 
-int on_command_line(const Glib::RefPtr<Gio::ApplicationCommandLine>& command_line,
-                    Glib::RefPtr<Gtk::Application>& app)
+int on_handle_local_options(const Glib::RefPtr<Glib::VariantDict>& options)
 {
-    app->activate();
-
-    const auto options = command_line->get_options_dict();
-
-    if (! options) {
-        g_debug("No options");
-    }
-
     bool flag_version = false;
     get_arg_value(options, "version", flag_version);
 
     if (flag_version) {
         std::cout << "SanchoSQL " << san::config::current_version << std::endl;
 
-        app->quit();
+        // -1 to continue default option processing
+        // 0 to exit with success
+        // > 0 for failures
+        return EXIT_SUCCESS;
     }
 
-    return 0;
+    return -1;
 }
 
 int main (int argc, char *argv[])
@@ -51,15 +45,16 @@ int main (int argc, char *argv[])
     signal(SIGPIPE, SIG_IGN);
     #endif
 
-    auto app = Gtk::Application::create(
-        argc, argv, "com.sanchosql",
-        Gio::APPLICATION_HANDLES_COMMAND_LINE | Gio::APPLICATION_NON_UNIQUE);
-
-    app->signal_command_line().connect(sigc::bind(sigc::ptr_fun(&on_command_line), app), false);
+    auto app = Gtk::Application::create(argc, argv, "com.sanchosql",
+                                        Gio::APPLICATION_NON_UNIQUE);
 
     app->add_main_option_entry(
         Gio::Application::OptionType::OPTION_TYPE_BOOL, "version", 'v',
         "Show version and quit");
+
+    app->signal_handle_local_options()
+        .connect(sigc::ptr_fun(&on_handle_local_options), false);
+
 
     #ifdef SANCHO_OS_WINDOWS
     Glib::RefPtr<Gtk::Settings> settings = Gtk::Settings::get_default();
