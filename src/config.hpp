@@ -31,4 +31,12 @@
 
 #endif
 
+namespace san
+{
+	namespace config
+	{
+		const std::string current_version = "Build 1";
+	}
+}
+
 #endif

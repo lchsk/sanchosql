@@ -251,7 +251,7 @@ namespace san
         q << "Database client"
 		  << "\n\n"
 		  << "Version: "
-		  << get_version()
+		  << san::config::current_version
           << "\n\n"
           << "http://sanchosql.com";
 

@@ -20,7 +20,6 @@ namespace san
     public:
         MainWindow();
         virtual ~MainWindow() {};
-
     protected:
         class BrowserModel : public Gtk::TreeModel::ColumnRecord
         {
@@ -72,9 +71,7 @@ namespace san
         void on_schema_changed();
         void on_win_connections_hide();
 
-        const std::string get_version() const {
-            return "Build 1";
-        }
+        // Gio::Application::signal_command_line;
 
         std::shared_ptr<san::PostgresConnection> connect(const std::shared_ptr<san::ConnectionDetails>& conn_details) {
             std::shared_ptr<san::PostgresConnection> pc
