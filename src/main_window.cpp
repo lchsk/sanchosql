@@ -245,6 +245,11 @@ namespace san
 
     void MainWindow::on_action_file_about()
     {
+        std::stringstream license;
+
+        license << "SanchoSQL is provided as-is. You are using it at your own risk. "
+                << "There is no warranty. ";
+
         Gtk::MessageDialog dialog(*this, "SanchoSQL", false /* use_markup */, Gtk::MESSAGE_INFO, Gtk::BUTTONS_OK);
         std::stringstream q;
 
@@ -253,7 +258,9 @@ namespace san
 		  << "Version: "
 		  << san::config::current_version
           << "\n\n"
-          << "http://sanchosql.com";
+          << "http://sanchosql.com"
+          << "\n\n"
+          << license.str();
 
         dialog.set_secondary_text(q.str());
 
