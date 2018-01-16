@@ -1,6 +1,6 @@
 #!/usr/bin/env sh
 
-CURRENT_VERSION="Build 1"
+CURRENT_VERSION="0.0.1"
 
 echo "New version $1"
 

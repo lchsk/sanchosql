@@ -29,7 +29,7 @@ endif ()
 
 project(sanchosql)
 
-set(PROJECT_VERSION "Build 1")
+set(PROJECT_VERSION "0.0.1")
 
 # cpack
 set(CPACK_PACKAGE_CONTACT "sanchosql.com")
@@ -39,7 +39,7 @@ set(CPACK_PACKAGE_VERSION ${PROJECT_VERSION})
 
 # deb stuff
 set(CPACK_DEBIAN_PACKAGE_HOMEPAGE "http://sanchosql.com")
-set(CPACK_DEBIAN_PACKAGE_DEPENDS "libpqxx-4.0 (>= 4.0), libgtkmm-3.0-1 (>= 3.0), libgtksourceviewmm-3.0-0 (>= 3.0)")
+set(CPACK_DEBIAN_PACKAGE_DEPENDS "libpqxx-dev (>= 4.0), libgtkmm-3.0-dev (>= 3.0), libgtksourceviewmm-3.0-dev (>= 3.0)")
 set(CPACK_DEBIAN_PACKAGE_MAINTAINER "sanchosql.com")
 
 # rpm stuff
