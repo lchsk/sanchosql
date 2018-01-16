@@ -6,7 +6,7 @@ Version=1.0
 
 Name=Sancho SQL
 
-Comment=Client application for working with PostgreSQL database
+Comment=Client application for PostgreSQL database
 
 # Path=
 

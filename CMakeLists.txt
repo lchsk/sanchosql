@@ -106,6 +106,8 @@ add_executable(${EXECUTABLE_NAME}
 
     # Resources
     src/resources.c
+    sanchosql.desktop
+    res/icons/sanchosql.png
     )
 
 add_custom_target(resources
@@ -124,4 +126,20 @@ include_directories(${GTKMM_INCLUDE_DIRS} ${PQXX_INCLUDE_DIRS} ${GTKSOURCEVIEW_I
 target_link_libraries(${EXECUTABLE_NAME} ${GTKMM_LIBRARIES} ${PQXX_LIBRARIES} -lpq ${EXTRA_TARGET_LIB} ${GTKSOURCEVIEW_LIBRARIES})
 cotire(${EXECUTABLE_NAME})
 
+# Installation
+
 install(TARGETS ${EXECUTABLE_NAME} DESTINATION bin)
+install(FILES sanchosql.desktop DESTINATION share/applications)
+install(FILES res/icons/sanchosql.png DESTINATION share/pixmaps)
+
+# Uninstall
+
+configure_file(
+  "${CMAKE_CURRENT_SOURCE_DIR}/cmake/cmake_uninstall.cmake.in"
+  "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake"
+  IMMEDIATE @ONLY
+)
+
+add_custom_target(uninstall
+  COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake
+)
