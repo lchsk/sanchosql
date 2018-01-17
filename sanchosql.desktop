@@ -4,7 +4,7 @@ Type=Application
 
 Version=1.0
 
-Name=Sancho SQL
+Name=SanchoSQL
 
 Comment=Client application for PostgreSQL database
 
