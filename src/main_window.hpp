@@ -71,6 +71,35 @@ namespace san
         void on_schema_changed();
         void on_win_connections_hide();
 
+        typedef guint GdkKeyCode;
+
+        bool check_mod_binding(GdkEventKey* key_event,
+                               GdkKeyCode mod_key,
+                               GdkKeyCode key) {
+            return ((key_event->keyval == key) &&
+                    (key_event->state & (GDK_SHIFT_MASK |
+                                         GDK_CONTROL_MASK |
+                                         GDK_MOD1_MASK)) == mod_key);
+        }
+
+		bool on_key_press_event(GdkEventKey* key_event) {
+            if (check_mod_binding(key_event, GDK_CONTROL_MASK, GDK_KEY_c)) {
+                on_action_file_new();
+
+                return true;
+            } else if (check_mod_binding(key_event, GDK_CONTROL_MASK, GDK_KEY_e)) {
+                on_open_sql_editor_clicked();
+
+                return true;
+            } else if (check_mod_binding(key_event, GDK_CONTROL_MASK, GDK_KEY_q)) {
+                on_action_file_quit();
+
+                return true;
+            }
+
+            return Gtk::Window::on_key_press_event(key_event);
+		}
+
         std::shared_ptr<san::PostgresConnection> connect(const std::shared_ptr<san::ConnectionDetails>& conn_details) {
             std::shared_ptr<san::PostgresConnection> pc
                 = std::make_shared<san::PostgresConnection>(conn_details);

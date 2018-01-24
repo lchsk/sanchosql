@@ -119,8 +119,6 @@ namespace san
 
         try {
             res_builder->add_from_resource("/res/toolbar.glade");
-            res_builder->add_from_resource("/res/main_menu.glade");
-            res_builder->add_from_resource("/res/test.glade");
             res_builder->add_from_resource("/res/window_new_connection.glade");
             res_builder->add_from_resource("/res/dashboard.glade");
         } catch(const Glib::Error& e) {
@@ -143,35 +141,75 @@ namespace san
         set_icon(icon->get_pixbuf());
         set_default_icon(icon->get_pixbuf());
 
-        Gtk::MenuBar* menu = nullptr;
-        res_builder->get_widget("menubar", menu);
+        Glib::RefPtr<Gtk::AccelGroup> group = Gtk::AccelGroup::create();
+        add_accel_group(group);
 
-        if (menu) {
-            main_box.pack_start(*menu, Gtk::PACK_SHRINK);
-        } else {
-            g_critical("Menu not found");
-        }
+        Gtk::MenuBar* menu = Gtk::manage(new Gtk::MenuBar);
 
-        Gtk::ImageMenuItem* menu_item_connections;
-        res_builder->get_widget("menu_item_connections", menu_item_connections);
+        Gtk::MenuItem* menu_item_file = Gtk::manage(new Gtk::MenuItem);
+        menu_item_file->set_label("_File");
+        menu_item_file->set_use_underline();
+        menu->append(*menu_item_file);
+
+        Gtk::MenuItem* menu_item_help = Gtk::manage(new Gtk::MenuItem);
+        menu_item_help->set_label("_Help");
+        menu_item_help->set_use_underline();
+        menu->append(*menu_item_help);
+
+        Gtk::Menu* menu_file = Gtk::manage(new Gtk::Menu);
+        menu_item_file->set_submenu(*menu_file);
+
+        Gtk::Menu* menu_help = Gtk::manage(new Gtk::Menu);
+        menu_item_help->set_submenu(*menu_help);
+
+        Gtk::ImageMenuItem* menu_item_about = Gtk::manage(new Gtk::ImageMenuItem);
+        menu_item_about->set_label("_About");
+        menu_item_about->set_use_underline();
+        menu_help->append(*menu_item_about);
+
+        Gtk::ImageMenuItem* menu_item_connections = Gtk::manage(new Gtk::ImageMenuItem);
+        menu_item_connections->set_label("_Connections");
+        menu_file->append(*menu_item_connections);
+
+        menu_item_connections
+            ->add_accelerator("activate", group,
+                              GDK_KEY_c, Gdk::ModifierType::CONTROL_MASK,
+                              Gtk::ACCEL_VISIBLE);
+        menu_item_connections->set_use_underline();
+
+        Gtk::ImageMenuItem* menu_item_sql_editor = Gtk::manage(new Gtk::ImageMenuItem);
+        menu_item_sql_editor->set_label("_SQL Editor");
+        menu_file->append(*menu_item_sql_editor);
+
+        menu_item_sql_editor
+            ->add_accelerator("activate", group,
+                              GDK_KEY_e, Gdk::ModifierType::CONTROL_MASK,
+                              Gtk::ACCEL_VISIBLE);
+        menu_item_sql_editor->set_use_underline();
+
+        Gtk::SeparatorMenuItem* menu_item_separator = Gtk::manage(new Gtk::SeparatorMenuItem);
+        menu_file->append(*menu_item_separator);
+
+        Gtk::ImageMenuItem* menu_item_quit = Gtk::manage(new Gtk::ImageMenuItem);
+        menu_item_quit->set_label("_Quit");
+        menu_file->append(*menu_item_quit);
+
+        menu_item_quit
+            ->add_accelerator("activate", group,
+                              GDK_KEY_q, Gdk::ModifierType::CONTROL_MASK,
+                              Gtk::ACCEL_VISIBLE);
+        menu_item_quit->set_use_underline();
+
+        main_box.pack_start(*menu, Gtk::PACK_SHRINK);
 
         menu_item_connections->signal_activate().connect
             (sigc::mem_fun(*this, &MainWindow::on_action_file_new));
 
-        Gtk::ImageMenuItem* menu_item_sql_editor;
-        res_builder->get_widget("menu_item_sql_editor", menu_item_sql_editor);
-
         menu_item_sql_editor->signal_activate().connect
             (sigc::mem_fun(*this, &MainWindow::on_open_sql_editor_clicked));
 
-        Gtk::ImageMenuItem* menu_item_quit;
-        res_builder->get_widget("menu_item_quit", menu_item_quit);
-
         menu_item_quit->signal_activate().connect
             (sigc::mem_fun(*this, &MainWindow::on_action_file_quit));
-
-        Gtk::ImageMenuItem* menu_item_about;
-        res_builder->get_widget("menu_item_about", menu_item_about);
 
         menu_item_about->signal_activate().connect
             (sigc::mem_fun(*this, &MainWindow::on_action_file_about));
@@ -221,6 +259,8 @@ namespace san
             win_connections->set_transient_for(*this);
             win_connections->set_modal();
         }
+
+        add_events(Gdk::KEY_PRESS_MASK);
 
         show_all_children();
 
