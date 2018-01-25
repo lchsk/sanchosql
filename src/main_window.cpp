@@ -157,27 +157,44 @@ namespace san
         menu->append(*menu_item_help);
 
         Gtk::Menu* menu_file = Gtk::manage(new Gtk::Menu);
+        menu_file->set_reserve_toggle_size(false);
         menu_item_file->set_submenu(*menu_file);
 
         Gtk::Menu* menu_help = Gtk::manage(new Gtk::Menu);
         menu_item_help->set_submenu(*menu_help);
+        // menu_item_help->set_always_show_image();
 
-        Gtk::ImageMenuItem* menu_item_about = Gtk::manage(new Gtk::ImageMenuItem);
+        Gtk::Box* b1 = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_HORIZONTAL, 6));
+        Gtk::AccelLabel* l1 = Gtk::manage(new Gtk::AccelLabel);
+        Gtk::Image* i1 = Gtk::manage(new Gtk::Image);
+        i1->set_from_icon_name("network-server", Gtk::BuiltinIconSize::ICON_SIZE_MENU);
+        l1->set_text("_Connections");
+        l1->set_use_underline();
+        l1->set_xalign(0.0);
+
+        b1->add(*i1);
+        b1->pack_end(*l1, true, true, 0);
+
+        Gtk::MenuItem* menu_item_about = Gtk::manage(new Gtk::MenuItem);
         menu_item_about->set_label("_About");
         menu_item_about->set_use_underline();
         menu_help->append(*menu_item_about);
 
-        Gtk::ImageMenuItem* menu_item_connections = Gtk::manage(new Gtk::ImageMenuItem);
-        menu_item_connections->set_label("_Connections");
-        menu_file->append(*menu_item_connections);
+        Gtk::MenuItem* menu_item_connections = Gtk::manage(new Gtk::MenuItem(*b1));
+
+        l1->set_accel_widget(*menu_item_connections);
 
         menu_item_connections
             ->add_accelerator("activate", group,
                               GDK_KEY_c, Gdk::ModifierType::CONTROL_MASK,
                               Gtk::ACCEL_VISIBLE);
-        menu_item_connections->set_use_underline();
 
-        Gtk::ImageMenuItem* menu_item_sql_editor = Gtk::manage(new Gtk::ImageMenuItem);
+        // menu_item_connections->set_label("_Connections");
+        menu_file->append(*menu_item_connections);
+
+        // menu_item_connections->set_use_underline();
+
+        Gtk::MenuItem* menu_item_sql_editor = Gtk::manage(new Gtk::MenuItem);
         menu_item_sql_editor->set_label("_SQL Editor");
         menu_file->append(*menu_item_sql_editor);
 
@@ -190,7 +207,7 @@ namespace san
         Gtk::SeparatorMenuItem* menu_item_separator = Gtk::manage(new Gtk::SeparatorMenuItem);
         menu_file->append(*menu_item_separator);
 
-        Gtk::ImageMenuItem* menu_item_quit = Gtk::manage(new Gtk::ImageMenuItem);
+        Gtk::MenuItem* menu_item_quit = Gtk::manage(new Gtk::MenuItem);
         menu_item_quit->set_label("_Quit");
         menu_file->append(*menu_item_quit);
 
