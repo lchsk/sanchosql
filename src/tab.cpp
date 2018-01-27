@@ -18,21 +18,29 @@ namespace san
         log_buffer->insert(log_buffer->begin(), dated_message);
     }
 
-    AbstractTab::AbstractTab(const Glib::ustring& tab_name) : tab_name(tab_name) {}
-
-    QueryTab::QueryTab(const Glib::ustring& tab_name) : AbstractTab(tab_name)
-    {
+    AbstractTab::AbstractTab(const Glib::ustring& tab_name) : tab_name(tab_name) {
         hb = Gtk::manage(new Gtk::HBox);
         b = Gtk::manage(new Gtk::Button);
         l = Gtk::manage(new Gtk::Label(tab_name));
 
-		b->set_relief(Gtk::ReliefStyle::RELIEF_NONE);
+        event_box.add(*l);
+        event_box.set_events(Gdk::BUTTON_RELEASE_MASK);
+        event_box.set_tooltip_text("Middle button click to close");
+        // l->set_size_request(110, 20);
+        // l->set_ellipsize(Pango::ELLIPSIZE_END);
+
+        b->set_relief(Gtk::ReliefStyle::RELIEF_NONE);
 
         i = Gtk::manage(new Gtk::Image(Gtk::Stock::CLOSE, Gtk::ICON_SIZE_MENU));
 
         b->add(*i);
-        hb->pack_start(*l, Gtk::PACK_SHRINK);
+        hb->pack_start(event_box, Gtk::PACK_SHRINK);
         hb->pack_start(*b, Gtk::PACK_SHRINK);
+    }
+
+    QueryTab::QueryTab(const Glib::ustring& tab_name) : AbstractTab(tab_name)
+    {
+
 
         tv = Gtk::manage(new Gtk::TextView);
 
@@ -128,18 +136,6 @@ namespace san
           tree(Gtk::manage(new Gtk::TreeView)),
           model(model)
     {
-        hb = Gtk::manage(new Gtk::HBox);
-        b = Gtk::manage(new Gtk::Button);
-        l = Gtk::manage(new Gtk::Label(tab_name));
-
-        b->set_relief(Gtk::ReliefStyle::RELIEF_NONE);
-
-        i = Gtk::manage(new Gtk::Image(Gtk::Stock::CLOSE, Gtk::ICON_SIZE_MENU));
-
-        b->add(*i);
-        hb->pack_start(*l, Gtk::PACK_SHRINK);
-        hb->pack_start(*b, Gtk::PACK_SHRINK);
-
         tv = Gtk::manage(new Gtk::TextView);
 
         toolbar = Gtk::manage(new Gtk::Toolbar);

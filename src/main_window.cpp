@@ -591,6 +591,15 @@ sigc::mem_fun(*this, &MainWindow::cellrenderer_validated_on_editing_started), &t
         r[*model.col_color] = model.col_inserted;
     }
 
+    bool MainWindow::on_tab_button_released(GdkEventButton* button_event, Gtk::ScrolledWindow* window)
+    {
+      if ((button_event->type == GDK_BUTTON_RELEASE) && (button_event->button == 2)) {
+        on_tab_close_button_clicked(window);
+      }
+
+      return true;
+    }
+
     void MainWindow::on_tab_close_button_clicked(Gtk::ScrolledWindow* tree)
     {
         if (tab_models.find(tree) == tab_models.end()) {
@@ -640,6 +649,11 @@ sigc::mem_fun(*this, &MainWindow::cellrenderer_validated_on_editing_started), &t
         tab->b->signal_clicked().connect
             (sigc::bind<Gtk::ScrolledWindow*>
              (sigc::mem_fun(*this, &MainWindow::on_tab_close_button_clicked),
+              window));
+
+        tab->event_box.signal_button_release_event().connect
+            (sigc::bind<Gtk::ScrolledWindow*>
+             (sigc::mem_fun(*this, &MainWindow::on_tab_button_released),
               window));
 
         tab->btn_execute_editor_query->signal_clicked().connect
@@ -721,6 +735,11 @@ sigc::mem_fun(*this, &MainWindow::cellrenderer_validated_on_editing_started), &t
             (sigc::bind<san::SimpleTab*, san::SimpleTabModel*>
              (sigc::mem_fun(*this, &MainWindow::on_btn_accept_changes_clicked),
               simple_tab, simple_tab_model));
+
+        tab->event_box.signal_button_release_event().connect
+            (sigc::bind<Gtk::ScrolledWindow*>
+             (sigc::mem_fun(*this, &MainWindow::on_tab_button_released),
+              window));
 
         tab->b->signal_clicked().connect
             (sigc::bind<Gtk::ScrolledWindow*>

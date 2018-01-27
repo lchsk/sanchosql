@@ -28,6 +28,7 @@ namespace san
         Gtk::HBox* hb;
         Gtk::Button* b;
         Gtk::Label* l;
+        Gtk::EventBox event_box;
 
         Gtk::Image* i;
         Gtk::TextView* tv;
