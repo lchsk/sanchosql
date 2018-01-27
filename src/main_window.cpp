@@ -141,94 +141,21 @@ namespace san
         set_icon(icon->get_pixbuf());
         set_default_icon(icon->get_pixbuf());
 
-        Glib::RefPtr<Gtk::AccelGroup> group = Gtk::AccelGroup::create();
-        add_accel_group(group);
+        add_accel_group(main_menu.group);
+        group = main_menu.group;
 
-        Gtk::MenuBar* menu = Gtk::manage(new Gtk::MenuBar);
+        main_box.pack_start(*main_menu.menu, Gtk::PACK_SHRINK);
 
-        Gtk::MenuItem* menu_item_file = Gtk::manage(new Gtk::MenuItem);
-        menu_item_file->set_label("_File");
-        menu_item_file->set_use_underline();
-        menu->append(*menu_item_file);
-
-        Gtk::MenuItem* menu_item_help = Gtk::manage(new Gtk::MenuItem);
-        menu_item_help->set_label("_Help");
-        menu_item_help->set_use_underline();
-        menu->append(*menu_item_help);
-
-        Gtk::Menu* menu_file = Gtk::manage(new Gtk::Menu);
-        menu_file->set_reserve_toggle_size(false);
-        menu_item_file->set_submenu(*menu_file);
-
-        Gtk::Menu* menu_help = Gtk::manage(new Gtk::Menu);
-        menu_item_help->set_submenu(*menu_help);
-        // menu_item_help->set_always_show_image();
-
-        Gtk::Box* b1 = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_HORIZONTAL, 6));
-        Gtk::AccelLabel* l1 = Gtk::manage(new Gtk::AccelLabel);
-        Gtk::Image* i1 = Gtk::manage(new Gtk::Image);
-        i1->set_from_icon_name("network-server", Gtk::BuiltinIconSize::ICON_SIZE_MENU);
-        l1->set_text("_Connections");
-        l1->set_use_underline();
-        l1->set_xalign(0.0);
-
-        b1->add(*i1);
-        b1->pack_end(*l1, true, true, 0);
-
-        Gtk::MenuItem* menu_item_about = Gtk::manage(new Gtk::MenuItem);
-        menu_item_about->set_label("_About");
-        menu_item_about->set_use_underline();
-        menu_help->append(*menu_item_about);
-
-        Gtk::MenuItem* menu_item_connections = Gtk::manage(new Gtk::MenuItem(*b1));
-
-        l1->set_accel_widget(*menu_item_connections);
-
-        menu_item_connections
-            ->add_accelerator("activate", group,
-                              GDK_KEY_c, Gdk::ModifierType::CONTROL_MASK,
-                              Gtk::ACCEL_VISIBLE);
-
-        // menu_item_connections->set_label("_Connections");
-        menu_file->append(*menu_item_connections);
-
-        // menu_item_connections->set_use_underline();
-
-        Gtk::MenuItem* menu_item_sql_editor = Gtk::manage(new Gtk::MenuItem);
-        menu_item_sql_editor->set_label("_SQL Editor");
-        menu_file->append(*menu_item_sql_editor);
-
-        menu_item_sql_editor
-            ->add_accelerator("activate", group,
-                              GDK_KEY_e, Gdk::ModifierType::CONTROL_MASK,
-                              Gtk::ACCEL_VISIBLE);
-        menu_item_sql_editor->set_use_underline();
-
-        Gtk::SeparatorMenuItem* menu_item_separator = Gtk::manage(new Gtk::SeparatorMenuItem);
-        menu_file->append(*menu_item_separator);
-
-        Gtk::MenuItem* menu_item_quit = Gtk::manage(new Gtk::MenuItem);
-        menu_item_quit->set_label("_Quit");
-        menu_file->append(*menu_item_quit);
-
-        menu_item_quit
-            ->add_accelerator("activate", group,
-                              GDK_KEY_q, Gdk::ModifierType::CONTROL_MASK,
-                              Gtk::ACCEL_VISIBLE);
-        menu_item_quit->set_use_underline();
-
-        main_box.pack_start(*menu, Gtk::PACK_SHRINK);
-
-        menu_item_connections->signal_activate().connect
+        main_menu.menu_item_connections->signal_activate().connect
             (sigc::mem_fun(*this, &MainWindow::on_action_file_new));
 
-        menu_item_sql_editor->signal_activate().connect
+        main_menu.menu_item_sql_editor->signal_activate().connect
             (sigc::mem_fun(*this, &MainWindow::on_open_sql_editor_clicked));
 
-        menu_item_quit->signal_activate().connect
+        main_menu.menu_item_quit->signal_activate().connect
             (sigc::mem_fun(*this, &MainWindow::on_action_file_quit));
 
-        menu_item_about->signal_activate().connect
+        main_menu.menu_item_about->signal_activate().connect
             (sigc::mem_fun(*this, &MainWindow::on_action_file_about));
 
         Gtk::Toolbar* toolbar = nullptr;

@@ -15,6 +15,137 @@ namespace san
 {
     enum class BrowserItemType { Header, Table };
 
+    class MainMenu
+    {
+      class ImageMenuItem
+      {
+      public:
+        ImageMenuItem() : b1(nullptr), l1(nullptr), i1(nullptr)
+        {
+          b1 = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_HORIZONTAL, 6));
+          l1 = Gtk::manage(new Gtk::AccelLabel);
+        }
+
+        void set_icon(const std::string& icon_name)
+        {
+          i1 = Gtk::manage(new Gtk::Image);
+          i1->set_from_icon_name(icon_name, Gtk::BuiltinIconSize::ICON_SIZE_MENU);
+        }
+
+        void set_text(const std::string& text)
+        {
+          l1->set_text(text);
+          l1->set_use_underline();
+          l1->set_xalign(0.0);
+        }
+
+        void finish()
+        {
+          if (i1) {
+            b1->add(*i1);
+          }
+
+          b1->pack_end(*l1, true, true, 0);
+        }
+
+        Gtk::Box* b1;
+        Gtk::AccelLabel* l1;
+        Gtk::Image* i1;
+      };
+
+    public:
+      MainMenu()
+      {
+        group = Gtk::AccelGroup::create();
+
+        menu = Gtk::manage(new Gtk::MenuBar);
+        menu_item_file = Gtk::manage(new Gtk::MenuItem);
+        menu_item_help = Gtk::manage(new Gtk::MenuItem);
+        menu_file = Gtk::manage(new Gtk::Menu);
+        menu_help = Gtk::manage(new Gtk::Menu);
+        menu_item_about = Gtk::manage(new Gtk::MenuItem);
+
+        menu_item_file->set_label("_File");
+        menu_item_file->set_use_underline();
+        menu->append(*menu_item_file);
+
+        menu_item_help->set_label("_Help");
+        menu_item_help->set_use_underline();
+        menu->append(*menu_item_help);
+
+        menu_file->set_reserve_toggle_size(false);
+        menu_item_file->set_submenu(*menu_file);
+
+        menu_item_help->set_submenu(*menu_help);
+        // menu_item_help->set_always_show_image();
+        menu_file->set_reserve_toggle_size(false);
+
+        connections_mi = std::make_unique<ImageMenuItem>();
+        connections_mi->set_text("_Connections");
+        connections_mi->set_icon("network-server");
+        connections_mi->finish();
+
+        editor_mi = std::make_unique<ImageMenuItem>();
+        editor_mi->set_text("_SQL Editor");
+        editor_mi->set_icon("accessories-text-editor");
+        editor_mi->finish();
+
+        menu_item_connections = Gtk::manage(new Gtk::MenuItem(*connections_mi->b1));
+        menu_file->append(*menu_item_connections);
+
+        menu_item_connections
+            ->add_accelerator("activate", group,
+                              GDK_KEY_c, Gdk::ModifierType::CONTROL_MASK,
+                              Gtk::ACCEL_VISIBLE);
+
+        connections_mi->l1->set_accel_widget(*menu_item_connections);
+
+        menu_item_sql_editor = Gtk::manage(new Gtk::MenuItem(*editor_mi->b1));
+        menu_file->append(*menu_item_sql_editor);
+
+        menu_item_sql_editor
+            ->add_accelerator("activate", group,
+                              GDK_KEY_e, Gdk::ModifierType::CONTROL_MASK,
+                              Gtk::ACCEL_VISIBLE);
+
+        editor_mi->l1->set_accel_widget(*menu_item_sql_editor);
+
+        menu_item_separator = Gtk::manage(new Gtk::SeparatorMenuItem);
+        menu_file->append(*menu_item_separator);
+
+        quit_mi = std::make_unique<ImageMenuItem>();
+        quit_mi->set_text("_Quit");
+        quit_mi->finish();
+
+        menu_item_quit = Gtk::manage(new Gtk::MenuItem(*quit_mi->b1));
+        menu_file->append(*menu_item_quit);
+
+        menu_item_quit
+            ->add_accelerator("activate", group,
+                              GDK_KEY_q, Gdk::ModifierType::CONTROL_MASK,
+                              Gtk::ACCEL_VISIBLE);
+
+        quit_mi->l1->set_accel_widget(*menu_item_quit);
+      }
+
+      Glib::RefPtr<Gtk::AccelGroup> group;
+
+      std::unique_ptr<ImageMenuItem> connections_mi;
+      std::unique_ptr<ImageMenuItem> editor_mi;
+      std::unique_ptr<ImageMenuItem> quit_mi;
+
+      Gtk::MenuBar* menu;
+      Gtk::MenuItem* menu_item_file;
+      Gtk::MenuItem* menu_item_help;
+      Gtk::Menu* menu_file;
+      Gtk::Menu* menu_help;
+      Gtk::MenuItem* menu_item_about;
+      Gtk::MenuItem* menu_item_connections;
+      Gtk::MenuItem* menu_item_sql_editor;
+      Gtk::SeparatorMenuItem* menu_item_separator;
+      Gtk::MenuItem* menu_item_quit;
+    };
+
     class MainWindow : public Gtk::Window
     {
     public:
@@ -55,6 +186,9 @@ namespace san
         BrowserModel browser_model;
         ConnectionsModel connections_model;
         san::NewConnectionWindow* win_connections;
+
+      Glib::RefPtr<Gtk::AccelGroup> group;
+      MainMenu main_menu;
 
         san::SimpleTabModel& get_simple_tab_model(Gtk::ScrolledWindow*);
         san::QueryTabModel& get_query_tab_model(Gtk::ScrolledWindow*);
