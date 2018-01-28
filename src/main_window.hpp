@@ -190,6 +190,21 @@ class MainWindow : public Gtk::Window {
     san::SimpleTab& get_simple_tab(Gtk::ScrolledWindow*);
     san::QueryTab& get_query_tab(Gtk::ScrolledWindow*);
 
+    Gtk::ScrolledWindow* get_current_swindow()
+    {
+        return static_cast<Gtk::ScrolledWindow*>(
+            notebook.get_nth_page(notebook.get_current_page()));
+    }
+
+    san::TabType get_tab_type(Gtk::ScrolledWindow* win)
+    {
+        if (!IN_MAP(tabs, win)) {
+            return san::TabType::Invalid;
+        }
+
+        return tabs[win]->type;
+    }
+
     void cellrenderer_validated_on_edited(const Glib::ustring& path_string,
                                           const Glib::ustring& new_text,
                                           san::SimpleTab* tab,
@@ -235,8 +250,7 @@ class MainWindow : public Gtk::Window {
 
             return true;
         } else if (check_mod_binding(key_event, GDK_CONTROL_MASK, GDK_KEY_w)) {
-            Gtk::ScrolledWindow* window = static_cast<Gtk::ScrolledWindow*>(
-                notebook.get_nth_page(notebook.get_current_page()));
+            Gtk::ScrolledWindow* window = get_current_swindow();
 
             if (!window) {
                 g_warning("Cannot remove tab!");
@@ -245,6 +259,17 @@ class MainWindow : public Gtk::Window {
             }
 
             on_tab_close_button_clicked(window);
+        } else if (key_event->keyval == GDK_KEY_F5) {
+            Gtk::ScrolledWindow* window = get_current_swindow();
+            const san::TabType type = get_tab_type(window);
+
+            if (type == san::TabType::Query) {
+                san::QueryTab& tab = get_query_tab(window);
+
+                on_submit_query_clicked(window, tab.buffer);
+            }
+
+            return true;
         }
 
         return Gtk::Window::on_key_press_event(key_event);

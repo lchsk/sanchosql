@@ -14,9 +14,11 @@ namespace san {
 void insert_log_message(Glib::RefPtr<Gsv::Buffer>& log_buffer,
                         const Glib::ustring& message);
 
+enum class TabType { List, Query, Invalid };
+
 class AbstractTab {
   public:
-    AbstractTab(const Glib::ustring& tab_name);
+    AbstractTab(const Glib::ustring& tab_name, TabType type);
 
     void show() const
     {
@@ -46,6 +48,8 @@ class AbstractTab {
     Gtk::Box* box;
 
     const Glib::ustring tab_name;
+
+    const TabType type;
 };
 
 class QueryTab : public AbstractTab {

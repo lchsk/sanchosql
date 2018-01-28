@@ -20,7 +20,8 @@ void insert_log_message(Glib::RefPtr<Gsv::Buffer>& log_buffer,
     log_buffer->insert(log_buffer->begin(), dated_message);
 }
 
-AbstractTab::AbstractTab(const Glib::ustring& tab_name) : tab_name(tab_name)
+AbstractTab::AbstractTab(const Glib::ustring& tab_name, TabType type)
+    : tab_name(tab_name), type(type)
 {
     hb = Gtk::manage(new Gtk::HBox);
     b = Gtk::manage(new Gtk::Button);
@@ -41,7 +42,8 @@ AbstractTab::AbstractTab(const Glib::ustring& tab_name) : tab_name(tab_name)
     hb->pack_start(*b, Gtk::PACK_SHRINK);
 }
 
-QueryTab::QueryTab(const Glib::ustring& tab_name) : AbstractTab(tab_name)
+QueryTab::QueryTab(const Glib::ustring& tab_name)
+    : AbstractTab(tab_name, TabType::Query)
 {
 
     tv = Gtk::manage(new Gtk::TextView);
@@ -141,7 +143,8 @@ QueryTab::QueryTab(const Glib::ustring& tab_name) : AbstractTab(tab_name)
 
 SimpleTab::SimpleTab(const Glib::ustring& tab_name,
                      std::shared_ptr<san::SimpleTabModel>& model)
-    : AbstractTab(tab_name), tree(Gtk::manage(new Gtk::TreeView)), model(model)
+    : AbstractTab(tab_name, TabType::List),
+      tree(Gtk::manage(new Gtk::TreeView)), model(model)
 {
     tv = Gtk::manage(new Gtk::TextView);
 
