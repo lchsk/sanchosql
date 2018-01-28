@@ -14,8 +14,21 @@ namespace san
         std::string data_type;
     };
 
-    struct Column
+    class Column
     {
+    public:
+        Column(const pqxx::oid& oid,
+               const std::string& column_name,
+               const std::string& data_type,
+               const std::string& char_length,
+               bool is_nullable):
+            oid(oid),
+            column_name(column_name),
+            data_type(data_type),
+            char_length(char_length),
+            is_nullable(is_nullable)
+        {}
+
         pqxx::oid oid;
         std::string column_name;
         std::string data_type;

@@ -59,13 +59,12 @@ namespace san
                 is_nullable = columns_data[result.column_name(i)].is_nullable;
             }
 
-            columns.push_back(san::Column({
-                        .oid = result.column_type(i),
-                            .column_name = result.column_name(i),
-                            .data_type = san::get_data_type(result.column_type(i), *oid_names),
-                            .char_length = char_length,
-                            .is_nullable = is_nullable
-                            }));
+            columns.push_back(san::Column(
+                        result.column_type(i),
+                        result.column_name(i),
+                        san::get_data_type(result.column_type(i), *oid_names),
+                        char_length,
+                        is_nullable));
         }
 
         for (const auto& row : result) {
