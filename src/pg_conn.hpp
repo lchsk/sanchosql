@@ -14,8 +14,9 @@
 
 namespace san
 {
-    struct PrimaryKey
+    class PrimaryKey
     {
+    public:
         std::string column_name;
         std::string data_type;
 

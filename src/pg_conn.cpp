@@ -118,10 +118,7 @@ namespace san
             return data;
 
         for (auto& row : query_result->as_map()) {
-            data.push_back(PrimaryKey({
-                .column_name = row["column_name"],
-                .data_type = row["data_type"]
-            }));
+            data.push_back(PrimaryKey(row["column_name"], row["data_type"]));
         }
 
         return data;
