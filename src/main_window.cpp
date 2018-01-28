@@ -643,6 +643,8 @@ void MainWindow::on_tab_close_button_clicked(Gtk::ScrolledWindow* tree)
     if (tabs_n != models || tabs_n != notebook_tabs) {
         g_warning("Tabs %d != Models %d != Notebook tabs %d", tabs_n, models,
                   notebook_tabs);
+    } else {
+        g_debug("Correctly removed tab");
     }
 }
 

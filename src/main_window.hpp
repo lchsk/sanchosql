@@ -234,6 +234,17 @@ class MainWindow : public Gtk::Window {
             on_action_file_quit();
 
             return true;
+        } else if (check_mod_binding(key_event, GDK_CONTROL_MASK, GDK_KEY_w)) {
+            Gtk::ScrolledWindow* window = static_cast<Gtk::ScrolledWindow*>(
+                notebook.get_nth_page(notebook.get_current_page()));
+
+            if (!window) {
+                g_warning("Cannot remove tab!");
+
+                return true;
+            }
+
+            on_tab_close_button_clicked(window);
         }
 
         return Gtk::Window::on_key_press_event(key_event);
