@@ -31,12 +31,10 @@
 
 #endif
 
-namespace san
-{
-	namespace config
-	{
-		const std::string current_version = "0.0.1";
-	}
+namespace san {
+namespace config {
+const std::string current_version = "0.0.1";
 }
+} // namespace san
 
 #endif

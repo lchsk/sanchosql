@@ -3,21 +3,19 @@
 
 #include "abstract_tab_model.hpp"
 
-namespace san
-{
-	class QueryTabModel : public AbstractTabModel
-	{
-	public:
-		QueryTabModel(const std::shared_ptr<san::ConnectionDetails>& conn_details)
-			: AbstractTabModel(conn_details) {}
+namespace san {
+class QueryTabModel : public AbstractTabModel {
+  public:
+    QueryTabModel(const std::shared_ptr<san::ConnectionDetails>& conn_details)
+        : AbstractTabModel(conn_details)
+    {
+    }
 
-		std::string query;
+    std::string query;
 
-		const std::string get_query() const {
-			return query;
-		}
-	};
+    const std::string get_query() const { return query; }
+};
 
-}
+} // namespace san
 
 #endif
