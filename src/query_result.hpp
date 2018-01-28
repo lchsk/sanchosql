@@ -100,11 +100,7 @@ namespace san
                     is_nullable = true;
                 }
 
-                columns[column_name] = san::ColumnMetadata({
-                        .character_maximum_length = character_maximum_length,
-                            .is_nullable = is_nullable
-                            });
-
+                columns[column_name] = san::ColumnMetadata(character_maximum_length, is_nullable);
             }
 
             return columns;
