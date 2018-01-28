@@ -219,7 +219,7 @@ namespace san
 		}
 
 		return result;
-	};
+	}
 
 	std::shared_ptr<san::QueryResult> SimpleTabModel::delete_rows(const std::vector<std::vector<std::pair<Glib::ustring, Glib::ustring>>>& rows_to_delete) {
 		if (rows_to_delete.empty()) {

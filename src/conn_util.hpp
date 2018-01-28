@@ -7,8 +7,19 @@
 
 namespace san
 {
-    struct OidMapping
+    class OidMapping
     {
+    public:
+        OidMapping(const pqxx::oid& oid,
+                   const std::string& udt_name,
+                   const std::string& data_type) :
+            oid(oid),
+            udt_name(udt_name),
+            data_type(data_type) {}
+
+        // TODO: Refactor so it's not needed
+        OidMapping() {}
+
         pqxx::oid oid;
         std::string udt_name;
         std::string data_type;

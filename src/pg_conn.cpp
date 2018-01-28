@@ -164,11 +164,7 @@ namespace san
         for (auto& row : query_result->as_map()) {
             const pqxx::oid oid = std::atoi(row["oid"].c_str());
 
-            (*oid_names)[oid] = san::OidMapping({
-                .oid=oid,
-                .udt_name=row["udt_name"],
-                .data_type=row["data_type"],
-            });
+            (*oid_names)[oid] = san::OidMapping(oid, row["udt_name"], row["data_type"]);
         }
     }
 }
