@@ -811,7 +811,16 @@ void MainWindow::on_submit_query_clicked(
     Gtk::ScrolledWindow* tree_scrolled_window,
     Glib::RefPtr<Gsv::Buffer>& buffer)
 {
-    const std::string query = buffer->get_text();
+    Glib::ustring query;
+
+    if (buffer->get_has_selection()) {
+        Glib::RefPtr<Gtk::TextBuffer::Mark> insert = buffer->get_insert();
+        Glib::RefPtr<Gtk::TextBuffer::Mark> end = buffer->get_selection_bound();
+
+        query = buffer->get_text(insert->get_iter(), end->get_iter());
+    } else {
+        query = buffer->get_text();
+    }
 
     auto& model = get_query_tab_model(tree_scrolled_window);
     model.query = query;
