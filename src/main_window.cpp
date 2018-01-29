@@ -819,7 +819,10 @@ void MainWindow::on_submit_query_clicked(
 
         query = buffer->get_text(insert->get_iter(), end->get_iter());
     } else {
-        query = buffer->get_text();
+        Glib::RefPtr<Gtk::TextBuffer::Mark> insert = buffer->get_insert();
+
+        query = san::string::get_query(buffer->get_text(),
+                                       insert->get_iter().get_offset());
     }
 
     auto& model = get_query_tab_model(tree_scrolled_window);

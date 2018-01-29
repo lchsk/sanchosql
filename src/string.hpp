@@ -22,6 +22,8 @@ bool contains_only_numbers(const Glib::ustring& text);
 Glib::ustring trim(const Glib::ustring& input);
 
 bool is_empty(const Glib::ustring& input);
+
+Glib::ustring get_query(const Glib::ustring& text, int point);
 } // namespace string
 
 namespace date {

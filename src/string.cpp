@@ -86,6 +86,25 @@ Glib::ustring trim(const Glib::ustring& input)
 }
 
 bool is_empty(const Glib::ustring& input) { return trim(input) == ""; }
+
+Glib::ustring get_query(const Glib::ustring& text, int point)
+{
+    int end = point;
+
+    while (end++ != text.length()) {
+        if (text[end] == ';') {
+            break;
+        }
+    }
+
+    while (point-- > 1) {
+        if (text[point] == ';') {
+            break;
+        }
+    }
+
+    return text.substr(point, end - point);
+}
 } // namespace string
 
 namespace date {

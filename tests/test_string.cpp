@@ -55,6 +55,24 @@ TEST(Util, in_map_macro)
     EXPECT_FALSE(IN_MAP(m, "test"));
 }
 
+TEST(Query, get_query)
+{
+    const std::vector<std::pair<Glib::ustring, std::string>> data = {
+        {"sel|ect * from test;", "select * from test"},
+        {"select * from tes|t;", "select * from test"},
+        {"s|elect * from test;", "select * from test"},
+        {"select * from test; select |1 from a", "; select 1 from a"},
+        {"select * |from test; select 1 from a", "select * from test"},
+    };
+
+    for (const auto& query : data) {
+        const int point = query.first.find("|");
+        const Glib::ustring text = san::string::replace_all(query.first, "|", "");
+
+        EXPECT_EQ(std::string(san::string::get_query(text, point)), query.second);
+    }
+}
+
 int main (int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);
 
