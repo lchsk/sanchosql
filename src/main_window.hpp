@@ -92,7 +92,7 @@ class MainMenu {
             Gtk::manage(new Gtk::MenuItem(*connections_mi->b1));
         menu_file->append(*menu_item_connections);
 
-        menu_item_connections->add_accelerator("activate", group, GDK_KEY_c,
+        menu_item_connections->add_accelerator("activate", group, GDK_KEY_n,
                                                Gdk::ModifierType::CONTROL_MASK,
                                                Gtk::ACCEL_VISIBLE);
 
@@ -237,7 +237,7 @@ class MainWindow : public Gtk::Window {
 
     bool on_key_press_event(GdkEventKey* key_event)
     {
-        if (check_mod_binding(key_event, GDK_CONTROL_MASK, GDK_KEY_c)) {
+        if (check_mod_binding(key_event, GDK_CONTROL_MASK, GDK_KEY_n)) {
             on_action_file_new();
 
             return true;
