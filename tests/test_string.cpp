@@ -58,15 +58,45 @@ TEST(Util, in_map_macro)
 TEST(Query, get_query)
 {
     const std::vector<std::pair<Glib::ustring, std::string>> data = {
-        {"sel|ect * from test;", "select * from test"},
-        {"select * from tes|t;", "select * from test"},
-        {"s|elect * from test;", "select * from test"},
-        {"select * from test; select |1 from a", "; select 1 from a"},
-        {"select * |from test; select 1 from a", "select * from test"},
+        {"sel|ect * from test;", "select * from test;"},
+        {"select * from tes|t", "select * from test;"},
+        {"s|elect * from test;", "select * from test;"},
+        {"select * from test; select |1 from a", "select 1 from a;"},
+        {"select * |from test; select 1 from a", "select * from test;"},
+
+        {"select * from test|", "select * from test;"},
+
+        {"select * from test;|", "select * from test;"},
+
+        {"select * from test;;|", "select * from test;"},
+
+        {"select * from test;| select 1 from test;", "select 1 from test;"},
+        {"select * from test;|select 1 from test;", "select 1 from test;"},
+        {"select * from test;|select 1 from test", "select 1 from test;"},
+        {"select * from test|;select 1 from test", "select * from test;"},
+
+        {"|select 1 from test;", "select 1 from test;"},
+
+        {"| select 1 from test;", "select 1 from test;"},
+
+        {";|select 1 from test;", "select 1 from test;"},
+        {" ; | select 1 from test;", "select 1 from test;"},
+
+        {"", ""},
+        {"   ", ""},
+        {" test ", "test"},
+        {" | ", ""},
+        {"; ", ";"},
+        {";;; ", ";;;"},
+        {";;|; ", ";;;"},
+
+        {"                                                                                                                  ", ""},
+        {"                     \n                                                                                             ", ""},
+        {"  |                                                                                                                ", ""},
     };
 
     for (const auto& query : data) {
-        const int point = query.first.find("|");
+        const Glib::ustring::size_type point = query.first.find("|");
         const Glib::ustring text = san::string::replace_all(query.first, "|", "");
 
         EXPECT_EQ(std::string(san::string::get_query(text, point)), query.second);

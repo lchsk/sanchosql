@@ -1,4 +1,5 @@
 #include <ctime>
+#include <iostream>
 #include <string>
 
 #include "string.hpp"
@@ -87,23 +88,49 @@ Glib::ustring trim(const Glib::ustring& input)
 
 bool is_empty(const Glib::ustring& input) { return trim(input) == ""; }
 
-Glib::ustring get_query(const Glib::ustring& text, int point)
+Glib::ustring get_query(const Glib::ustring& text,
+                        const Glib::ustring::size_type point)
 {
-    int end = point;
+    if (point == Glib::ustring::npos)
+        return trim(text);
 
-    while (end++ != text.length()) {
-        if (text[end] == ';') {
+    unsigned end = point;
+    int start = point;
+
+    while (end != text.length()) {
+        if (text[end++] == ';') {
             break;
         }
     }
 
-    while (point-- > 1) {
-        if (text[point] == ';') {
+    while (true) {
+        if (text[start] == ';') {
+            start++;
             break;
         }
+
+        if (start == 0)
+            break;
+
+        start--;
     }
 
-    return text.substr(point, end - point);
+    Glib::ustring q = trim(text.substr(start, end - start));
+
+    if (q == "") {
+        if (!point) {
+            // In the worst-case scenario, just return trimmed input
+            return trim(text);
+        }
+
+        return get_query(text, point - 1);
+    }
+
+    if (q[q.length() - 1] != ';') {
+        q += ';';
+    }
+
+    return q;
 }
 } // namespace string
 

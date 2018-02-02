@@ -23,7 +23,8 @@ Glib::ustring trim(const Glib::ustring& input);
 
 bool is_empty(const Glib::ustring& input);
 
-Glib::ustring get_query(const Glib::ustring& text, int point);
+Glib::ustring get_query(const Glib::ustring& text,
+                        const Glib::ustring::size_type point);
 } // namespace string
 
 namespace date {
