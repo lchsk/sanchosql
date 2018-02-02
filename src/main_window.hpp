@@ -61,7 +61,7 @@ class MainMenu {
         menu_item_help = Gtk::manage(new Gtk::MenuItem);
         menu_file = Gtk::manage(new Gtk::Menu);
         menu_help = Gtk::manage(new Gtk::Menu);
-        menu_item_about = Gtk::manage(new Gtk::MenuItem);
+        // menu_help->set_reserve_toggle_size(false);
 
         menu_item_file->set_label("_File");
         menu_item_file->set_use_underline();
@@ -122,6 +122,13 @@ class MainMenu {
                                         Gtk::ACCEL_VISIBLE);
 
         quit_mi->l1->set_accel_widget(*menu_item_quit);
+
+        about_mi = std::make_unique<ImageMenuItem>();
+        about_mi->set_text("_About");
+        about_mi->finish();
+
+        menu_item_about = Gtk::manage(new Gtk::MenuItem(*about_mi->b1));
+        menu_help->append(*menu_item_about);
     }
 
     Glib::RefPtr<Gtk::AccelGroup> group;
@@ -129,6 +136,7 @@ class MainMenu {
     std::unique_ptr<ImageMenuItem> connections_mi;
     std::unique_ptr<ImageMenuItem> editor_mi;
     std::unique_ptr<ImageMenuItem> quit_mi;
+    std::unique_ptr<ImageMenuItem> about_mi;
 
     Gtk::MenuBar* menu;
     Gtk::MenuItem* menu_item_file;
