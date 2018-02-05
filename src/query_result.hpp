@@ -150,6 +150,36 @@ struct QueryResult {
         }
     }
 
+    const std::string get_message() const {
+        if (! success)
+            return error_message;
+
+        std::stringstream message;
+        message << "Query ";
+
+        if (show_results) {
+            message << "returned " << size;
+
+            if (size == 1) {
+                message << " row";
+            } else {
+                message << " rows";
+            }
+        } else {
+            message << "affected " << affected_rows;
+
+            if (affected_rows == 1) {
+                message << " row";
+            } else {
+                message << " rows";
+            }
+        }
+
+        message << "\n";
+
+        return message.str();
+    }
+
     bool success;
     Glib::ustring error_message;
     bool inserted_empty_row;

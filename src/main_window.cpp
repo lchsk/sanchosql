@@ -297,6 +297,14 @@ void MainWindow::load_list_results(Gtk::ScrolledWindow* window)
         pc.run_query(san::QueryType::NonTransaction, model.get_query(),
                      model.get_columns_query());
 
+    san::insert_log_message(tab.log_buffer, result->get_message());
+
+    if (! result->success) {
+        tab.data_scrolled_window->hide();
+
+        return;
+    }
+
     tab.col_names.clear();
     tab.tree->remove_all_columns();
 
@@ -447,33 +455,9 @@ void MainWindow::load_query_results(Gtk::ScrolledWindow* window)
 
     tab.data_scrolled_window->set_visible(result->show_results);
 
-    if (result->success) {
-        std::stringstream message;
-        message << "Query ";
+    san::insert_log_message(tab.log_buffer, result->get_message());
 
-        if (result->show_results) {
-            message << "returned " << result->size;
-
-            if (result->size == 1) {
-                message << " row";
-            } else {
-                message << " rows";
-            }
-        } else {
-            message << "affected " << result->affected_rows;
-
-            if (result->affected_rows == 1) {
-                message << " row";
-            } else {
-                message << " rows";
-            }
-        }
-
-        message << "\n";
-
-        san::insert_log_message(tab.log_buffer, message.str());
-    } else {
-        san::insert_log_message(tab.log_buffer, result->error_message);
+    if (! result->success) {
         tab.data_scrolled_window->hide();
 
         return;
