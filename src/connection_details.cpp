@@ -3,10 +3,7 @@
 namespace san {
 void ConnectionDetails::set_host(const std::string& hostname)
 {
-    if (hostname == "localhost")
-        host = "127.0.0.1";
-    else
-        host = hostname;
+    host = hostname;
 }
 
 const std::string ConnectionDetails::postgres_connection_string()
@@ -23,7 +20,10 @@ const std::string ConnectionDetails::postgres_string_(bool include_password)
 {
     std::stringstream conn;
 
-    conn << "hostaddr = " << host << " user = " << user << " password = ";
+    conn
+        << "host = " << host
+        << " user = " << user
+        << " password = ";
 
     if (include_password) {
         conn << password;
