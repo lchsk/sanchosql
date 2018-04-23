@@ -58,7 +58,9 @@ void Connections::load_connections()
 {
     connections.clear();
 
-    for (int i = 1; i <= 1000; i++) {
+    int i = 1;
+
+    while (true) {
         const Glib::ustring group = Glib::ustring::compose("conn_%1", i);
 
         if (!conn_file.has_group(group))
@@ -76,6 +78,8 @@ void Connections::load_connections()
             continue;
 
         add(name, host, user, password, dbname, port, save_password);
+
+        i++;
     }
 }
 
