@@ -6,31 +6,27 @@ namespace sancho {
 sancho::Connections sancho::Connections::ins;
 
 PostgresConnection::PostgresConnection(
-    const std::shared_ptr<sancho::ConnectionDetails>& conn_details)
+    const std::shared_ptr<sancho::ConnectionDetails> &conn_details)
     : conn_details(conn_details), is_open_(false), error_message_(""),
-      oid_names(
-          std::make_shared<std::unordered_map<pqxx::oid, sancho::OidMapping>>())
-{
-}
+      oid_names(std::make_shared<
+                std::unordered_map<pqxx::oid, sancho::OidMapping>>()) {}
 
-PostgresConnection::~PostgresConnection()
-{
+PostgresConnection::~PostgresConnection() {
     if (!conn)
         return;
 
     try {
         if (conn->is_open())
             conn->disconnect();
-    } catch (const std::exception& e) {
+    } catch (const std::exception &e) {
         std::cerr << "Error when disconnecting: " << e.what() << std::endl;
     }
 }
 
 std::shared_ptr<sancho::QueryResult>
-PostgresConnection::run_query(const sancho::QueryType& query_type,
-                              const std::string& query,
-                              const std::string& columns_query)
-{
+PostgresConnection::run_query(const sancho::QueryType &query_type,
+                              const std::string &query,
+                              const std::string &columns_query) {
     g_debug("Executing query: %s", query.c_str());
 
     if (!columns_query.empty()) {
@@ -38,20 +34,18 @@ PostgresConnection::run_query(const sancho::QueryType& query_type,
     }
 
     return sancho::QueryResult::get(*conn, query_type, query, columns_query,
-                                 oid_names);
+                                    oid_names);
 }
 
 std::shared_ptr<sancho::QueryResult>
-PostgresConnection::run_query(const sancho::QueryType& query_type,
-                              const std::string& query)
-{
+PostgresConnection::run_query(const sancho::QueryType &query_type,
+                              const std::string &query) {
     return run_query(query_type, query, "");
 }
 
 std::vector<std::string>
-PostgresConnection::get_db_tables(const Glib::ustring& schema_name) const
-    noexcept
-{
+PostgresConnection::get_db_tables(const Glib::ustring &schema_name) const
+    noexcept {
     std::vector<std::string> tables;
 
     const std::string sql = R"(
@@ -71,15 +65,14 @@ PostgresConnection::get_db_tables(const Glib::ustring& schema_name) const
     if (!query_result->success)
         return tables;
 
-    for (auto& row : query_result->as_map()) {
+    for (auto &row : query_result->as_map()) {
         tables.push_back(row["table_name"]);
     }
 
     return tables;
 }
 
-std::unique_ptr<std::vector<Glib::ustring>> PostgresConnection::get_schemas()
-{
+std::unique_ptr<std::vector<Glib::ustring>> PostgresConnection::get_schemas() {
     std::unique_ptr<std::vector<Glib::ustring>> schemas =
         std::make_unique<std::vector<Glib::ustring>>();
 
@@ -92,7 +85,7 @@ std::unique_ptr<std::vector<Glib::ustring>> PostgresConnection::get_schemas()
     if (!query_result->success)
         return std::move(schemas);
 
-    for (auto& row : query_result->as_map()) {
+    for (auto &row : query_result->as_map()) {
         schemas->push_back(row["nspname"]);
     }
 
@@ -102,10 +95,9 @@ std::unique_ptr<std::vector<Glib::ustring>> PostgresConnection::get_schemas()
 }
 
 const std::vector<PrimaryKey>
-PostgresConnection::get_primary_key(const std::string& table_name,
-                                    const std::string& schema_name) const
-    noexcept
-{
+PostgresConnection::get_primary_key(const std::string &table_name,
+                                    const std::string &schema_name) const
+    noexcept {
     std::vector<PrimaryKey> data;
 
     const std::string sql = R"(
@@ -120,21 +112,20 @@ PostgresConnection::get_primary_key(const std::string& table_name,
 
     const std::string id = schema_name + "." + table_name;
 
-    auto query_result =
-        sancho::QueryResult::get_prepared_stmt(*conn, "get_primary_key", sql, id);
+    auto query_result = sancho::QueryResult::get_prepared_stmt(
+        *conn, "get_primary_key", sql, id);
 
     if (!query_result->success)
         return data;
 
-    for (auto& row : query_result->as_map()) {
+    for (auto &row : query_result->as_map()) {
         data.push_back(PrimaryKey(row["column_name"], row["data_type"]));
     }
 
     return data;
 }
 
-void PostgresConnection::init_connection()
-{
+void PostgresConnection::init_connection() {
     g_debug("Initiating postgres connection: %s",
             conn_details->postgres_string_safe().c_str());
 
@@ -146,7 +137,7 @@ void PostgresConnection::init_connection()
         is_open_ = conn->is_open();
 
         load_oids();
-    } catch (const std::exception& e) {
+    } catch (const std::exception &e) {
         g_warning("Postgres connection failed: %s", e.what());
 
         error_message_ = e.what();
@@ -156,8 +147,7 @@ void PostgresConnection::init_connection()
     }
 }
 
-void PostgresConnection::load_oids()
-{
+void PostgresConnection::load_oids() {
     const std::string sql = R"(
             SELECT
                 DISTINCT udt_name, data_type, t.oid
@@ -173,7 +163,7 @@ void PostgresConnection::load_oids()
     if (!query_result->success)
         return;
 
-    for (auto& row : query_result->as_map()) {
+    for (auto &row : query_result->as_map()) {
         const pqxx::oid oid = std::atoi(row["oid"].c_str());
 
         (*oid_names)[oid] =

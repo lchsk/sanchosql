@@ -4,9 +4,8 @@
 namespace sancho {
 const int LOG_BUFFER_MAX_SIZE = 2000; // characters
 
-void insert_log_message(Glib::RefPtr<Gsv::Buffer>& log_buffer,
-                        const Glib::ustring& message)
-{
+void insert_log_message(Glib::RefPtr<Gsv::Buffer> &log_buffer,
+                        const Glib::ustring &message) {
     // Limit the size of the buffer
     if (log_buffer->get_char_count() > LOG_BUFFER_MAX_SIZE) {
         log_buffer->set_text(
@@ -20,9 +19,8 @@ void insert_log_message(Glib::RefPtr<Gsv::Buffer>& log_buffer,
     log_buffer->insert(log_buffer->begin(), dated_message);
 }
 
-AbstractTab::AbstractTab(const Glib::ustring& tab_name, TabType type)
-    : tab_name(tab_name), type(type)
-{
+AbstractTab::AbstractTab(const Glib::ustring &tab_name, TabType type)
+    : tab_name(tab_name), type(type) {
     hb = Gtk::manage(new Gtk::HBox);
     b = Gtk::manage(new Gtk::Button);
     l = Gtk::manage(new Gtk::Label(tab_name));
@@ -42,16 +40,14 @@ AbstractTab::AbstractTab(const Glib::ustring& tab_name, TabType type)
     hb->pack_start(*b, Gtk::PACK_SHRINK);
 }
 
-void AbstractTab::show() const
-{
+void AbstractTab::show() const {
     tree_scrolled_window->show();
     tree_scrolled_window->show_all_children();
     hb->show_all_children();
 }
 
-QueryTab::QueryTab(const Glib::ustring& tab_name)
-    : AbstractTab(tab_name, TabType::Query)
-{
+QueryTab::QueryTab(const Glib::ustring &tab_name)
+    : AbstractTab(tab_name, TabType::Query) {
 
     tv = Gtk::manage(new Gtk::TextView);
 
@@ -148,11 +144,10 @@ QueryTab::QueryTab(const Glib::ustring& tab_name)
                                      Gtk::POLICY_AUTOMATIC);
 }
 
-SimpleTab::SimpleTab(const Glib::ustring& tab_name,
-                     std::shared_ptr<sancho::SimpleTabModel>& model)
+SimpleTab::SimpleTab(const Glib::ustring &tab_name,
+                     std::shared_ptr<sancho::SimpleTabModel> &model)
     : AbstractTab(tab_name, TabType::List),
-      tree(Gtk::manage(new Gtk::TreeView)), model(model)
-{
+      tree(Gtk::manage(new Gtk::TreeView)), model(model) {
     tv = Gtk::manage(new Gtk::TextView);
 
     toolbar = Gtk::manage(new Gtk::Toolbar);

@@ -6,9 +6,8 @@
 
 namespace sancho {
 NewConnectionWindow::NewConnectionWindow(
-    BaseObjectType* cobject, const Glib::RefPtr<Gtk::Builder>& builder)
-    : Gtk::Window(cobject), builder(builder)
-{
+    BaseObjectType *cobject, const Glib::RefPtr<Gtk::Builder> &builder)
+    : Gtk::Window(cobject), builder(builder) {
     builder->get_widget("box_left", box_left);
     builder->get_widget("paned_new_connections", paned_new_connections);
     builder->get_widget("btn_save", btn_save);
@@ -97,8 +96,7 @@ NewConnectionWindow::NewConnectionWindow(
     paned_new_connections->set_position(0.3 * w);
 }
 
-void NewConnectionWindow::on_btn_save_clicked()
-{
+void NewConnectionWindow::on_btn_save_clicked() {
     if (mode == Mode::Adding) {
         sancho::Connections::instance()->add(
             text_connection_name->get_text(), text_host->get_text(),
@@ -119,8 +117,7 @@ void NewConnectionWindow::on_btn_save_clicked()
 
 void NewConnectionWindow::on_btn_close_clicked() { hide(); }
 
-void NewConnectionWindow::on_btn_test_connection_clicked()
-{
+void NewConnectionWindow::on_btn_test_connection_clicked() {
     std::shared_ptr<sancho::ConnectionDetails> conn =
         std::make_shared<sancho::ConnectionDetails>();
 
@@ -138,7 +135,7 @@ void NewConnectionWindow::on_btn_test_connection_clicked()
     try {
         pg_conn.init_connection();
         g_debug("Test connection OK: %s", conn->postgres_string_safe().c_str());
-    } catch (const sancho::NoConnection& e) {
+    } catch (const sancho::NoConnection &e) {
         g_debug("Test connection failed: %s",
                 conn->postgres_string_safe().c_str());
     }
@@ -146,14 +143,12 @@ void NewConnectionWindow::on_btn_test_connection_clicked()
     update_connection_status(pg_conn);
 }
 
-void NewConnectionWindow::reset_connection_status()
-{
+void NewConnectionWindow::reset_connection_status() {
     label_connection_status->set_text("");
 }
 
 void NewConnectionWindow::update_connection_status(
-    const sancho::PostgresConnection& pg_conn)
-{
+    const sancho::PostgresConnection &pg_conn) {
     if (pg_conn.is_open()) {
         label_connection_status->set_text("Success");
         label_connection_status->override_color(Gdk::RGBA("green"),
@@ -167,8 +162,7 @@ void NewConnectionWindow::update_connection_status(
 
 void NewConnectionWindow::on_btn_add_connection_clicked() { set_adding_mode(); }
 
-void NewConnectionWindow::on_btn_del_connection_clicked()
-{
+void NewConnectionWindow::on_btn_del_connection_clicked() {
     Glib::RefPtr<Gtk::TreeSelection> selection =
         tree_connections.get_selection();
     Gtk::TreeModel::iterator iter = selection->get_selected();
@@ -195,11 +189,11 @@ void NewConnectionWindow::on_btn_del_connection_clicked()
     }
 }
 
-void NewConnectionWindow::on_win_show()
-{
+void NewConnectionWindow::on_win_show() {
     connections_model->clear();
 
-    for (const auto& conn : sancho::Connections::instance()->get_connections()) {
+    for (const auto &conn :
+         sancho::Connections::instance()->get_connections()) {
         Gtk::TreeModel::Row row = *(connections_model->append());
         row[connection_columns.col_name] = conn.first;
     }
@@ -207,18 +201,15 @@ void NewConnectionWindow::on_win_show()
     prepare_adding();
 }
 
-void NewConnectionWindow::on_win_hide()
-{
+void NewConnectionWindow::on_win_hide() {
     sancho::Connections::instance()->save_connections();
 }
 
-void NewConnectionWindow::on_checkbox_save_password_toggled()
-{
+void NewConnectionWindow::on_checkbox_save_password_toggled() {
     update_save_btn();
 }
 
-void NewConnectionWindow::on_selected_connection_changed()
-{
+void NewConnectionWindow::on_selected_connection_changed() {
     Glib::RefPtr<Gtk::TreeSelection> selection =
         tree_connections.get_selection();
     Gtk::TreeModel::iterator iter = selection->get_selected();
@@ -237,7 +228,7 @@ void NewConnectionWindow::on_selected_connection_changed()
     const std::string conn_name = row.get_value(connection_columns.col_name);
     edited_conn_name = conn_name;
 
-    auto& connection_details = sancho::Connections::instance()->get(conn_name);
+    auto &connection_details = sancho::Connections::instance()->get(conn_name);
 
     text_connection_name->set_text(connection_details->name);
     text_host->set_text(connection_details->host);
@@ -253,8 +244,7 @@ void NewConnectionWindow::on_selected_connection_changed()
     update_save_btn();
 }
 
-void NewConnectionWindow::set_adding_mode()
-{
+void NewConnectionWindow::set_adding_mode() {
     mode = Mode::Adding;
     edited_conn_name = "";
     Glib::RefPtr<Gtk::TreeSelection> selection =
@@ -267,16 +257,14 @@ void NewConnectionWindow::set_adding_mode()
 
 void NewConnectionWindow::set_editing_mode() { mode = Mode::Editing; }
 
-void NewConnectionWindow::update_save_btn()
-{
+void NewConnectionWindow::update_save_btn() {
     if (mode == Mode::Adding)
         btn_save->set_sensitive(can_add_new_connection());
     else if (mode == Mode::Editing)
         btn_save->set_sensitive(can_save_edited_connection());
 }
 
-bool NewConnectionWindow::can_save_edited_connection() const
-{
+bool NewConnectionWindow::can_save_edited_connection() const {
     return sancho::Connections::instance()->can_update_conn_details(
         edited_conn_name, text_connection_name->get_text(),
         text_host->get_text(), text_user->get_text(), text_password->get_text(),
@@ -285,21 +273,20 @@ bool NewConnectionWindow::can_save_edited_connection() const
         checkbox_save_password->get_active());
 }
 
-bool NewConnectionWindow::can_add_new_connection() const
-{
+bool NewConnectionWindow::can_add_new_connection() const {
     if (sancho::Connections::instance()->any_fields_empty(
             text_host->get_text(), text_port->get_text(), text_db->get_text(),
             text_user->get_text(), text_connection_name->get_text()))
         return false;
 
-    if (sancho::Connections::instance()->exists(text_connection_name->get_text()))
+    if (sancho::Connections::instance()->exists(
+            text_connection_name->get_text()))
         return false;
 
     return true;
 }
 
-void NewConnectionWindow::reset_widgets()
-{
+void NewConnectionWindow::reset_widgets() {
     text_connection_name->set_text(
         "Connection " +
         std::to_string(sancho::Connections::instance()->size() + 1));

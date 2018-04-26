@@ -20,10 +20,9 @@ namespace sancho {
 class AbstractTabModel {
   public:
     AbstractTabModel(
-        const std::shared_ptr<sancho::ConnectionDetails>& conn_details)
+        const std::shared_ptr<sancho::ConnectionDetails> &conn_details)
         : conn_details(conn_details),
-          connection(std::make_unique<PG_CLASS>(conn_details))
-    {
+          connection(std::make_unique<PG_CLASS>(conn_details)) {
 #ifdef MOCK_PG_CONN
         EXPECT_CALL(*get_mock_connection(), init_connection())
             .Times(Exactly(1));
@@ -34,12 +33,11 @@ class AbstractTabModel {
 
     virtual ~AbstractTabModel() {}
 
-    sancho::PostgresConnection& conn() const { return *connection; }
+    sancho::PostgresConnection &conn() const { return *connection; }
 
     virtual const std::string get_query() const = 0;
 
-    virtual const std::string& get_sort_column() const
-    {
+    virtual const std::string &get_sort_column() const {
         return EMPTY_SORT_COLUMN;
     };
 
@@ -50,9 +48,8 @@ class AbstractTabModel {
     std::unique_ptr<Gtk::TreeModelColumn<Gdk::RGBA>> col_color;
 
 #ifdef MOCK_PG_CONN
-    virtual MockPostgresConnection* get_mock_connection()
-    {
-        return static_cast<MockPostgresConnection*>(connection.get());
+    virtual MockPostgresConnection *get_mock_connection() {
+        return static_cast<MockPostgresConnection *>(connection.get());
     }
 #endif
 

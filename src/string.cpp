@@ -6,9 +6,8 @@
 
 namespace sancho {
 namespace string {
-std::string replace_all(std::string str, const std::string& from,
-                        const std::string& to)
-{
+std::string replace_all(std::string str, const std::string &from,
+                        const std::string &to) {
     size_t start_pos = 0;
 
     while ((start_pos = str.find(from, start_pos)) != std::string::npos) {
@@ -19,8 +18,7 @@ std::string replace_all(std::string str, const std::string& from,
     return str;
 }
 
-std::string escape_sql(std::string str)
-{
+std::string escape_sql(std::string str) {
     return sancho::string::replace_all(str, "'", "''");
 }
 
@@ -28,22 +26,19 @@ const std::vector<std::pair<std::string, std::string>> special_chars{
     {"\b", "\\b"}, {"\f", "\\f"}, {"\n", "\\n"}, {"\r", "\\r"}, {"\t", "\\t"},
 };
 
-std::string escape_db_data(std::string str)
-{
-    for (const auto& special_char : special_chars) {
+std::string escape_db_data(std::string str) {
+    for (const auto &special_char : special_chars) {
         str = replace_all(str, special_char.first, special_char.second);
     }
 
     return str;
 }
 
-std::string _prepare_sql_value(std::string str)
-{
+std::string _prepare_sql_value(std::string str) {
     return "'" + sancho::string::escape_sql(Glib::strcompress(str)) + "'";
 }
 
-std::string prepare_sql_value(std::string str, bool handle_strings)
-{
+std::string prepare_sql_value(std::string str, bool handle_strings) {
     if (!handle_strings) {
         return _prepare_sql_value(str);
     }
@@ -61,8 +56,7 @@ std::string prepare_sql_value(std::string str, bool handle_strings)
     return _prepare_sql_value(str);
 }
 
-bool contains_only_numbers(const Glib::ustring& text)
-{
+bool contains_only_numbers(const Glib::ustring &text) {
     for (unsigned i = 0; i < text.length(); i++) {
         if (!Glib::Unicode::isdigit(text[i]))
             return false;
@@ -71,8 +65,7 @@ bool contains_only_numbers(const Glib::ustring& text)
     return true;
 }
 
-Glib::ustring trim(const Glib::ustring& input)
-{
+Glib::ustring trim(const Glib::ustring &input) {
     Glib::ustring s(input);
 
     s.erase(s.begin(), std::find_if(s.begin(), s.end(),
@@ -86,11 +79,10 @@ Glib::ustring trim(const Glib::ustring& input)
     return s;
 }
 
-bool is_empty(const Glib::ustring& input) { return trim(input) == ""; }
+bool is_empty(const Glib::ustring &input) { return trim(input) == ""; }
 
-Glib::ustring get_query(const Glib::ustring& text,
-                        const Glib::ustring::size_type point)
-{
+Glib::ustring get_query(const Glib::ustring &text,
+                        const Glib::ustring::size_type point) {
     if (point == Glib::ustring::npos)
         return trim(text);
 
@@ -135,10 +127,9 @@ Glib::ustring get_query(const Glib::ustring& text,
 } // namespace string
 
 namespace date {
-Glib::ustring get_current_datetime()
-{
+Glib::ustring get_current_datetime() {
     time_t rawtime;
-    struct tm* timeinfo;
+    struct tm *timeinfo;
     char buffer[80];
 
     time(&rawtime);

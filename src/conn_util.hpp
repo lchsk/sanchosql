@@ -8,11 +8,9 @@
 namespace sancho {
 class OidMapping {
   public:
-    OidMapping(const pqxx::oid& oid, const std::string& udt_name,
-               const std::string& data_type)
-        : oid(oid), udt_name(udt_name), data_type(data_type)
-    {
-    }
+    OidMapping(const pqxx::oid &oid, const std::string &udt_name,
+               const std::string &data_type)
+        : oid(oid), udt_name(udt_name), data_type(data_type) {}
 
     // TODO: Refactor so it's not needed
     OidMapping() {}
@@ -24,13 +22,11 @@ class OidMapping {
 
 class Column {
   public:
-    Column(const pqxx::oid& oid, const std::string& column_name,
-           const std::string& data_type, const std::string& char_length,
+    Column(const pqxx::oid &oid, const std::string &column_name,
+           const std::string &data_type, const std::string &char_length,
            bool is_nullable)
         : oid(oid), column_name(column_name), data_type(data_type),
-          char_length(char_length), is_nullable(is_nullable)
-    {
-    }
+          char_length(char_length), is_nullable(is_nullable) {}
 
     pqxx::oid oid;
     std::string column_name;
@@ -41,7 +37,7 @@ class Column {
 
 class ColumnMetadata {
   public:
-    ColumnMetadata(const std::string& character_maximum_length,
+    ColumnMetadata(const std::string &character_maximum_length,
                    bool is_nullable)
         : character_maximum_length(character_maximum_length),
           is_nullable(is_nullable){};
@@ -55,7 +51,7 @@ class ColumnMetadata {
 
 const std::string
 get_data_type(const pqxx::oid oid,
-              std::unordered_map<pqxx::oid, sancho::OidMapping>& oid_names);
+              std::unordered_map<pqxx::oid, sancho::OidMapping> &oid_names);
 
 enum class QueryType { Transaction, NonTransaction, None };
 } // namespace sancho

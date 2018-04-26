@@ -11,7 +11,7 @@ class ConnectionDetails {
     const std::string postgres_connection_string();
     const std::string postgres_string_safe();
 
-    void set_host(const std::string& hostname);
+    void set_host(const std::string &hostname);
 
     Glib::ustring name;
     std::string host;

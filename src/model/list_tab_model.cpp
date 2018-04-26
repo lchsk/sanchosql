@@ -2,18 +2,15 @@
 
 namespace sancho {
 SimpleTabModel::SimpleTabModel(
-    const std::shared_ptr<sancho::ConnectionDetails>& conn_details,
-    const Glib::ustring& p_table_name, const Glib::ustring& p_schema_name)
+    const std::shared_ptr<sancho::ConnectionDetails> &conn_details,
+    const Glib::ustring &p_table_name, const Glib::ustring &p_schema_name)
     : AbstractTabModel(conn_details), table_name(p_table_name),
       schema_name(p_schema_name),
       primary_key(conn().get_primary_key(p_table_name, p_schema_name)),
       limit(DEFAULT_LIMIT), offset(DEFAULT_OFFSET), sort_column(""),
-      sort_type(ColumnSortType::None)
-{
-}
+      sort_type(ColumnSortType::None) {}
 
-void SimpleTabModel::set_sort(const std::string& p_sort_column)
-{
+void SimpleTabModel::set_sort(const std::string &p_sort_column) {
     switch (sort_type) {
     case ColumnSortType::None:
         sort_type = ColumnSortType::Asc;
@@ -30,26 +27,23 @@ void SimpleTabModel::set_sort(const std::string& p_sort_column)
     }
 }
 
-void SimpleTabModel::set_limit(const std::string& p_limit)
-{
+void SimpleTabModel::set_limit(const std::string &p_limit) {
     try {
         limit = std::stoul(p_limit);
-    } catch (const std::invalid_argument&) {
+    } catch (const std::invalid_argument &) {
         limit = DEFAULT_LIMIT;
     }
 }
 
-void SimpleTabModel::set_offset(const std::string& p_offset)
-{
+void SimpleTabModel::set_offset(const std::string &p_offset) {
     try {
         offset = std::stoul(p_offset);
-    } catch (const std::invalid_argument&) {
+    } catch (const std::invalid_argument &) {
         offset = DEFAULT_OFFSET;
     }
 }
 
-Gtk::SortType SimpleTabModel::get_sort_type() const
-{
+Gtk::SortType SimpleTabModel::get_sort_type() const {
     if (sort_type == ColumnSortType::Asc)
         return Gtk::SortType::SORT_ASCENDING;
     else if (sort_type == ColumnSortType::Desc)
@@ -58,8 +52,7 @@ Gtk::SortType SimpleTabModel::get_sort_type() const
     return Gtk::SortType::SORT_ASCENDING;
 }
 
-const std::string SimpleTabModel::get_query() const
-{
+const std::string SimpleTabModel::get_query() const {
     std::stringstream query;
 
     query << "select * from ";
@@ -74,8 +67,7 @@ const std::string SimpleTabModel::get_query() const
     return query.str();
 }
 
-const std::string SimpleTabModel::get_columns_query() const
-{
+const std::string SimpleTabModel::get_columns_query() const {
     std::stringstream query;
 
     query << "select * from information_schema.columns where table_name = "
@@ -89,8 +81,7 @@ const std::string SimpleTabModel::get_columns_query() const
     return query.str();
 }
 
-std::shared_ptr<sancho::QueryResult> SimpleTabModel::accept_changes()
-{
+std::shared_ptr<sancho::QueryResult> SimpleTabModel::accept_changes() {
     if (!map_test.size()) {
         return sancho::QueryResult::get(true);
     }
@@ -147,8 +138,7 @@ std::shared_ptr<sancho::QueryResult> SimpleTabModel::accept_changes()
     return result;
 }
 
-std::shared_ptr<sancho::QueryResult> SimpleTabModel::accept_pk_change()
-{
+std::shared_ptr<sancho::QueryResult> SimpleTabModel::accept_pk_change() {
     if (pk_changes.empty()) {
         return sancho::QueryResult::get(true);
     }
@@ -175,7 +165,8 @@ std::shared_ptr<sancho::QueryResult> SimpleTabModel::accept_pk_change()
             query << " and ";
         }
 
-        query << t.first << " = " << sancho::string::prepare_sql_value(t.second);
+        query << t.first << " = "
+              << sancho::string::prepare_sql_value(t.second);
 
         i++;
     }
@@ -208,9 +199,8 @@ std::shared_ptr<sancho::QueryResult> SimpleTabModel::accept_pk_change()
 }
 
 std::shared_ptr<sancho::QueryResult> SimpleTabModel::delete_rows(
-    const std::vector<std::vector<std::pair<Glib::ustring, Glib::ustring>>>&
-        rows_to_delete)
-{
+    const std::vector<std::vector<std::pair<Glib::ustring, Glib::ustring>>>
+        &rows_to_delete) {
     if (rows_to_delete.empty()) {
         return sancho::QueryResult::get(true);
     }
@@ -219,7 +209,7 @@ std::shared_ptr<sancho::QueryResult> SimpleTabModel::delete_rows(
 
     std::stringstream query;
 
-    for (const auto& row : rows_to_delete) {
+    for (const auto &row : rows_to_delete) {
         std::stringstream row_query;
 
         row_query << "delete from " << schema_name << "." << table_name
@@ -259,15 +249,14 @@ std::shared_ptr<sancho::QueryResult> SimpleTabModel::delete_rows(
 }
 
 std::shared_ptr<sancho::QueryResult>
-SimpleTabModel::insert_row(const Gtk::TreeModel::Row& row)
-{
+SimpleTabModel::insert_row(const Gtk::TreeModel::Row &row) {
     std::stringstream query;
 
     query << "insert into " << schema_name << "." << table_name << " (";
 
     unsigned i = 0;
 
-    for (const auto& col : cols) {
+    for (const auto &col : cols) {
         if (col.first == "#")
             continue;
 
@@ -296,7 +285,7 @@ SimpleTabModel::insert_row(const Gtk::TreeModel::Row& row)
 
     query << ") values (";
 
-    for (const auto& col : cols) {
+    for (const auto &col : cols) {
         if (col.first == "#")
             continue;
 
@@ -342,8 +331,7 @@ SimpleTabModel::insert_row(const Gtk::TreeModel::Row& row)
     return result;
 }
 
-const std::string SimpleTabModel::get_order_by_query() const
-{
+const std::string SimpleTabModel::get_order_by_query() const {
     std::stringstream order_by;
 
     if (is_sorted()) {
@@ -358,14 +346,13 @@ const std::string SimpleTabModel::get_order_by_query() const
     return order_by.str();
 }
 
-    const bool SimpleTabModel::is_part_of_pk(const Glib::ustring& column_name)
-    {
-        for (const auto& pk_column : get_primary_key()) {
-            if (pk_column.column_name == column_name)
-                return true;
-        }
-
-        return false;
+const bool SimpleTabModel::is_part_of_pk(const Glib::ustring &column_name) {
+    for (const auto &pk_column : get_primary_key()) {
+        if (pk_column.column_name == column_name)
+            return true;
     }
+
+    return false;
+}
 
 } // namespace sancho

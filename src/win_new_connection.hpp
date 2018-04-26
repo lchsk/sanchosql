@@ -8,8 +8,8 @@
 namespace sancho {
 class NewConnectionWindow : public Gtk::Window {
   public:
-    NewConnectionWindow(BaseObjectType* cobject,
-                        const Glib::RefPtr<Gtk::Builder>& builder);
+    NewConnectionWindow(BaseObjectType *cobject,
+                        const Glib::RefPtr<Gtk::Builder> &builder);
     virtual ~NewConnectionWindow(){};
 
   private:
@@ -19,7 +19,7 @@ class NewConnectionWindow : public Gtk::Window {
     // Name of the connection currently being edited
     Glib::ustring edited_conn_name;
 
-    void update_connection_status(const sancho::PostgresConnection& pg_conn);
+    void update_connection_status(const sancho::PostgresConnection &pg_conn);
     void reset_connection_status();
 
     void set_adding_mode();
@@ -58,24 +58,24 @@ class NewConnectionWindow : public Gtk::Window {
     Gtk::TreeView tree_connections;
     Glib::RefPtr<Gtk::TreeStore> connections_model;
 
-    Gtk::Box* box_left;
-    Gtk::Paned* paned_new_connections;
-    Gtk::Button* btn_close;
-    Gtk::Button* btn_save;
-    Gtk::Button* btn_test_connection;
-    Gtk::Button* btn_add_connection;
-    Gtk::Button* btn_del_connection;
+    Gtk::Box *box_left;
+    Gtk::Paned *paned_new_connections;
+    Gtk::Button *btn_close;
+    Gtk::Button *btn_save;
+    Gtk::Button *btn_test_connection;
+    Gtk::Button *btn_add_connection;
+    Gtk::Button *btn_del_connection;
 
-    Gtk::CheckButton* checkbox_save_password;
+    Gtk::CheckButton *checkbox_save_password;
 
-    Gtk::Label* label_connection_status;
+    Gtk::Label *label_connection_status;
 
-    Gtk::Entry* text_connection_name;
-    Gtk::Entry* text_host;
-    Gtk::Entry* text_port;
-    Gtk::Entry* text_db;
-    Gtk::Entry* text_user;
-    Gtk::Entry* text_password;
+    Gtk::Entry *text_connection_name;
+    Gtk::Entry *text_host;
+    Gtk::Entry *text_port;
+    Gtk::Entry *text_db;
+    Gtk::Entry *text_user;
+    Gtk::Entry *text_password;
 };
 } // namespace sancho
 
