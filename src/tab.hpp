@@ -20,12 +20,7 @@ class AbstractTab {
   public:
     AbstractTab(const Glib::ustring& tab_name, TabType type);
 
-    void show() const
-    {
-        tree_scrolled_window->show();
-        tree_scrolled_window->show_all_children();
-        hb->show_all_children();
-    };
+    void show() const;
 
     Gtk::HBox* hb;
     Gtk::Button* b;

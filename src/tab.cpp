@@ -42,6 +42,13 @@ AbstractTab::AbstractTab(const Glib::ustring& tab_name, TabType type)
     hb->pack_start(*b, Gtk::PACK_SHRINK);
 }
 
+void AbstractTab::show() const
+{
+    tree_scrolled_window->show();
+    tree_scrolled_window->show_all_children();
+    hb->show_all_children();
+}
+
 QueryTab::QueryTab(const Glib::ustring& tab_name)
     : AbstractTab(tab_name, TabType::Query)
 {

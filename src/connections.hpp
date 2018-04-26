@@ -17,13 +17,7 @@ class Connections {
     std::shared_ptr<san::ConnectionDetails>& end() { return conn_end; }
 
     std::shared_ptr<san::ConnectionDetails>&
-    find_connection(const Glib::ustring& connection_name)
-    {
-        if (!exists(connection_name))
-            return end();
-
-        return connections[connection_name];
-    }
+    find_connection(const Glib::ustring& connection_name);
 
     void add(const Glib::ustring& name, const std::string& host,
              const std::string& user, const std::string& password,
@@ -48,13 +42,7 @@ class Connections {
         return IN_MAP(connections, conn_name);
     };
 
-    void remove(const Glib::ustring& conn_name)
-    {
-        if (!exists(conn_name))
-            return;
-
-        connections.erase(connections.find(conn_name));
-    }
+    void remove(const Glib::ustring& conn_name);
 
     bool can_update_conn_details(const Glib::ustring& old_conn_name,
                                  const Glib::ustring& new_conn_name,

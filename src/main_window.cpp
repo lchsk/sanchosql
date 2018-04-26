@@ -1087,4 +1087,314 @@ void MainWindow::on_btn_accept_changes_clicked(san::SimpleTab* tab,
         }
     }
 }
+
+
+Gtk::ScrolledWindow* MainWindow::get_current_swindow()
+    {
+        return static_cast<Gtk::ScrolledWindow*>(
+            notebook.get_nth_page(notebook.get_current_page()));
+    }
+
+san::TabType MainWindow::get_tab_type(Gtk::ScrolledWindow* win)
+    {
+        if (!IN_MAP(tabs, win)) {
+            return san::TabType::Invalid;
+        }
+
+        return tabs[win]->type;
+    }
+
+
+bool MainWindow::check_mod_binding(GdkEventKey* key_event, GdkKeyCode mod_key,
+                           GdkKeyCode key)
+    {
+        return ((key_event->keyval == key) &&
+                (key_event->state & (GDK_SHIFT_MASK | GDK_CONTROL_MASK |
+                                     GDK_MOD1_MASK)) == mod_key);
+    }
+
+bool MainWindow::on_key_press_event(GdkEventKey* key_event)
+    {
+        if (check_mod_binding(key_event, GDK_CONTROL_MASK, GDK_KEY_n)) {
+            on_action_file_new();
+
+            return true;
+        } else if (check_mod_binding(key_event, GDK_CONTROL_MASK, GDK_KEY_e)) {
+            on_open_sql_editor_clicked();
+
+            return true;
+        } else if (check_mod_binding(key_event, GDK_CONTROL_MASK, GDK_KEY_q)) {
+            on_action_file_quit();
+
+            return true;
+        } else if (check_mod_binding(key_event, GDK_CONTROL_MASK, GDK_KEY_w)) {
+            Gtk::ScrolledWindow* window = get_current_swindow();
+
+            if (!window) {
+                g_warning("Cannot remove tab!");
+
+                return true;
+            }
+
+            on_tab_close_button_clicked(window);
+        } else if (key_event->keyval == GDK_KEY_F5) {
+            Gtk::ScrolledWindow* window = get_current_swindow();
+            const san::TabType type = get_tab_type(window);
+
+            if (type == san::TabType::Query) {
+                san::QueryTab& tab = get_query_tab(window);
+
+                on_submit_query_clicked(window, tab.buffer);
+            }
+
+            return true;
+        }
+
+        return Gtk::Window::on_key_press_event(key_event);
+    }
+
+
+    std::shared_ptr<san::PostgresConnection>
+    MainWindow::connect(const std::shared_ptr<san::ConnectionDetails>& conn_details)
+    {
+        std::shared_ptr<san::PostgresConnection> pc =
+            std::make_shared<san::PostgresConnection>(conn_details);
+        pc->init_connection();
+
+        return pc;
+    }
+
+
+void MainWindow::on_primary_key_warning_clicked(const Glib::ustring table_name)
+    {
+        Gtk::MessageDialog dialog(
+            *this, "Table \"" + table_name + "\" doesn't a have primary key",
+            false /* use_markup */, Gtk::MESSAGE_WARNING, Gtk::BUTTONS_OK);
+        dialog.set_modal();
+        dialog.set_secondary_text(
+            "Updating values in the editor will be disabled");
+
+        dialog.run();
+    }
+
+
+void MainWindow::show_warning(const Glib::ustring& primary,
+                      const Glib::ustring& secondary)
+    {
+        Gtk::MessageDialog dialog(*this, primary, false /* use_markup */,
+                                  Gtk::MESSAGE_WARNING, Gtk::BUTTONS_OK);
+        dialog.set_modal();
+
+        if (!secondary.empty()) {
+            dialog.set_secondary_text(secondary);
+        }
+
+        dialog.run();
+    }
+
+void MainWindow::on_menu_file_popup_generic(Gtk::ScrolledWindow* window,
+                                    san::SimpleTab* tab,
+                                    san::SimpleTabModel* model)
+    {
+        const auto selection = tab->tree->get_selection();
+
+        if (selection) {
+            std::size_t size = selection->get_selected_rows().size();
+
+            std::stringstream question;
+            question << "Are you sure you want to permanently delete " << size
+                     << " row(s)?";
+
+            Gtk::MessageDialog dialog(
+                *this, question.str(), false /* use_markup */,
+                Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_OK_CANCEL);
+            dialog.set_modal();
+
+            std::stringstream text;
+
+            text << "The following rows will be deleted: ";
+
+            auto rows = selection->get_selected_rows();
+
+            unsigned i = 0;
+
+            for (const auto& row_path : rows) {
+                Gtk::TreeModel::iterator row_iter =
+                    tab->tree->get_model()->get_iter(row_path);
+
+                if (row_iter) {
+                    Gtk::TreeModel::Row row = *row_iter;
+
+                    if (i > 0)
+                        text << ", ";
+
+                    text << row.get_value(model->cols["#"]);
+
+                    i++;
+                }
+            }
+
+            dialog.set_secondary_text(text.str());
+
+            const int result = dialog.run();
+
+            if (result == Gtk::RESPONSE_OK) {
+                auto pks = model->get_primary_key();
+
+                auto rows = selection->get_selected_rows();
+
+                std::vector<
+                    std::vector<std::pair<Glib::ustring, Glib::ustring>>>
+                    rows_to_delete;
+
+                for (const auto& row_path : rows) {
+                    Gtk::TreeModel::iterator row_iter =
+                        tab->tree->get_model()->get_iter(row_path);
+
+                    if (row_iter) {
+                        Gtk::TreeModel::Row row = *row_iter;
+
+                        std::vector<std::pair<Glib::ustring, Glib::ustring>>
+                            pk_values;
+
+                        for (auto pk : pks) {
+                            const Glib::ustring pk_value =
+                                row.get_value(model->cols[pk.column_name]);
+
+                            pk_values.push_back(
+                                std::make_pair<Glib::ustring, Glib::ustring>(
+                                    Glib::ustring(pk.column_name),
+                                    Glib::ustring(pk_value)));
+                        }
+
+                        rows_to_delete.push_back(pk_values);
+                    }
+                }
+
+                auto result = model->delete_rows(rows_to_delete);
+
+                if (result->success) {
+                    load_list_results(window);
+                } else {
+                    san::insert_log_message(tab->log_buffer,
+                                            result->error_message);
+
+                    show_warning("Deleting rows failed", result->error_message);
+                }
+            }
+        }
+    }
+
+
+bool MainWindow::on_list_press(GdkEventButton* button_event, san::SimpleTab* tab,
+                       san::SimpleTabModel* model)
+    {
+        if ((button_event->type == GDK_BUTTON_RELEASE) &&
+            (button_event->button == 3)) {
+            // gtkmm 3.22 only:
+            // tab->popup.popup_at_pointer((GdkEvent*) button_event);
+            tab->popup.popup(button_event->button, button_event->time);
+        }
+
+        return true;
+    }
+
+
+void MainWindow::on_browser_refresh_clicked()
+    {
+        auto pc = handle_connect();
+
+        if (!pc)
+            return;
+
+        refresh_browser(pc);
+    }
+
+
+std::shared_ptr<san::ConnectionDetails>& MainWindow::find_current_connection()
+    {
+        const Glib::ustring connection_name =
+            combo_connections.get_active_text();
+
+        return san::Connections::instance()->find_connection(connection_name);
+    }
+
+std::shared_ptr<san::PostgresConnection> MainWindow::handle_connect()
+    {
+        auto current_connection = find_current_connection();
+
+        if (current_connection == san::Connections::instance()->end())
+            return nullptr;
+
+        std::shared_ptr<san::PostgresConnection> pc = nullptr;
+
+        try {
+            pc = connect(current_connection);
+        } catch (const san::NoConnection& e) {
+            Glib::ustring error_message;
+
+            if (current_connection->password.empty()) {
+                error_message = "Password for connection \"" +
+                                current_connection->name +
+                                "\" is empty. Please edit the connection and "
+                                "provide password.";
+            } else {
+                error_message = e.what();
+            }
+
+            show_warning("Connection failed", error_message);
+
+            reset_browser();
+
+            return nullptr;
+        }
+
+        return pc;
+    }
+
+bool MainWindow::on_browser_button_released(GdkEventButton* button_event)
+    {
+        if (button_event->button == 3) {
+            Gtk::TreeModel::Path path;
+
+            bool found =
+                browser.get_path_at_pos(button_event->x, button_event->y, path);
+
+            if (!found)
+                return false;
+
+            Gtk::TreeModel::iterator iter = browser_store->get_iter(path);
+
+            if (!iter)
+                return false;
+
+            Gtk::TreeModel::Row current_row = *iter;
+
+            if (current_row[browser_model.type] ==
+                san::BrowserItemType::Header) {
+                // gtkmm 3.22 only:
+                // popup_browser_header.popup_at_pointer((GdkEvent*)
+                // button_event);
+                popup_browser_header.popup(button_event->button,
+                                           button_event->time);
+
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+void MainWindow::reset_browser()
+    {
+        // Reset current_connection first before triggering events
+        san::Connections::instance()->current_connection = nullptr;
+
+        browser_store->clear();
+        combo_connections.set_active(0);
+        combo_schemas.remove_all();
+        combo_schemas.set_active(0);
+    }
+
+
 } // namespace san

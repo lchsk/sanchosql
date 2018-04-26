@@ -218,4 +218,23 @@ bool Connections::can_update_conn_details(
 
     return false;
 }
+
+    std::shared_ptr<san::ConnectionDetails>&
+    Connections::find_connection(const Glib::ustring& connection_name)
+    {
+        if (!exists(connection_name))
+            return end();
+
+        return connections[connection_name];
+    }
+
+    void Connections::remove(const Glib::ustring& conn_name)
+    {
+        if (!exists(conn_name))
+            return;
+
+        connections.erase(connections.find(conn_name));
+    }
+
+
 } // namespace san

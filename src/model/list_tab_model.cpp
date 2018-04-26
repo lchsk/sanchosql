@@ -357,4 +357,15 @@ const std::string SimpleTabModel::get_order_by_query() const
 
     return order_by.str();
 }
+
+    const bool SimpleTabModel::is_part_of_pk(const Glib::ustring& column_name)
+    {
+        for (const auto& pk_column : get_primary_key()) {
+            if (pk_column.column_name == column_name)
+                return true;
+        }
+
+        return false;
+    }
+
 } // namespace san

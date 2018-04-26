@@ -10,6 +10,153 @@ QueryResult::QueryResult()
 {
 }
 
+    QueryResult::~QueryResult()
+    {
+        // In theory that should never happen but if the transaction is left
+        // unfinished, explicitly roll it back.
+        if (query_type == san::QueryType::Transaction && transaction) {
+            g_debug("Destroying san::QueryResult - rolling back");
+            rollback();
+        }
+    }
+
+    std::shared_ptr<QueryResult> QueryResult::get()
+    {
+        return std::make_shared<QueryResult>();
+    }
+
+    std::shared_ptr<QueryResult> QueryResult::get(const bool success)
+    {
+        auto result = std::make_shared<QueryResult>();
+        result->success = success;
+
+        return result;
+    }
+
+    std::vector<std::map<std::string, std::string>> QueryResult::as_map() const
+    {
+        std::vector<std::map<std::string, std::string>> v;
+
+        for (unsigned i = 0; i < data.size(); i++) {
+            std::map<std::string, std::string> m;
+
+            for (unsigned j = 0; j < columns.size(); j++) {
+                m[columns[j].column_name] = data[i][j];
+            }
+
+            v.push_back(m);
+        }
+
+        return v;
+    }
+
+    const std::map<std::string, san::ColumnMetadata>
+    QueryResult::get_columns_data(pqxx::connection& conn,
+                     const std::string& columns_query) const
+    {
+        // TODO: Make sure only SELECT can be run here
+        pqxx::nontransaction work(conn);
+        pqxx::result result = work.exec(columns_query);
+        work.commit();
+
+        std::map<std::string, san::ColumnMetadata> columns;
+
+        // TODO: Handle cases when 'row' does not contain the columns mentioned
+        // below
+        for (const auto& row : result) {
+            const auto column_name = row["column_name"].as<std::string>();
+
+            const auto character_maximum_length =
+                row["character_maximum_length"].is_null()
+                    ? ""
+                    : row["character_maximum_length"].as<std::string>();
+            bool is_nullable = false;
+
+            if (!row["is_nullable"].is_null() &&
+                row["is_nullable"].as<std::string>() == "YES") {
+                is_nullable = true;
+            }
+
+            columns[column_name] =
+                san::ColumnMetadata(character_maximum_length, is_nullable);
+        }
+
+        return columns;
+    }
+
+    void QueryResult::set_status(bool p_success, const Glib::ustring& p_error_message)
+    {
+        success = p_success;
+        error_message = p_error_message;
+    }
+
+    void QueryResult::commit() noexcept
+    {
+        if (query_type == san::QueryType::Transaction && transaction) {
+            try {
+                transaction->commit();
+                transaction.reset();
+                g_assert(transaction == nullptr);
+                g_debug("Transaction committed");
+            } catch (const std::exception& e) {
+                g_warning("Commit failed: %s", e.what());
+                set_status(
+                    false,
+                    Glib::ustring("Commit failed, attempting to rollback: ") +
+                        Glib::ustring(e.what()));
+
+                rollback();
+            }
+        }
+    }
+
+    void QueryResult::rollback() noexcept
+    {
+        if (query_type == san::QueryType::Transaction && transaction) {
+            try {
+                transaction->abort();
+                transaction.reset();
+                g_assert(transaction == nullptr);
+                g_debug("Transaction rolled back");
+            } catch (const std::exception& e) {
+                g_warning("Rollback failed: %s", e.what());
+                set_status(false, Glib::ustring("Rollback failed: ") +
+                                      Glib::ustring(e.what()));
+            }
+        }
+    }
+
+    const std::string QueryResult::get_message() const {
+        if (! success)
+            return error_message;
+
+        std::stringstream message;
+        message << "Query ";
+
+        if (show_results) {
+            message << "returned " << size;
+
+            if (size == 1) {
+                message << " row";
+            } else {
+                message << " rows";
+            }
+        } else {
+            message << "affected " << affected_rows;
+
+            if (affected_rows == 1) {
+                message << " row";
+            } else {
+                message << " rows";
+            }
+        }
+
+        message << "\n";
+
+        return message.str();
+    }
+
+
 std::shared_ptr<QueryResult>
 QueryResult::get_prepared_stmt(pqxx::connection& conn, const std::string& name,
                                const std::string& query, const std::string& arg)

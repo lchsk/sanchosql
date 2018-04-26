@@ -30,7 +30,6 @@ class SimpleTabModel : public AbstractTabModel {
     void prev_page()
     {
         offset -= std::min(offset, limit);
-        ;
     }
 
     std::string get_limit() const { return std::to_string(limit); }
@@ -46,15 +45,7 @@ class SimpleTabModel : public AbstractTabModel {
         return primary_key;
     }
 
-    const bool is_part_of_pk(const Glib::ustring& column_name)
-    {
-        for (const auto& pk_column : get_primary_key()) {
-            if (pk_column.column_name == column_name)
-                return true;
-        }
-
-        return false;
-    }
+    const bool is_part_of_pk(const Glib::ustring& column_name);
 
     // Run UPDATE query to save pending changes in the DB
     // Doesn't include changes to Primary Key
