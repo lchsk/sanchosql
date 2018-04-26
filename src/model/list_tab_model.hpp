@@ -8,12 +8,12 @@
 #include "../pg_conn.hpp"
 #include "abstract_tab_model.hpp"
 
-namespace san {
+namespace sancho {
 class SimpleTabModel : public AbstractTabModel {
   public:
     enum class ColumnSortType { None, Asc, Desc };
 
-    SimpleTabModel(const std::shared_ptr<san::ConnectionDetails>& conn_details,
+    SimpleTabModel(const std::shared_ptr<sancho::ConnectionDetails>& conn_details,
                    const Glib::ustring& p_table_name,
                    const Glib::ustring& p_schema_name);
 
@@ -40,7 +40,7 @@ class SimpleTabModel : public AbstractTabModel {
 
     const bool has_primary_key() const { return primary_key.size(); }
 
-    const std::vector<san::PrimaryKey> get_primary_key() const
+    const std::vector<sancho::PrimaryKey> get_primary_key() const
     {
         return primary_key;
     }
@@ -49,12 +49,12 @@ class SimpleTabModel : public AbstractTabModel {
 
     // Run UPDATE query to save pending changes in the DB
     // Doesn't include changes to Primary Key
-    std::shared_ptr<san::QueryResult> accept_changes();
-    std::shared_ptr<san::QueryResult> accept_pk_change();
-    std::shared_ptr<san::QueryResult> delete_rows(
+    std::shared_ptr<sancho::QueryResult> accept_changes();
+    std::shared_ptr<sancho::QueryResult> accept_pk_change();
+    std::shared_ptr<sancho::QueryResult> delete_rows(
         const std::vector<std::vector<std::pair<Glib::ustring, Glib::ustring>>>&
             rows_to_delete);
-    std::shared_ptr<san::QueryResult>
+    std::shared_ptr<sancho::QueryResult>
     insert_row(const Gtk::TreeModel::Row& row);
 
     unsigned db_rows_cnt;
@@ -88,7 +88,7 @@ class SimpleTabModel : public AbstractTabModel {
 
     const Glib::ustring table_name;
     const Glib::ustring schema_name;
-    const std::vector<san::PrimaryKey> primary_key;
+    const std::vector<sancho::PrimaryKey> primary_key;
 
     unsigned limit;
     unsigned offset;
@@ -99,6 +99,6 @@ class SimpleTabModel : public AbstractTabModel {
     static const unsigned DEFAULT_LIMIT = 30;
     static const unsigned DEFAULT_OFFSET = 0;
 };
-} // namespace san
+} // namespace sancho
 
 #endif

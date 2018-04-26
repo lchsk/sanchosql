@@ -10,7 +10,7 @@
 #include "model/list_tab_model.hpp"
 #include "widgets/number_entry.hpp"
 
-namespace san {
+namespace sancho {
 void insert_log_message(Glib::RefPtr<Gsv::Buffer>& log_buffer,
                         const Glib::ustring& message);
 
@@ -70,7 +70,7 @@ class QueryTab : public AbstractTab {
 class SimpleTab : public AbstractTab {
   public:
     SimpleTab(const Glib::ustring& tab_name,
-              std::shared_ptr<san::SimpleTabModel>& model);
+              std::shared_ptr<sancho::SimpleTabModel>& model);
 
     // Browse box
     Gtk::Box* browse_box;
@@ -83,8 +83,8 @@ class SimpleTab : public AbstractTab {
     Gtk::Button* btn_next;
     Gtk::Label* label_offset;
     Gtk::Label* label_limit;
-    san::NumberEntry* number_offset;
-    san::NumberEntry* number_limit;
+    sancho::NumberEntry* number_offset;
+    sancho::NumberEntry* number_limit;
     Gtk::TreeView* tree;
     Gtk::ScrolledWindow* data_scrolled_window;
 
@@ -98,8 +98,8 @@ class SimpleTab : public AbstractTab {
 
     Gtk::VPaned paned_main;
 
-    std::shared_ptr<san::SimpleTabModel> model;
+    std::shared_ptr<sancho::SimpleTabModel> model;
 };
-} // namespace san
+} // namespace sancho
 
 #endif

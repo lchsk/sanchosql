@@ -5,7 +5,7 @@
 
 #include "pg_conn.hpp"
 
-namespace san {
+namespace sancho {
 class NewConnectionWindow : public Gtk::Window {
   public:
     NewConnectionWindow(BaseObjectType* cobject,
@@ -19,7 +19,7 @@ class NewConnectionWindow : public Gtk::Window {
     // Name of the connection currently being edited
     Glib::ustring edited_conn_name;
 
-    void update_connection_status(const san::PostgresConnection& pg_conn);
+    void update_connection_status(const sancho::PostgresConnection& pg_conn);
     void reset_connection_status();
 
     void set_adding_mode();
@@ -77,6 +77,6 @@ class NewConnectionWindow : public Gtk::Window {
     Gtk::Entry* text_user;
     Gtk::Entry* text_password;
 };
-} // namespace san
+} // namespace sancho
 
 #endif

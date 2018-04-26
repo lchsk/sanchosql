@@ -6,7 +6,7 @@
 #define IN_MAP(map, item) (map.find(item) != map.end())
 #define COUT(var) std::cout << var << std::endl;
 
-namespace san {
+namespace sancho {
 namespace string {
 const std::string EMPTY_DB_STRING = "\"\"";
 
@@ -34,6 +34,6 @@ Glib::ustring get_current_datetime();
 namespace user {
 std::string get_user_name();
 }
-} // namespace san
+} // namespace sancho
 
 #endif

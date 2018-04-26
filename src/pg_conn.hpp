@@ -12,7 +12,7 @@
 #include "connections.hpp"
 #include "query_result.hpp"
 
-namespace san {
+namespace sancho {
 class PrimaryKey {
   public:
     std::string column_name;
@@ -32,14 +32,14 @@ class NoConnection : public std::runtime_error {
 class PostgresConnection {
   public:
     explicit PostgresConnection(
-        const std::shared_ptr<san::ConnectionDetails>& conn_details);
+        const std::shared_ptr<sancho::ConnectionDetails>& conn_details);
     virtual ~PostgresConnection();
 
-    virtual std::shared_ptr<san::QueryResult>
-    run_query(const san::QueryType& query_type, const std::string& query,
+    virtual std::shared_ptr<sancho::QueryResult>
+    run_query(const sancho::QueryType& query_type, const std::string& query,
               const std::string& columns_query);
-    virtual std::shared_ptr<san::QueryResult>
-    run_query(const san::QueryType& query_type, const std::string& query);
+    virtual std::shared_ptr<sancho::QueryResult>
+    run_query(const sancho::QueryType& query_type, const std::string& query);
 
     std::vector<std::string>
     get_db_tables(const Glib::ustring& schema_name) const noexcept;
@@ -59,15 +59,15 @@ class PostgresConnection {
   private:
     void load_oids();
 
-    std::shared_ptr<san::ConnectionDetails> conn_details;
+    std::shared_ptr<sancho::ConnectionDetails> conn_details;
 
     std::unique_ptr<pqxx::connection> conn;
 
     bool is_open_;
     std::string error_message_;
 
-    std::shared_ptr<std::unordered_map<pqxx::oid, san::OidMapping>> oid_names;
+    std::shared_ptr<std::unordered_map<pqxx::oid, sancho::OidMapping>> oid_names;
 };
-} // namespace san
+} // namespace sancho
 
 #endif

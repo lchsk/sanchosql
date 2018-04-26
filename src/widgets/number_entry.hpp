@@ -5,14 +5,14 @@
 
 #include "../string.hpp"
 
-namespace san {
+namespace sancho {
 class NumberEntry : public Gtk::Entry {
     void on_insert_text(const Glib::ustring& text, int* position)
     {
-        if (san::string::contains_only_numbers(text))
+        if (sancho::string::contains_only_numbers(text))
             Gtk::Entry::on_insert_text(text, position);
     }
 };
-} // namespace san
+} // namespace sancho
 
 #endif

@@ -9,14 +9,14 @@
 #include "connection_details.hpp"
 #include "string.hpp"
 
-namespace san {
+namespace sancho {
 class Connections {
   public:
     Connections();
 
-    std::shared_ptr<san::ConnectionDetails>& end() { return conn_end; }
+    std::shared_ptr<sancho::ConnectionDetails>& end() { return conn_end; }
 
-    std::shared_ptr<san::ConnectionDetails>&
+    std::shared_ptr<sancho::ConnectionDetails>&
     find_connection(const Glib::ustring& connection_name);
 
     void add(const Glib::ustring& name, const std::string& host,
@@ -26,7 +26,7 @@ class Connections {
 
     static Connections* instance() { return &ins; }
 
-    const std::map<Glib::ustring, std::shared_ptr<san::ConnectionDetails>>&
+    const std::map<Glib::ustring, std::shared_ptr<sancho::ConnectionDetails>>&
     get_connections() const
     {
         return connections;
@@ -34,7 +34,7 @@ class Connections {
 
     const unsigned size() const { return connections.size(); }
 
-    std::shared_ptr<san::ConnectionDetails>&
+    std::shared_ptr<sancho::ConnectionDetails>&
     get(const Glib::ustring& conn_name);
 
     bool exists(const Glib::ustring& conn_name) const
@@ -67,7 +67,7 @@ class Connections {
 
     Glib::ustring CONN_PATH = "connections";
 
-    std::shared_ptr<san::ConnectionDetails> current_connection;
+    std::shared_ptr<sancho::ConnectionDetails> current_connection;
 
   private:
     void open_conn_file();
@@ -78,15 +78,15 @@ class Connections {
                                    const Glib::ustring&) const;
 
     // Returned if the actual connection was not found
-    std::shared_ptr<san::ConnectionDetails> conn_end;
+    std::shared_ptr<sancho::ConnectionDetails> conn_end;
 
-    std::map<Glib::ustring, std::shared_ptr<san::ConnectionDetails>>
+    std::map<Glib::ustring, std::shared_ptr<sancho::ConnectionDetails>>
         connections;
 
     static Connections ins;
 
     Glib::KeyFile conn_file;
 };
-} // namespace san
+} // namespace sancho
 
 #endif

@@ -1,12 +1,12 @@
 #include "query_result.hpp"
 
-namespace san {
+namespace sancho {
 QueryResult::QueryResult()
     : success(false), error_message(Glib::ustring()), inserted_empty_row(false),
       size(0), affected_rows(0), show_results(false),
       oid_names(
-          std::make_shared<std::unordered_map<pqxx::oid, san::OidMapping>>()),
-      query_type(san::QueryType::None)
+          std::make_shared<std::unordered_map<pqxx::oid, sancho::OidMapping>>()),
+      query_type(sancho::QueryType::None)
 {
 }
 
@@ -14,8 +14,8 @@ QueryResult::QueryResult()
     {
         // In theory that should never happen but if the transaction is left
         // unfinished, explicitly roll it back.
-        if (query_type == san::QueryType::Transaction && transaction) {
-            g_debug("Destroying san::QueryResult - rolling back");
+        if (query_type == sancho::QueryType::Transaction && transaction) {
+            g_debug("Destroying sancho::QueryResult - rolling back");
             rollback();
         }
     }
@@ -50,7 +50,7 @@ QueryResult::QueryResult()
         return v;
     }
 
-    const std::map<std::string, san::ColumnMetadata>
+    const std::map<std::string, sancho::ColumnMetadata>
     QueryResult::get_columns_data(pqxx::connection& conn,
                      const std::string& columns_query) const
     {
@@ -59,7 +59,7 @@ QueryResult::QueryResult()
         pqxx::result result = work.exec(columns_query);
         work.commit();
 
-        std::map<std::string, san::ColumnMetadata> columns;
+        std::map<std::string, sancho::ColumnMetadata> columns;
 
         // TODO: Handle cases when 'row' does not contain the columns mentioned
         // below
@@ -78,7 +78,7 @@ QueryResult::QueryResult()
             }
 
             columns[column_name] =
-                san::ColumnMetadata(character_maximum_length, is_nullable);
+                sancho::ColumnMetadata(character_maximum_length, is_nullable);
         }
 
         return columns;
@@ -92,7 +92,7 @@ QueryResult::QueryResult()
 
     void QueryResult::commit() noexcept
     {
-        if (query_type == san::QueryType::Transaction && transaction) {
+        if (query_type == sancho::QueryType::Transaction && transaction) {
             try {
                 transaction->commit();
                 transaction.reset();
@@ -112,7 +112,7 @@ QueryResult::QueryResult()
 
     void QueryResult::rollback() noexcept
     {
-        if (query_type == san::QueryType::Transaction && transaction) {
+        if (query_type == sancho::QueryType::Transaction && transaction) {
             try {
                 transaction->abort();
                 transaction.reset();
@@ -202,8 +202,8 @@ void QueryResult::handle_results(const pqxx::result& result)
         }
 
         columns.push_back(
-            san::Column(result.column_type(i), result.column_name(i),
-                        san::get_data_type(result.column_type(i), *oid_names),
+            sancho::Column(result.column_type(i), result.column_name(i),
+                        sancho::get_data_type(result.column_type(i), *oid_names),
                         char_length, is_nullable));
     }
 
@@ -218,7 +218,7 @@ void QueryResult::handle_results(const pqxx::result& result)
                 const std::string value = row[i].as<std::string>();
 
                 if (value.empty()) {
-                    row_data.push_back(san::string::EMPTY_DB_STRING);
+                    row_data.push_back(sancho::string::EMPTY_DB_STRING);
                 } else {
                     row_data.push_back(value);
                 }
@@ -236,9 +236,9 @@ void QueryResult::run_prepared_stmt(
 }
 
 std::shared_ptr<QueryResult> QueryResult::get(
-    pqxx::connection& conn, const san::QueryType& query_type,
+    pqxx::connection& conn, const sancho::QueryType& query_type,
     const std::string& query, const std::string& columns_query,
-    std::shared_ptr<std::unordered_map<pqxx::oid, san::OidMapping>>& oid_names)
+    std::shared_ptr<std::unordered_map<pqxx::oid, sancho::OidMapping>>& oid_names)
 {
     auto query_result = std::make_shared<QueryResult>(query_type);
     query_result->oid_names = oid_names;
@@ -260,18 +260,18 @@ std::shared_ptr<QueryResult> QueryResult::get(
     return query_result;
 }
 
-void QueryResult::run(pqxx::connection& conn, const san::QueryType& query_type,
+void QueryResult::run(pqxx::connection& conn, const sancho::QueryType& query_type,
                       const std::string& query,
                       const std::string& columns_query)
 {
-    if (query_type == san::QueryType::Transaction) {
+    if (query_type == sancho::QueryType::Transaction) {
         transaction = std::make_unique<pqxx::work>(conn);
         handle_results(transaction->exec(query));
-    } else if (query_type == san::QueryType::NonTransaction) {
+    } else if (query_type == sancho::QueryType::NonTransaction) {
         pqxx::nontransaction work(conn);
         handle_results(work.exec(query));
     } else {
         throw std::invalid_argument("Invalid query type");
     }
 }
-} // namespace san
+} // namespace sancho

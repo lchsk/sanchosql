@@ -1,6 +1,6 @@
 #include "connection_details.hpp"
 
-namespace san {
+namespace sancho {
 void ConnectionDetails::set_host(const std::string& hostname)
 {
     host = hostname;
@@ -35,4 +35,4 @@ const std::string ConnectionDetails::postgres_string_(bool include_password)
 
     return conn.str();
 }
-} // namespace san
+} // namespace sancho

@@ -12,15 +12,15 @@ using ::testing::Exactly;
 
 #else
 
-#define PG_CLASS san::PostgresConnection
+#define PG_CLASS sancho::PostgresConnection
 
 #endif
 
-namespace san {
+namespace sancho {
 class AbstractTabModel {
   public:
     AbstractTabModel(
-        const std::shared_ptr<san::ConnectionDetails>& conn_details)
+        const std::shared_ptr<sancho::ConnectionDetails>& conn_details)
         : conn_details(conn_details),
           connection(std::make_unique<PG_CLASS>(conn_details))
     {
@@ -34,7 +34,7 @@ class AbstractTabModel {
 
     virtual ~AbstractTabModel() {}
 
-    san::PostgresConnection& conn() const { return *connection; }
+    sancho::PostgresConnection& conn() const { return *connection; }
 
     virtual const std::string get_query() const = 0;
 
@@ -57,11 +57,11 @@ class AbstractTabModel {
 #endif
 
   private:
-    std::shared_ptr<san::ConnectionDetails> conn_details;
-    std::unique_ptr<san::PostgresConnection> connection;
+    std::shared_ptr<sancho::ConnectionDetails> conn_details;
+    std::unique_ptr<sancho::PostgresConnection> connection;
 
     const std::string EMPTY_SORT_COLUMN = "";
 };
-} // namespace san
+} // namespace sancho
 
 #endif

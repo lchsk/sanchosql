@@ -3,10 +3,10 @@
 
 #include "abstract_tab_model.hpp"
 
-namespace san {
+namespace sancho {
 class QueryTabModel : public AbstractTabModel {
   public:
-    QueryTabModel(const std::shared_ptr<san::ConnectionDetails>& conn_details)
+    QueryTabModel(const std::shared_ptr<sancho::ConnectionDetails>& conn_details)
         : AbstractTabModel(conn_details)
     {
     }
@@ -16,6 +16,6 @@ class QueryTabModel : public AbstractTabModel {
     const std::string get_query() const { return query; }
 };
 
-} // namespace san
+} // namespace sancho
 
 #endif

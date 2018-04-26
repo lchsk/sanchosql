@@ -5,7 +5,7 @@
 
 #include <glibmm.h>
 
-namespace san {
+namespace sancho {
 class ConnectionDetails {
   public:
     const std::string postgres_connection_string();
@@ -26,6 +26,6 @@ class ConnectionDetails {
   private:
     const std::string postgres_string_(bool include_password);
 };
-} // namespace san
+} // namespace sancho
 
 #endif

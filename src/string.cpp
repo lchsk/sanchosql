@@ -4,7 +4,7 @@
 
 #include "string.hpp"
 
-namespace san {
+namespace sancho {
 namespace string {
 std::string replace_all(std::string str, const std::string& from,
                         const std::string& to)
@@ -21,7 +21,7 @@ std::string replace_all(std::string str, const std::string& from,
 
 std::string escape_sql(std::string str)
 {
-    return san::string::replace_all(str, "'", "''");
+    return sancho::string::replace_all(str, "'", "''");
 }
 
 const std::vector<std::pair<std::string, std::string>> special_chars{
@@ -39,7 +39,7 @@ std::string escape_db_data(std::string str)
 
 std::string _prepare_sql_value(std::string str)
 {
-    return "'" + san::string::escape_sql(Glib::strcompress(str)) + "'";
+    return "'" + sancho::string::escape_sql(Glib::strcompress(str)) + "'";
 }
 
 std::string prepare_sql_value(std::string str, bool handle_strings)
@@ -52,7 +52,7 @@ std::string prepare_sql_value(std::string str, bool handle_strings)
     if (str.empty()) {
         // NULL
         return "NULL";
-    } else if (str == san::string::EMPTY_DB_STRING) {
+    } else if (str == sancho::string::EMPTY_DB_STRING) {
         // Empty string
         return "''";
     }
@@ -153,4 +153,4 @@ Glib::ustring get_current_datetime()
 namespace user {
 std::string get_user_name() { return Glib::get_user_name(); }
 } // namespace user
-} // namespace san
+} // namespace sancho

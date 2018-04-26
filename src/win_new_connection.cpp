@@ -4,7 +4,7 @@
 
 #include "string.hpp"
 
-namespace san {
+namespace sancho {
 NewConnectionWindow::NewConnectionWindow(
     BaseObjectType* cobject, const Glib::RefPtr<Gtk::Builder>& builder)
     : Gtk::Window(cobject), builder(builder)
@@ -100,13 +100,13 @@ NewConnectionWindow::NewConnectionWindow(
 void NewConnectionWindow::on_btn_save_clicked()
 {
     if (mode == Mode::Adding) {
-        san::Connections::instance()->add(
+        sancho::Connections::instance()->add(
             text_connection_name->get_text(), text_host->get_text(),
             text_user->get_text(), text_password->get_text(),
             text_db->get_text(), text_port->get_text(),
             checkbox_save_password->get_active());
     } else if (mode == Mode::Editing) {
-        san::Connections::instance()->update_conn(
+        sancho::Connections::instance()->update_conn(
             edited_conn_name, text_connection_name->get_text(),
             text_host->get_text(), text_user->get_text(),
             text_password->get_text(), text_db->get_text(),
@@ -121,8 +121,8 @@ void NewConnectionWindow::on_btn_close_clicked() { hide(); }
 
 void NewConnectionWindow::on_btn_test_connection_clicked()
 {
-    std::shared_ptr<san::ConnectionDetails> conn =
-        std::make_shared<san::ConnectionDetails>();
+    std::shared_ptr<sancho::ConnectionDetails> conn =
+        std::make_shared<sancho::ConnectionDetails>();
 
     conn->set_host(text_host->get_text());
     conn->user = text_user->get_text();
@@ -133,12 +133,12 @@ void NewConnectionWindow::on_btn_test_connection_clicked()
     conn->port = text_port->get_text();
     ;
 
-    san::PostgresConnection pg_conn(conn);
+    sancho::PostgresConnection pg_conn(conn);
 
     try {
         pg_conn.init_connection();
         g_debug("Test connection OK: %s", conn->postgres_string_safe().c_str());
-    } catch (const san::NoConnection& e) {
+    } catch (const sancho::NoConnection& e) {
         g_debug("Test connection failed: %s",
                 conn->postgres_string_safe().c_str());
     }
@@ -152,7 +152,7 @@ void NewConnectionWindow::reset_connection_status()
 }
 
 void NewConnectionWindow::update_connection_status(
-    const san::PostgresConnection& pg_conn)
+    const sancho::PostgresConnection& pg_conn)
 {
     if (pg_conn.is_open()) {
         label_connection_status->set_text("Success");
@@ -189,7 +189,7 @@ void NewConnectionWindow::on_btn_del_connection_clicked()
     const int result = dialog.run();
 
     if (result == Gtk::RESPONSE_OK) {
-        san::Connections::instance()->remove(conn_name);
+        sancho::Connections::instance()->remove(conn_name);
 
         on_win_show();
     }
@@ -199,7 +199,7 @@ void NewConnectionWindow::on_win_show()
 {
     connections_model->clear();
 
-    for (const auto& conn : san::Connections::instance()->get_connections()) {
+    for (const auto& conn : sancho::Connections::instance()->get_connections()) {
         Gtk::TreeModel::Row row = *(connections_model->append());
         row[connection_columns.col_name] = conn.first;
     }
@@ -209,7 +209,7 @@ void NewConnectionWindow::on_win_show()
 
 void NewConnectionWindow::on_win_hide()
 {
-    san::Connections::instance()->save_connections();
+    sancho::Connections::instance()->save_connections();
 }
 
 void NewConnectionWindow::on_checkbox_save_password_toggled()
@@ -237,7 +237,7 @@ void NewConnectionWindow::on_selected_connection_changed()
     const std::string conn_name = row.get_value(connection_columns.col_name);
     edited_conn_name = conn_name;
 
-    auto& connection_details = san::Connections::instance()->get(conn_name);
+    auto& connection_details = sancho::Connections::instance()->get(conn_name);
 
     text_connection_name->set_text(connection_details->name);
     text_host->set_text(connection_details->host);
@@ -277,7 +277,7 @@ void NewConnectionWindow::update_save_btn()
 
 bool NewConnectionWindow::can_save_edited_connection() const
 {
-    return san::Connections::instance()->can_update_conn_details(
+    return sancho::Connections::instance()->can_update_conn_details(
         edited_conn_name, text_connection_name->get_text(),
         text_host->get_text(), text_user->get_text(), text_password->get_text(),
         // get_password(),
@@ -287,12 +287,12 @@ bool NewConnectionWindow::can_save_edited_connection() const
 
 bool NewConnectionWindow::can_add_new_connection() const
 {
-    if (san::Connections::instance()->any_fields_empty(
+    if (sancho::Connections::instance()->any_fields_empty(
             text_host->get_text(), text_port->get_text(), text_db->get_text(),
             text_user->get_text(), text_connection_name->get_text()))
         return false;
 
-    if (san::Connections::instance()->exists(text_connection_name->get_text()))
+    if (sancho::Connections::instance()->exists(text_connection_name->get_text()))
         return false;
 
     return true;
@@ -302,7 +302,7 @@ void NewConnectionWindow::reset_widgets()
 {
     text_connection_name->set_text(
         "Connection " +
-        std::to_string(san::Connections::instance()->size() + 1));
+        std::to_string(sancho::Connections::instance()->size() + 1));
     text_host->set_text("127.0.0.1");
     text_port->set_text("5432");
     text_db->set_text("");
@@ -313,4 +313,4 @@ void NewConnectionWindow::reset_widgets()
 }
 
 void NewConnectionWindow::prepare_adding() { reset_widgets(); }
-} // namespace san
+} // namespace sancho

@@ -1,7 +1,7 @@
 #include "tab.hpp"
 #include "string.hpp"
 
-namespace san {
+namespace sancho {
 const int LOG_BUFFER_MAX_SIZE = 2000; // characters
 
 void insert_log_message(Glib::RefPtr<Gsv::Buffer>& log_buffer,
@@ -14,7 +14,7 @@ void insert_log_message(Glib::RefPtr<Gsv::Buffer>& log_buffer,
     }
 
     const Glib::ustring dated_message =
-        san::date::get_current_datetime() + " " + message;
+        sancho::date::get_current_datetime() + " " + message;
 
     // Add the message at the beginning
     log_buffer->insert(log_buffer->begin(), dated_message);
@@ -93,7 +93,7 @@ QueryTab::QueryTab(const Glib::ustring& tab_name)
     const Glib::ustring default_text = Glib::ustring::compose(
         "-- Opened %1 by %2\n-- Code executed in this editor is "
         "automatically committed\n\n",
-        san::date::get_current_datetime(), san::user::get_user_name());
+        sancho::date::get_current_datetime(), sancho::user::get_user_name());
 
     buffer->set_text(default_text);
     source_view->set_monospace();
@@ -109,7 +109,7 @@ QueryTab::QueryTab(const Glib::ustring& tab_name)
 
     insert_log_message(log_buffer,
                        Glib::ustring::compose("Editor opened by %1",
-                                              san::user::get_user_name()));
+                                              sancho::user::get_user_name()));
 
     log->property_editable() = false;
     log_buffer->set_style_scheme(style);
@@ -149,7 +149,7 @@ QueryTab::QueryTab(const Glib::ustring& tab_name)
 }
 
 SimpleTab::SimpleTab(const Glib::ustring& tab_name,
-                     std::shared_ptr<san::SimpleTabModel>& model)
+                     std::shared_ptr<sancho::SimpleTabModel>& model)
     : AbstractTab(tab_name, TabType::List),
       tree(Gtk::manage(new Gtk::TreeView)), model(model)
 {
@@ -218,8 +218,8 @@ SimpleTab::SimpleTab(const Glib::ustring& tab_name,
     label_limit = Gtk::manage(new Gtk::Label);
     label_limit->set_text("Show Results:");
 
-    number_offset = Gtk::manage(new san::NumberEntry);
-    number_limit = Gtk::manage(new san::NumberEntry);
+    number_offset = Gtk::manage(new sancho::NumberEntry);
+    number_limit = Gtk::manage(new sancho::NumberEntry);
     browse_box = Gtk::manage(new Gtk::Box);
 
     browse_box->pack_start(*btn_insert);
@@ -243,4 +243,4 @@ SimpleTab::SimpleTab(const Glib::ustring& tab_name,
     tree_scrolled_window->set_policy(Gtk::POLICY_AUTOMATIC,
                                      Gtk::POLICY_AUTOMATIC);
 }
-} // namespace san
+} // namespace sancho

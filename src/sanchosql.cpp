@@ -24,7 +24,7 @@ int on_handle_local_options(const Glib::RefPtr<Glib::VariantDict>& options)
     get_arg_value(options, "version", flag_version);
 
     if (flag_version) {
-        std::cout << "SanchoSQL " << san::config::current_version << std::endl;
+        std::cout << "SanchoSQL " << sancho::config::current_version << std::endl;
 
         // -1 to continue default option processing
         // 0 to exit with success
@@ -62,7 +62,7 @@ int main(int argc, char* argv[])
             settings->property_gtk_theme_name().get_value().c_str());
 #endif
 
-    san::MainWindow main_window;
+    sancho::MainWindow main_window;
 
     return app->run(main_window);
 }

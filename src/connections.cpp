@@ -2,10 +2,10 @@
 
 #include "connections.hpp"
 
-namespace san {
+namespace sancho {
 Connections::Connections()
 {
-    conn_end = std::make_shared<san::ConnectionDetails>();
+    conn_end = std::make_shared<sancho::ConnectionDetails>();
 
     conn_end->host = "";
     conn_end->user = "";
@@ -74,7 +74,7 @@ void Connections::load_connections()
         const Glib::ustring port = get_conn_value(group, "port");
         const bool save_password = get_conn_value_bool(group, "save_password");
 
-        if (san::string::is_empty(name))
+        if (sancho::string::is_empty(name))
             continue;
 
         add(name, host, user, password, dbname, port, save_password);
@@ -132,7 +132,7 @@ void Connections::add(const Glib::ustring& name, const std::string& host,
                       const std::string& dbname, const std::string& port,
                       bool save_password)
 {
-    auto conn = std::make_shared<san::ConnectionDetails>();
+    auto conn = std::make_shared<sancho::ConnectionDetails>();
 
     conn->name = name;
     conn->host = host;
@@ -176,16 +176,16 @@ bool Connections::any_fields_empty(const Glib::ustring& host,
                                    const Glib::ustring& user,
                                    const Glib::ustring& connection_name) const
 {
-    if (san::string::is_empty(host) || san::string::is_empty(port) ||
-        san::string::is_empty(db) || san::string::is_empty(user) ||
-        san::string::is_empty(connection_name))
+    if (sancho::string::is_empty(host) || sancho::string::is_empty(port) ||
+        sancho::string::is_empty(db) || sancho::string::is_empty(user) ||
+        sancho::string::is_empty(connection_name))
         // no password - it can be empty
         return true;
 
     return false;
 }
 
-std::shared_ptr<san::ConnectionDetails>&
+std::shared_ptr<sancho::ConnectionDetails>&
 Connections::get(const Glib::ustring& conn_name)
 {
     return connections.at(conn_name);
@@ -219,7 +219,7 @@ bool Connections::can_update_conn_details(
     return false;
 }
 
-    std::shared_ptr<san::ConnectionDetails>&
+    std::shared_ptr<sancho::ConnectionDetails>&
     Connections::find_connection(const Glib::ustring& connection_name)
     {
         if (!exists(connection_name))
@@ -237,4 +237,4 @@ bool Connections::can_update_conn_details(
     }
 
 
-} // namespace san
+} // namespace sancho

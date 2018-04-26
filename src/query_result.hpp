@@ -8,10 +8,10 @@
 #include "conn_util.hpp"
 #include "string.hpp"
 
-namespace san {
+namespace sancho {
 struct QueryResult {
     QueryResult();
-    QueryResult(const san::QueryType& query_type) : query_type(query_type){};
+    QueryResult(const sancho::QueryType& query_type) : query_type(query_type){};
 
     ~QueryResult();
 
@@ -19,12 +19,12 @@ struct QueryResult {
     static std::shared_ptr<QueryResult> get(const bool success);
 
     static std::shared_ptr<QueryResult>
-    get(pqxx::connection& conn, const san::QueryType& query_type,
+    get(pqxx::connection& conn, const sancho::QueryType& query_type,
         const std::string& query, const std::string& columns_query,
-        std::shared_ptr<std::unordered_map<pqxx::oid, san::OidMapping>>&
+        std::shared_ptr<std::unordered_map<pqxx::oid, sancho::OidMapping>>&
             oid_names);
 
-    std::vector<san::Column> columns;
+    std::vector<sancho::Column> columns;
     std::vector<std::vector<std::string>> data;
 
     // Return data where each row is a map column name -> value
@@ -38,10 +38,10 @@ struct QueryResult {
 
     void handle_results(const pqxx::result&);
 
-    void run(pqxx::connection& conn, const san::QueryType& query_type,
+    void run(pqxx::connection& conn, const sancho::QueryType& query_type,
              const std::string& query, const std::string& columns_query);
 
-    const std::map<std::string, san::ColumnMetadata>
+    const std::map<std::string, sancho::ColumnMetadata>
     get_columns_data(pqxx::connection& conn,
                      const std::string& columns_query) const;
 
@@ -69,13 +69,13 @@ struct QueryResult {
     // some kind of SELECT query that didn't error.
     bool show_results;
 
-    std::map<std::string, san::ColumnMetadata> columns_data;
+    std::map<std::string, sancho::ColumnMetadata> columns_data;
 
-    std::shared_ptr<std::unordered_map<pqxx::oid, san::OidMapping>> oid_names;
+    std::shared_ptr<std::unordered_map<pqxx::oid, sancho::OidMapping>> oid_names;
 
     std::unique_ptr<pqxx::work> transaction;
-    const san::QueryType query_type;
+    const sancho::QueryType query_type;
 };
-} // namespace san
+} // namespace sancho
 
 #endif

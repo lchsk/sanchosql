@@ -2,14 +2,14 @@
 
 #include "pg_conn.hpp"
 
-namespace san {
-san::Connections san::Connections::ins;
+namespace sancho {
+sancho::Connections sancho::Connections::ins;
 
 PostgresConnection::PostgresConnection(
-    const std::shared_ptr<san::ConnectionDetails>& conn_details)
+    const std::shared_ptr<sancho::ConnectionDetails>& conn_details)
     : conn_details(conn_details), is_open_(false), error_message_(""),
       oid_names(
-          std::make_shared<std::unordered_map<pqxx::oid, san::OidMapping>>())
+          std::make_shared<std::unordered_map<pqxx::oid, sancho::OidMapping>>())
 {
 }
 
@@ -26,8 +26,8 @@ PostgresConnection::~PostgresConnection()
     }
 }
 
-std::shared_ptr<san::QueryResult>
-PostgresConnection::run_query(const san::QueryType& query_type,
+std::shared_ptr<sancho::QueryResult>
+PostgresConnection::run_query(const sancho::QueryType& query_type,
                               const std::string& query,
                               const std::string& columns_query)
 {
@@ -37,12 +37,12 @@ PostgresConnection::run_query(const san::QueryType& query_type,
         g_debug("Executing columns query: %s", columns_query.c_str());
     }
 
-    return san::QueryResult::get(*conn, query_type, query, columns_query,
+    return sancho::QueryResult::get(*conn, query_type, query, columns_query,
                                  oid_names);
 }
 
-std::shared_ptr<san::QueryResult>
-PostgresConnection::run_query(const san::QueryType& query_type,
+std::shared_ptr<sancho::QueryResult>
+PostgresConnection::run_query(const sancho::QueryType& query_type,
                               const std::string& query)
 {
     return run_query(query_type, query, "");
@@ -65,7 +65,7 @@ PostgresConnection::get_db_tables(const Glib::ustring& schema_name) const
                 table_name ASC
             )";
 
-    auto query_result = san::QueryResult::get_prepared_stmt(
+    auto query_result = sancho::QueryResult::get_prepared_stmt(
         *conn, "get_db_tables", sql, schema_name);
 
     if (!query_result->success)
@@ -86,8 +86,8 @@ std::unique_ptr<std::vector<Glib::ustring>> PostgresConnection::get_schemas()
     const std::string sql = R"(SELECT nspname FROM pg_catalog.pg_namespace;)";
 
     // TODO: Remove oid_names - it is not used here
-    auto query_result = san::QueryResult::get(
-        *conn, san::QueryType::NonTransaction, sql, "", oid_names);
+    auto query_result = sancho::QueryResult::get(
+        *conn, sancho::QueryType::NonTransaction, sql, "", oid_names);
 
     if (!query_result->success)
         return std::move(schemas);
@@ -121,7 +121,7 @@ PostgresConnection::get_primary_key(const std::string& table_name,
     const std::string id = schema_name + "." + table_name;
 
     auto query_result =
-        san::QueryResult::get_prepared_stmt(*conn, "get_primary_key", sql, id);
+        sancho::QueryResult::get_prepared_stmt(*conn, "get_primary_key", sql, id);
 
     if (!query_result->success)
         return data;
@@ -152,7 +152,7 @@ void PostgresConnection::init_connection()
         error_message_ = e.what();
         is_open_ = false;
 
-        throw san::NoConnection(e.what());
+        throw sancho::NoConnection(e.what());
     }
 }
 
@@ -167,8 +167,8 @@ void PostgresConnection::load_oids()
                 on t.typname = c.udt_name
         )";
 
-    auto query_result = san::QueryResult::get(
-        *conn, san::QueryType::NonTransaction, sql, "", oid_names);
+    auto query_result = sancho::QueryResult::get(
+        *conn, sancho::QueryType::NonTransaction, sql, "", oid_names);
 
     if (!query_result->success)
         return;
@@ -177,7 +177,7 @@ void PostgresConnection::load_oids()
         const pqxx::oid oid = std::atoi(row["oid"].c_str());
 
         (*oid_names)[oid] =
-            san::OidMapping(oid, row["udt_name"], row["data_type"]);
+            sancho::OidMapping(oid, row["udt_name"], row["data_type"]);
     }
 }
-} // namespace san
+} // namespace sancho

@@ -1,8 +1,8 @@
 #include "list_tab_model.hpp"
 
-namespace san {
+namespace sancho {
 SimpleTabModel::SimpleTabModel(
-    const std::shared_ptr<san::ConnectionDetails>& conn_details,
+    const std::shared_ptr<sancho::ConnectionDetails>& conn_details,
     const Glib::ustring& p_table_name, const Glib::ustring& p_schema_name)
     : AbstractTabModel(conn_details), table_name(p_table_name),
       schema_name(p_schema_name),
@@ -89,10 +89,10 @@ const std::string SimpleTabModel::get_columns_query() const
     return query.str();
 }
 
-std::shared_ptr<san::QueryResult> SimpleTabModel::accept_changes()
+std::shared_ptr<sancho::QueryResult> SimpleTabModel::accept_changes()
 {
     if (!map_test.size()) {
-        return san::QueryResult::get(true);
+        return sancho::QueryResult::get(true);
     }
 
     std::stringstream query;
@@ -108,7 +108,7 @@ std::shared_ptr<san::QueryResult> SimpleTabModel::accept_changes()
             }
 
             query << pk_val.first << " = "
-                  << san::string::prepare_sql_value(pk_val.second, true);
+                  << sancho::string::prepare_sql_value(pk_val.second, true);
 
             i++;
         }
@@ -123,7 +123,7 @@ std::shared_ptr<san::QueryResult> SimpleTabModel::accept_changes()
             }
 
             query << pk_col.first << " = "
-                  << san::string::prepare_sql_value(pk_col.second);
+                  << sancho::string::prepare_sql_value(pk_col.second);
 
             i++;
         }
@@ -133,7 +133,7 @@ std::shared_ptr<san::QueryResult> SimpleTabModel::accept_changes()
 
     g_debug("Executing UPDATE value query: %s", query.str().c_str());
 
-    auto result = conn().run_query(san::QueryType::Transaction, query.str());
+    auto result = conn().run_query(sancho::QueryType::Transaction, query.str());
 
     // We can't use affected rows information here because we're sending
     // several UPDATE queries in one.
@@ -147,17 +147,17 @@ std::shared_ptr<san::QueryResult> SimpleTabModel::accept_changes()
     return result;
 }
 
-std::shared_ptr<san::QueryResult> SimpleTabModel::accept_pk_change()
+std::shared_ptr<sancho::QueryResult> SimpleTabModel::accept_pk_change()
 {
     if (pk_changes.empty()) {
-        return san::QueryResult::get(true);
+        return sancho::QueryResult::get(true);
     }
 
     if (pk_changes.size() > 1) {
         pk_changes.clear();
         pk_hist.clear();
 
-        return san::QueryResult::get(true);
+        return sancho::QueryResult::get(true);
     };
 
     std::stringstream query;
@@ -166,7 +166,7 @@ std::shared_ptr<san::QueryResult> SimpleTabModel::accept_pk_change()
 
     query << "update " << schema_name << "." << table_name << " set "
           << data.first << " = "
-          << san::string::prepare_sql_value(data.second.second) << " where ";
+          << sancho::string::prepare_sql_value(data.second.second) << " where ";
 
     unsigned i = 0;
 
@@ -175,14 +175,14 @@ std::shared_ptr<san::QueryResult> SimpleTabModel::accept_pk_change()
             query << " and ";
         }
 
-        query << t.first << " = " << san::string::prepare_sql_value(t.second);
+        query << t.first << " = " << sancho::string::prepare_sql_value(t.second);
 
         i++;
     }
 
     g_debug("Executing PRIMARY KEY change query: %s", query.str().c_str());
 
-    auto result = conn().run_query(san::QueryType::Transaction, query.str());
+    auto result = conn().run_query(sancho::QueryType::Transaction, query.str());
 
     if (result->affected_rows > 1) {
         // That should never happen unless primary key / unique constraint
@@ -207,12 +207,12 @@ std::shared_ptr<san::QueryResult> SimpleTabModel::accept_pk_change()
     return result;
 }
 
-std::shared_ptr<san::QueryResult> SimpleTabModel::delete_rows(
+std::shared_ptr<sancho::QueryResult> SimpleTabModel::delete_rows(
     const std::vector<std::vector<std::pair<Glib::ustring, Glib::ustring>>>&
         rows_to_delete)
 {
     if (rows_to_delete.empty()) {
-        return san::QueryResult::get(true);
+        return sancho::QueryResult::get(true);
     }
 
     g_debug("Removing %d rows", rows_to_delete.size());
@@ -233,7 +233,7 @@ std::shared_ptr<san::QueryResult> SimpleTabModel::delete_rows(
             }
 
             row_query << t.first << " = "
-                      << san::string::prepare_sql_value(t.second);
+                      << sancho::string::prepare_sql_value(t.second);
 
             i++;
         }
@@ -244,7 +244,7 @@ std::shared_ptr<san::QueryResult> SimpleTabModel::delete_rows(
 
     g_debug("Executing DELETE query: %s", query.str().c_str());
 
-    auto result = conn().run_query(san::QueryType::Transaction, query.str());
+    auto result = conn().run_query(sancho::QueryType::Transaction, query.str());
 
     // Number of affected rows doesn't help here because we're sending all
     // DELETE queries in one batch.
@@ -258,7 +258,7 @@ std::shared_ptr<san::QueryResult> SimpleTabModel::delete_rows(
     return result;
 }
 
-std::shared_ptr<san::QueryResult>
+std::shared_ptr<sancho::QueryResult>
 SimpleTabModel::insert_row(const Gtk::TreeModel::Row& row)
 {
     std::stringstream query;
@@ -286,7 +286,7 @@ SimpleTabModel::insert_row(const Gtk::TreeModel::Row& row)
     }
 
     if (!i) {
-        auto result = san::QueryResult::get(true);
+        auto result = sancho::QueryResult::get(true);
         result->inserted_empty_row = true;
 
         return result;
@@ -307,7 +307,7 @@ SimpleTabModel::insert_row(const Gtk::TreeModel::Row& row)
             if (i > 0) {
                 query << ", ";
             }
-            query << san::string::prepare_sql_value(value);
+            query << sancho::string::prepare_sql_value(value);
 
             i++;
         }
@@ -317,7 +317,7 @@ SimpleTabModel::insert_row(const Gtk::TreeModel::Row& row)
 
     g_debug("Executing INSERT query: %s", query.str().c_str());
 
-    auto result = conn().run_query(san::QueryType::Transaction, query.str());
+    auto result = conn().run_query(sancho::QueryType::Transaction, query.str());
 
     // We're executing INSERT queries one by one so we can check if there's
     // exactly one affected row.
@@ -368,4 +368,4 @@ const std::string SimpleTabModel::get_order_by_query() const
         return false;
     }
 
-} // namespace san
+} // namespace sancho

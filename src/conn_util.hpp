@@ -5,7 +5,7 @@
 
 #include <unordered_map>
 
-namespace san {
+namespace sancho {
 class OidMapping {
   public:
     OidMapping(const pqxx::oid& oid, const std::string& udt_name,
@@ -55,9 +55,9 @@ class ColumnMetadata {
 
 const std::string
 get_data_type(const pqxx::oid oid,
-              std::unordered_map<pqxx::oid, san::OidMapping>& oid_names);
+              std::unordered_map<pqxx::oid, sancho::OidMapping>& oid_names);
 
 enum class QueryType { Transaction, NonTransaction, None };
-} // namespace san
+} // namespace sancho
 
 #endif

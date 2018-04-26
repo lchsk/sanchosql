@@ -11,7 +11,7 @@
 #include "tab.hpp"
 #include "win_new_connection.hpp"
 
-namespace san {
+namespace sancho {
 enum class BrowserItemType { Header, Table };
 
 class MainMenu {
@@ -165,7 +165,7 @@ class MainWindow : public Gtk::Window {
         }
 
         Gtk::TreeModelColumn<Glib::ustring> table;
-        Gtk::TreeModelColumn<san::BrowserItemType> type;
+        Gtk::TreeModelColumn<sancho::BrowserItemType> type;
     };
 
     class ConnectionsModel : public Gtk::TreeModel::ColumnRecord {
@@ -187,29 +187,29 @@ class MainWindow : public Gtk::Window {
   private:
     BrowserModel browser_model;
     ConnectionsModel connections_model;
-    san::NewConnectionWindow* win_connections;
+    sancho::NewConnectionWindow* win_connections;
 
     Glib::RefPtr<Gtk::AccelGroup> group;
     MainMenu main_menu;
 
-    san::SimpleTabModel& get_simple_tab_model(Gtk::ScrolledWindow*);
-    san::QueryTabModel& get_query_tab_model(Gtk::ScrolledWindow*);
+    sancho::SimpleTabModel& get_simple_tab_model(Gtk::ScrolledWindow*);
+    sancho::QueryTabModel& get_query_tab_model(Gtk::ScrolledWindow*);
 
-    san::SimpleTab& get_simple_tab(Gtk::ScrolledWindow*);
-    san::QueryTab& get_query_tab(Gtk::ScrolledWindow*);
+    sancho::SimpleTab& get_simple_tab(Gtk::ScrolledWindow*);
+    sancho::QueryTab& get_query_tab(Gtk::ScrolledWindow*);
 
     Gtk::ScrolledWindow* get_current_swindow();
 
-    san::TabType get_tab_type(Gtk::ScrolledWindow* win);
+    sancho::TabType get_tab_type(Gtk::ScrolledWindow* win);
 
     void cellrenderer_validated_on_edited(const Glib::ustring& path_string,
                                           const Glib::ustring& new_text,
-                                          san::SimpleTab* tab,
-                                          san::SimpleTabModel* model,
+                                          sancho::SimpleTab* tab,
+                                          sancho::SimpleTabModel* model,
                                           const std::string& column_name);
     void cellrenderer_validated_on_editing_started(
         Gtk::CellEditable* cell_editable, const Glib::ustring& path_string,
-        san::SimpleTab* tab, san::SimpleTabModel* model,
+        sancho::SimpleTab* tab, sancho::SimpleTabModel* model,
         const std::string& column_name);
 
     void on_connection_changed();
@@ -223,8 +223,8 @@ class MainWindow : public Gtk::Window {
 
     bool on_key_press_event(GdkEventKey* key_event);
 
-    std::shared_ptr<san::PostgresConnection>
-    connect(const std::shared_ptr<san::ConnectionDetails>& conn_details);
+    std::shared_ptr<sancho::PostgresConnection>
+    connect(const std::shared_ptr<sancho::ConnectionDetails>& conn_details);
 
     void on_primary_key_warning_clicked(const Glib::ustring table_name);
 
@@ -232,17 +232,17 @@ class MainWindow : public Gtk::Window {
                       const Glib::ustring& secondary = Glib::ustring());
 
     void on_menu_file_popup_generic(Gtk::ScrolledWindow* window,
-                                    san::SimpleTab* tab,
-                                    san::SimpleTabModel* model);
+                                    sancho::SimpleTab* tab,
+                                    sancho::SimpleTabModel* model);
 
-    bool on_list_press(GdkEventButton* button_event, san::SimpleTab* tab,
-                       san::SimpleTabModel* model);
+    bool on_list_press(GdkEventButton* button_event, sancho::SimpleTab* tab,
+                       sancho::SimpleTabModel* model);
 
     void on_browser_refresh_clicked();
 
-    std::shared_ptr<san::ConnectionDetails>& find_current_connection();
+    std::shared_ptr<sancho::ConnectionDetails>& find_current_connection();
 
-    std::shared_ptr<san::PostgresConnection> handle_connect();
+    std::shared_ptr<sancho::PostgresConnection> handle_connect();
 
     bool on_browser_button_released(GdkEventButton* button_event);
 
@@ -260,13 +260,13 @@ class MainWindow : public Gtk::Window {
     void on_submit_query_clicked(Gtk::ScrolledWindow*,
                                  Glib::RefPtr<Gsv::Buffer>&);
 
-    void on_btn_accept_changes_clicked(san::SimpleTab* tab,
-                                       san::SimpleTabModel* model);
+    void on_btn_accept_changes_clicked(sancho::SimpleTab* tab,
+                                       sancho::SimpleTabModel* model);
 
     void load_list_results(Gtk::ScrolledWindow*);
     void load_query_results(Gtk::ScrolledWindow*);
 
-    void handle_results_sort(const san::SimpleTabModel* model,
+    void handle_results_sort(const sancho::SimpleTabModel* model,
                              Gtk::TreeViewColumn* sorted_col);
 
     void on_action_file_new();
@@ -274,7 +274,7 @@ class MainWindow : public Gtk::Window {
     void on_action_file_about();
 
     void refresh_connections_list();
-    void refresh_browser(const std::shared_ptr<san::PostgresConnection>&);
+    void refresh_browser(const std::shared_ptr<sancho::PostgresConnection>&);
     void refresh_tree_connections();
     void reset_browser();
 
@@ -309,9 +309,9 @@ class MainWindow : public Gtk::Window {
     std::unordered_map<Gtk::ScrolledWindow*, std::shared_ptr<AbstractTabModel>>
         tab_models;
 
-    std::unordered_map<Gtk::ScrolledWindow*, std::shared_ptr<san::AbstractTab>>
+    std::unordered_map<Gtk::ScrolledWindow*, std::shared_ptr<sancho::AbstractTab>>
         tabs;
 };
-} // namespace san
+} // namespace sancho
 
 #endif
