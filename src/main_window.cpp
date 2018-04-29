@@ -13,7 +13,9 @@ MainWindow::MainWindow()
       box_browser(Gtk::ORIENTATION_VERTICAL) {
     Glib::init();
 
-    g_debug("Debugging is on");
+    g_debug("SanchoSQL %s\tGlib %d.%d.%d",
+            sancho::config::current_version.c_str(), GLIB_MAJOR_VERSION,
+            GLIB_MINOR_VERSION, GLIB_MICRO_VERSION);
 
     sancho::Connections::instance()->CONN_PATH =
         sancho::files::get_connections_file_path();
