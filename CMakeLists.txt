@@ -107,6 +107,7 @@ add_executable(${EXECUTABLE_NAME}
     src/connections.cpp
     src/tab.cpp
     src/string.cpp
+    src/files.cpp
 
     # Models
     src/model/list_tab_model.cpp

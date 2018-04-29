@@ -2,6 +2,7 @@
 
 #include <glib.h>
 
+#include "files.hpp"
 #include "main_window.hpp"
 #include "string.hpp"
 
@@ -14,31 +15,11 @@ MainWindow::MainWindow()
 
     g_debug("Debugging is on");
 
-    set_title("SanchoSQL");
-
-    const Glib::ustring config_home = Glib::get_user_config_dir();
-
-    gchar *tmp = g_build_filename(config_home.c_str(), "sancho", NULL);
-
-    std::string path = tmp;
-
-    gint r = g_mkdir_with_parents(path.c_str(), 0755);
-
-    if (r == 0) {
-        g_debug("Config directory OK");
-    } else {
-        g_warning("Could not create config directory: %d", r);
-    }
-
-    g_free(tmp);
-
-    tmp = g_build_filename(path.c_str(), "connections", NULL);
-
-    sancho::Connections::instance()->CONN_PATH = tmp;
+    sancho::Connections::instance()->CONN_PATH =
+        sancho::files::get_connections_file_path();
     sancho::Connections::instance()->init_connections();
 
-    g_free(tmp);
-
+    set_title("SanchoSQL");
     set_border_width(0);
     set_default_size(1200, 800);
 
