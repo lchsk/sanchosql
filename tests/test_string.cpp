@@ -6,45 +6,45 @@
 
 TEST(Util, contains_only_numbers)
 {
-    EXPECT_TRUE(san::string::contains_only_numbers("123"));
-    EXPECT_TRUE(san::string::contains_only_numbers(""));
-    EXPECT_FALSE(san::string::contains_only_numbers("abc0"));
-    EXPECT_FALSE(san::string::contains_only_numbers("1abc"));
+    EXPECT_TRUE(sancho::string::contains_only_numbers("123"));
+    EXPECT_TRUE(sancho::string::contains_only_numbers(""));
+    EXPECT_FALSE(sancho::string::contains_only_numbers("abc0"));
+    EXPECT_FALSE(sancho::string::contains_only_numbers("1abc"));
 }
 
 TEST(Util, replace_all)
 {
-    EXPECT_EQ(san::string::replace_all("abc def", "def", "abc"), "abc abc");
+    EXPECT_EQ(sancho::string::replace_all("abc def", "def", "abc"), "abc abc");
 }
 
 TEST(Util, quote_sql)
 {
-    EXPECT_EQ(san::string::escape_sql("test"), "test");
-    EXPECT_EQ(san::string::escape_sql("test's"), "test''s");
-    EXPECT_EQ(san::string::escape_sql("test's test's"), "test''s test''s");
+    EXPECT_EQ(sancho::string::escape_sql("test"), "test");
+    EXPECT_EQ(sancho::string::escape_sql("test's"), "test''s");
+    EXPECT_EQ(sancho::string::escape_sql("test's test's"), "test''s test''s");
 }
 
 TEST(Util, prepare_sql_value)
 {
-    EXPECT_EQ(san::string::prepare_sql_value("Test's\\n"), "'Test''s\n'");
-    EXPECT_EQ(san::string::prepare_sql_value("\\ttest\\n"), "'\ttest\n'");
+    EXPECT_EQ(sancho::string::prepare_sql_value("Test's\\n"), "'Test''s\n'");
+    EXPECT_EQ(sancho::string::prepare_sql_value("\\ttest\\n"), "'\ttest\n'");
 }
 
 TEST(Util, trim)
 {
-    EXPECT_EQ(san::string::trim("abc"), "abc");
-    EXPECT_EQ(san::string::trim(" abc "), "abc");
-    EXPECT_EQ(san::string::trim(" a b c "), "a b c");
-    EXPECT_EQ(san::string::trim("  "), "");
-    EXPECT_EQ(san::string::trim(""), "");
+    EXPECT_EQ(sancho::string::trim("abc"), "abc");
+    EXPECT_EQ(sancho::string::trim(" abc "), "abc");
+    EXPECT_EQ(sancho::string::trim(" a b c "), "a b c");
+    EXPECT_EQ(sancho::string::trim("  "), "");
+    EXPECT_EQ(sancho::string::trim(""), "");
 }
 
 TEST(Util, is_empty)
 {
-    EXPECT_TRUE(san::string::is_empty(""));
-    EXPECT_TRUE(san::string::is_empty("  "));
-    EXPECT_FALSE(san::string::is_empty("abc"));
-    EXPECT_FALSE(san::string::is_empty("    abc "));
+    EXPECT_TRUE(sancho::string::is_empty(""));
+    EXPECT_TRUE(sancho::string::is_empty("  "));
+    EXPECT_FALSE(sancho::string::is_empty("abc"));
+    EXPECT_FALSE(sancho::string::is_empty("    abc "));
 }
 
 TEST(Util, in_map_macro)
@@ -97,9 +97,9 @@ TEST(Query, get_query)
 
     for (const auto& query : data) {
         const Glib::ustring::size_type point = query.first.find("|");
-        const Glib::ustring text = san::string::replace_all(query.first, "|", "");
+        const Glib::ustring text = sancho::string::replace_all(query.first, "|", "");
 
-        EXPECT_EQ(std::string(san::string::get_query(text, point)), query.second);
+        EXPECT_EQ(std::string(sancho::string::get_query(text, point)), query.second);
     }
 }
 
