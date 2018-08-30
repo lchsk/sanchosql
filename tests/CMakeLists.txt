@@ -53,20 +53,20 @@ add_executable(test_string
   ../src/string.cpp
   )
 
-add_executable(test_cell_update
-  test_cell_update.cpp
-  ../src/string.cpp
-  ../src/conn_util.cpp
-  ../src/query_result.cpp
-  ../src/connection_details.cpp
-  ../src/connections.cpp
-  ../src/pg_conn.cpp
-  ../src/model/list_tab_model.cpp
-  )
+# add_executable(test_cell_update
+#   test_cell_update.cpp
+#   ../src/string.cpp
+#   ../src/conn_util.cpp
+#   ../src/query_result.cpp
+#   ../src/connection_details.cpp
+#   ../src/connections.cpp
+#   ../src/pg_conn.cpp
+#   ../src/model/list_tab_model.cpp
+#   )
 
 if ( CMAKE_COMPILER_IS_GNUCC )
   message(STATUS "#warning extension is disabled")
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wno-cpp")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wno-cpp -g")
 endif ( CMAKE_COMPILER_IS_GNUCC )
 
 link_directories(${GTKMM_LIBRARY_DIRS} ${PQXX_LIBRARY_DIRS} ${GTKSOURCEVIEW_LIBRARY_DIRS})
@@ -77,12 +77,12 @@ target_link_libraries(test_string
   ${GTEST_LIBRARIES}
   )
 
-target_link_libraries(test_cell_update
-  ${GTKMM_LIBRARIES}
-  ${GTEST_LIBRARIES}
-  ${GMOCK_LIBRARIES} -lgmock
-  ${PQXX_LIBRARIES} -lpq
-  ${EXTRA_TARGET_LIB}
-  ${GTKSOURCEVIEW_LIBRARIES}
-  -pthread
-  )
+# target_link_libraries(test_cell_update
+#   ${GTKMM_LIBRARIES}
+#   ${GTEST_LIBRARIES}
+#   ${GMOCK_LIBRARIES} -lgmock
+#   ${PQXX_LIBRARIES} -lpq
+#   ${EXTRA_TARGET_LIB}
+#   ${GTKSOURCEVIEW_LIBRARIES}
+#   -pthread
+#   )

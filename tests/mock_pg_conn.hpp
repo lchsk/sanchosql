@@ -8,21 +8,21 @@
 
 #include "../src/pg_conn.hpp"
 
-class MockPostgresConnection : public san::PostgresConnection
+class MockPostgresConnection : public sancho::PostgresConnection
 {
 public:
-	MockPostgresConnection(const std::shared_ptr<san::ConnectionDetails>& conn_details)
+	MockPostgresConnection(const std::shared_ptr<sancho::ConnectionDetails>& conn_details)
 		: PostgresConnection::PostgresConnection(conn_details) {};
 
 	MOCK_METHOD0(init_connection, void());
-	MOCK_METHOD1(run_query, std::shared_ptr<san::QueryResult>(const std::string& query));
-	// MOCK_METHOD2(run_query, std::shared_ptr<san::QueryResult>(const std::string& query, const std::string& columns_query));
+	MOCK_METHOD1(run_query, std::shared_ptr<sancho::QueryResult>(const std::string& query));
+	// MOCK_METHOD2(run_query, std::shared_ptr<sancho::QueryResult>(const std::string& query, const std::string& columns_query));
 
-	const std::vector<san::PrimaryKey>
-    get_primary_key(const std::string& table_name, const std::string& schema_name) const override {
-		std::vector<san::PrimaryKey> pk;
+	const std::vector<sancho::PrimaryKey>
+    get_primary_key(const std::string& table_name, const std::string& schema_name) const noexcept override {
+		std::vector<sancho::PrimaryKey> pk;
 
-		pk.push_back(san::PrimaryKey("test_column", "test_int"));
+		pk.push_back(sancho::PrimaryKey("test_column", "test_int"));
 
 		return pk;
 	}
