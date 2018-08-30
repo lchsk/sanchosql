@@ -1,3 +1,4 @@
+Master: [![Build Status](https://travis-ci.org/lchsk/sanchosql.svg?branch=master)](https://travis-ci.org/lchsk/sanchosql)
 
 ## Dependencies
 
