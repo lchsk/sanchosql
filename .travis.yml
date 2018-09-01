@@ -1,6 +1,10 @@
 language: cpp
 sudo: false
 
+before_install:
+  - sudo apt-get update -q
+  - sudo apt-get install -y libgtkmm-3.0-dev libpqxx-dev libgtksourceviewmm-3.0-dev
+
 matrix:
   include:
     # - os: linux
@@ -30,7 +34,7 @@ matrix:
       addons:
         apt:
           sources: ['ubuntu-toolchain-r-test']
-          packages: ['g++-7', 'libgtkmm-3.0-dev', 'libpqxx-dev', 'libgtksourceviewmm-3.0-dev']
+          packages: ['g++-7']
       env: COMPILER=g++-7
       after_success:
     # - os: linux
@@ -81,6 +85,7 @@ matrix:
 
 script:
   - uname -a
+  - cat /etc/os-release
   - $COMPILER --version
   - mkdir build
   - cd build
