@@ -45,7 +45,7 @@ src/resources.c
 res/*~
 
 # Tests
-tests/*
-!tests/*.cpp
-!tests/*.hpp
-!tests/CMakeLists.txt
+#tests/*
+#!tests/*.cpp
+#!tests/*.hpp
+#!tests/CMakeLists.txt

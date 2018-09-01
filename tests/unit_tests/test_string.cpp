@@ -2,7 +2,7 @@
 
 #include "gtest/gtest.h"
 
-#include "../src/string.hpp"
+#include "../../src/string.hpp"
 
 TEST(Util, contains_only_numbers)
 {

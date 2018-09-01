@@ -48,9 +48,15 @@ message(STATUS "All dependencies look ok")
 message(STATUS "CMAKE_CXX_FLAGS: " ${CMAKE_CXX_FLAGS} )
 message(STATUS "BUILD_SHARED_LIBS: " ${BUILD_SHARED_LIBS} )
 
+################################################################################
+#
+#                                 Unit tests
+#
+################################################################################
+
 add_executable(test_string
-  test_string.cpp
-  ../src/string.cpp
+  ${PROJECT_SOURCE_DIR}/unit_tests/test_string.cpp
+  ${PROJECT_SOURCE_DIR}/../src/string.cpp
   )
 
 # add_executable(test_cell_update
@@ -86,3 +92,10 @@ target_link_libraries(test_string
 #   ${GTKSOURCEVIEW_LIBRARIES}
 #   -pthread
 #   )
+
+enable_testing()
+
+set(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/build/)
+set(CTEST_BINARY_DIRECTORY ${PROJECT_BINARY_DIR}/build/)
+
+add_test("test_string" "test_string")
