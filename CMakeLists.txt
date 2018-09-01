@@ -96,9 +96,12 @@ message(STATUS "Generating resources...")
 MESSAGE( STATUS "CMAKE_CXX_FLAGS: " ${CMAKE_CXX_FLAGS} )
 MESSAGE( STATUS "BUILD_SHARED_LIBS: " ${BUILD_SHARED_LIBS} )
 
-# execute_process(
-  # COMMAND glib-compile-resources --target=${PROJECT_SOURCE_DIR}/src/resources.c --generate-source ${PROJECT_SOURCE_DIR}/res/resources.gresource.xml
-  # )
+execute_process(
+  COMMAND glib-compile-resources --target=${PROJECT_SOURCE_DIR}/src/resources.c --generate-source ${PROJECT_SOURCE_DIR}/res/resources.gresource.xml
+  )
+add_custom_target(resources
+  COMMAND glib-compile-resources --target=${PROJECT_SOURCE_DIR}/src/resources.c --generate-source ${PROJECT_SOURCE_DIR}/res/resources.gresource.xml
+  )
 
 add_executable(${EXECUTABLE_NAME}
     src/sanchosql.cpp
@@ -123,10 +126,6 @@ add_executable(${EXECUTABLE_NAME}
     sanchosql.desktop
     res/icons/sanchosql.png
     )
-
-add_custom_target(resources
-  COMMAND glib-compile-resources --target=${PROJECT_SOURCE_DIR}/src/resources.c --generate-source ${PROJECT_SOURCE_DIR}/res/resources.gresource.xml
-  )
 
 add_dependencies(${EXECUTABLE_NAME} resources)
 

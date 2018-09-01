@@ -3,26 +3,26 @@ sudo: false
 
 matrix:
   include:
-    - os: linux
-      compiler: g++
-      before_install:
-      install:
-      addons:
-        apt:
-          sources: ['ubuntu-toolchain-r-test']
-          packages: ['g++-5', 'libgtkmm-3.0-dev', 'libpqxx-dev']
-      env: COMPILER=g++-5
-      after_success:
-    - os: linux
-      compiler: g++
-      before_install:
-      install:
-      addons:
-        apt:
-          sources: ['ubuntu-toolchain-r-test']
-          packages: ['g++-6', 'libgtkmm-3.0-dev', 'libpqxx-dev']
-      env: COMPILER=g++-6
-      after_success:
+    # - os: linux
+      # compiler: g++
+      # before_install:
+      # install:
+      # addons:
+        # apt:
+          # sources: ['ubuntu-toolchain-r-test']
+          # packages: ['g++-5', 'libgtkmm-3.0-dev', 'libpqxx-dev']
+      # env: COMPILER=g++-5
+      # after_success:
+    # - os: linux
+      # compiler: g++
+      # before_install:
+      # install:
+      # addons:
+        # apt:
+          # sources: ['ubuntu-toolchain-r-test']
+          # packages: ['g++-6', 'libgtkmm-3.0-dev', 'libpqxx-dev']
+      # env: COMPILER=g++-6
+      # after_success:
     - os: linux
       compiler: g++
       before_install:
@@ -33,42 +33,42 @@ matrix:
           packages: ['g++-7', 'libgtkmm-3.0-dev', 'libpqxx-dev']
       env: COMPILER=g++-7
       after_success:
-    - os: linux
-      compiler: clang++
-      before_install:
-      install:
-      addons:
-        apt:
-          sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-precise-3.6']
-          packages: ['clang-3.6', 'libgtkmm-3.0-dev', 'libpqxx-dev']
-      env: COMPILER=clang++-3.6
-    - os: linux
-      compiler: clang++
-      before_install:
-      install:
-      addons:
-        apt:
-          sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-precise-3.7']
-          packages: ['clang-3.7', 'libgtkmm-3.0-dev', 'libpqxx-dev']
-      env: COMPILER=clang++-3.7
-    - os: linux
-      compiler: clang++
-      before_install:
-      install:
-      addons:
-        apt:
-          sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-precise-3.8']
-          packages: ['g++-6', 'clang-3.8', 'libgtkmm-3.0-dev', 'libpqxx-dev']
-      env: COMPILER=clang++-3.8
-    - os: linux
-      compiler: clang++
-      before_install:
-      install:
-      addons:
-        apt:
-          sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-precise-3.9']
-          packages: ['g++-6', 'clang-3.9', 'libgtkmm-3.0-dev', 'libpqxx-dev']
-      env: COMPILER=clang++-3.9
+    # - os: linux
+      # compiler: clang++
+      # before_install:
+      # install:
+      # addons:
+        # apt:
+          # sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-precise-3.6']
+          # packages: ['clang-3.6', 'libgtkmm-3.0-dev', 'libpqxx-dev']
+      # env: COMPILER=clang++-3.6
+    # - os: linux
+      # compiler: clang++
+      # before_install:
+      # install:
+      # addons:
+        # apt:
+          # sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-precise-3.7']
+          # packages: ['clang-3.7', 'libgtkmm-3.0-dev', 'libpqxx-dev']
+      # env: COMPILER=clang++-3.7
+    # - os: linux
+      # compiler: clang++
+      # before_install:
+      # install:
+      # addons:
+        # apt:
+          # sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-precise-3.8']
+          # packages: ['g++-6', 'clang-3.8', 'libgtkmm-3.0-dev', 'libpqxx-dev']
+      # env: COMPILER=clang++-3.8
+    # - os: linux
+      # compiler: clang++
+      # before_install:
+      # install:
+      # addons:
+        # apt:
+          # sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-precise-3.9']
+          # packages: ['g++-6', 'clang-3.9', 'libgtkmm-3.0-dev', 'libpqxx-dev']
+      # env: COMPILER=clang++-3.9
     # - os: linux
       # compiler: clang++
       # before_install:
@@ -82,5 +82,14 @@ matrix:
 script:
   - uname -a
   - $COMPILER --version
-  - cmake -DCMAKE_CXX_COMPILER=$COMPILER .
-  - CXX=$COMPILER make
+  - mkdir build
+  - cd build
+  - cmake -DCMAKE_CXX_COMPILER=$COMPILER -DCMAKE_BUILD_TYPE=Release ..
+  - CXX=$COMPILER make -j
+  - echo "Compiling tests"
+  - cd ../tests/
+  - mkdir build
+  - cmake -DCMAKE_CXX_COMPILER=$COMPILER ..
+  - CXX=$COMPILER make -j
+  - echo "Running tests"
+  - ctest

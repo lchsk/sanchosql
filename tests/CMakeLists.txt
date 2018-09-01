@@ -95,7 +95,7 @@ target_link_libraries(test_string
 
 enable_testing()
 
-set(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/build/)
-set(CTEST_BINARY_DIRECTORY ${PROJECT_BINARY_DIR}/build/)
+set(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR})
+set(CTEST_BINARY_DIRECTORY ${PROJECT_BINARY_DIR})
 
 add_test("test_string" "test_string")
