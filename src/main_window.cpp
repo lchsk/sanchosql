@@ -105,6 +105,7 @@ MainWindow::MainWindow()
         res_builder->add_from_resource("/res/dashboard.glade");
     } catch (const Glib::Error &e) {
         g_critical("Building menus and toolbar failed: %s", e.what().c_str());
+        return;
     }
 
     Gtk::ToolButton *toolbutton_sql;

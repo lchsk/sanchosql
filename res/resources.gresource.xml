@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <gresources>
   <gresource prefix="/">
-    <file preprocess="xml-stripblanks">res/toolbar.glade</file>
-    <file preprocess="xml-stripblanks">res/main_menu.glade</file>
-    <file preprocess="xml-stripblanks">res/test.glade</file>
-    <file preprocess="xml-stripblanks">res/window_new_connection.glade</file>
-    <file preprocess="xml-stripblanks">res/dashboard.glade</file>
+    <file alias="res/toolbar.glade" preprocess="xml-stripblanks">../res/toolbar.glade</file>
+    <file alias="res/main_menu.glade" preprocess="xml-stripblanks">../res/main_menu.glade</file>
+    <file alias="res/test.glade" preprocess="xml-stripblanks">../res/test.glade</file>
+    <file alias="res/window_new_connection.glade" preprocess="xml-stripblanks">../res/window_new_connection.glade</file>
+    <file alias="res/dashboard.glade" preprocess="xml-stripblanks">../res/dashboard.glade</file>
   </gresource>
   <gresource prefix="/icons/64x64">
     <!-- <file>res/icons/sanchosql.png</file> -->
   </gresource>
   <gresource prefix="/icons/512x512">
-    <file>res/icons/sanchosql.png</file>
+    <file alias="res/icons/sanchosql.png">../res/icons/sanchosql.png</file>
   </gresource>
 </gresources>

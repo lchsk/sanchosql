@@ -48,9 +48,11 @@ set(CPACK_RPM_PACKAGE_URL "http://sanchosql.com")
 set(CPACK_RPM_PACKAGE_DESCRIPTION "Client application for PostgreSQL")
 set(CPACK_RPM_PACKAGE_REQUIRES "libpqxx >= 4.0, gtkmm30 >= 3.0, gtksourceviewmm3 >= 3.0")
 
+include(CTest)
 include(CPack)
 
 MESSAGE(STATUS "CMAKE_ROOT: " ${CMAKE_ROOT} )
+MESSAGE(STATUS "PROJECT_SOURCE_DIR: " ${PROJECT_SOURCE_DIR} )
 message(STATUS "CMAKE_SYSTEM_NAME          = ${CMAKE_SYSTEM_NAME}"         )
 MESSAGE( STATUS "CMAKE_SYSTEM: " ${CMAKE_SYSTEM} )
 MESSAGE( STATUS "CMAKE_SYSTEM_VERSION: " ${CMAKE_SYSTEM_VERSION} )
@@ -94,9 +96,9 @@ message(STATUS "Generating resources...")
 MESSAGE( STATUS "CMAKE_CXX_FLAGS: " ${CMAKE_CXX_FLAGS} )
 MESSAGE( STATUS "BUILD_SHARED_LIBS: " ${BUILD_SHARED_LIBS} )
 
-execute_process(
-  COMMAND glib-compile-resources --target=src/resources.c --generate-source res/resources.gresource.xml
-  )
+# execute_process(
+  # COMMAND glib-compile-resources --target=${PROJECT_SOURCE_DIR}/src/resources.c --generate-source ${PROJECT_SOURCE_DIR}/res/resources.gresource.xml
+  # )
 
 add_executable(${EXECUTABLE_NAME}
     src/sanchosql.cpp
@@ -123,7 +125,7 @@ add_executable(${EXECUTABLE_NAME}
     )
 
 add_custom_target(resources
-  COMMAND glib-compile-resources --target=src/resources.c --generate-source res/resources.gresource.xml
+  COMMAND glib-compile-resources --target=${PROJECT_SOURCE_DIR}/src/resources.c --generate-source ${PROJECT_SOURCE_DIR}/res/resources.gresource.xml
   )
 
 add_dependencies(${EXECUTABLE_NAME} resources)
@@ -154,4 +156,4 @@ configure_file(
 
 add_custom_target(uninstall
   COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake
-)
+  )
