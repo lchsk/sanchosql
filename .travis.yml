@@ -30,7 +30,7 @@ matrix:
       addons:
         apt:
           sources: ['ubuntu-toolchain-r-test']
-          packages: ['g++-7', 'libgtkmm-3.0-dev', 'libpqxx-dev']
+          packages: ['g++-7', 'libgtkmm-3.0-dev', 'libpqxx-dev', 'libgtksourceviewmm-3.0-dev']
       env: COMPILER=g++-7
       after_success:
     # - os: linux
