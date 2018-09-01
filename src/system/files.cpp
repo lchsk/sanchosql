@@ -1,4 +1,6 @@
-#include <glib.h>
+#include <string>
+
+#include <gtkmm.h>
 
 #include "files.hpp"
 

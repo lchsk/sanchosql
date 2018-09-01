@@ -112,7 +112,6 @@ add_executable(${EXECUTABLE_NAME}
     src/connections.cpp
     src/tab.cpp
     src/string.cpp
-    src/files.cpp
 
     # Models
     src/model/list_tab_model.cpp
@@ -127,16 +126,37 @@ add_executable(${EXECUTABLE_NAME}
     res/icons/sanchosql.png
     )
 
-add_dependencies(${EXECUTABLE_NAME} resources)
+  add_dependencies(${EXECUTABLE_NAME} resources)
+
+  add_library(sancho-system
+    src/system/files.cpp
+    )
 
 if ( CMAKE_COMPILER_IS_GNUCC )
   message(STATUS "#warning extension is disabled")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wno-cpp")
 endif ( CMAKE_COMPILER_IS_GNUCC )
 
-link_directories(${GTKMM_LIBRARY_DIRS} ${PQXX_LIBRARY_DIRS} ${GTKSOURCEVIEW_LIBRARY_DIRS})
-include_directories(${GTKMM_INCLUDE_DIRS} ${PQXX_INCLUDE_DIRS} ${GTKSOURCEVIEW_INCLUDE_DIRS})
-target_link_libraries(${EXECUTABLE_NAME} ${GTKMM_LIBRARIES} ${PQXX_LIBRARIES} -lpq ${EXTRA_TARGET_LIB} ${GTKSOURCEVIEW_LIBRARIES})
+link_directories(
+  ${GTKMM_LIBRARY_DIRS}
+  ${PQXX_LIBRARY_DIRS}
+  ${GTKSOURCEVIEW_LIBRARY_DIRS}
+  ${PROJECT_SOURCE_DIR}/build
+  )
+include_directories(
+  ${GTKMM_INCLUDE_DIRS}
+  ${PQXX_INCLUDE_DIRS}
+  ${GTKSOURCEVIEW_INCLUDE_DIRS}
+  )
+target_link_libraries(
+  ${EXECUTABLE_NAME}
+  ${GTKMM_LIBRARIES}
+  ${PQXX_LIBRARIES}
+  -lpq
+  ${EXTRA_TARGET_LIB}
+  ${GTKSOURCEVIEW_LIBRARIES}
+  sancho-system
+  )
 cotire(${EXECUTABLE_NAME})
 
 # Installation
