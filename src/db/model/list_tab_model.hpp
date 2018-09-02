@@ -5,10 +5,11 @@
 
 #include <gtkmm.h>
 
-#include "../pg_conn.hpp"
+#include "../../pg_conn.hpp"
 #include "abstract_tab_model.hpp"
 
 namespace sancho {
+namespace db {
 class SimpleTabModel : public AbstractTabModel {
   public:
     enum class ColumnSortType { None, Asc, Desc };
@@ -96,5 +97,6 @@ class SimpleTabModel : public AbstractTabModel {
     static const unsigned DEFAULT_OFFSET = 0;
 };
 } // namespace sancho
+}
 
 #endif

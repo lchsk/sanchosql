@@ -7,7 +7,7 @@
 #include <gtkmm.h>
 #include <gtksourceviewmm.h>
 
-#include "../../model/list_tab_model.hpp"
+#include "../../db/model/list_tab_model.hpp"
 #include "number_entry.hpp"
 
 namespace sancho {
@@ -72,7 +72,7 @@ class QueryTab : public AbstractTab {
 class SimpleTab : public AbstractTab {
   public:
     SimpleTab(const Glib::ustring &tab_name,
-              std::shared_ptr<sancho::SimpleTabModel> &model);
+              std::shared_ptr<sancho::db::SimpleTabModel> &model);
 
     // Browse box
     Gtk::Box *browse_box;
@@ -100,7 +100,7 @@ class SimpleTab : public AbstractTab {
 
     Gtk::VPaned paned_main;
 
-    std::shared_ptr<sancho::SimpleTabModel> model;
+    std::shared_ptr<sancho::db::SimpleTabModel> model;
 };
 } // namespace sancho
 }

@@ -109,12 +109,6 @@ add_executable(${EXECUTABLE_NAME}
 
     src/string.cpp
 
-    # Models
-    src/model/list_tab_model.cpp
-
-    # Windows
-
-
     # Resources
     src/resources.c
     sanchosql.desktop
@@ -131,6 +125,9 @@ add_executable(${EXECUTABLE_NAME}
     src/db/core/query_result.cpp
     src/db/core/connection_details.cpp
     src/db/core/connections.cpp
+    )
+  add_library(sancho-db-model
+    src/db/model/list_tab_model.cpp
     )
   add_library(sancho-ui-gtk
     src/ui/gtk/tab.cpp
@@ -164,10 +161,11 @@ target_link_libraries(
   ${GTKSOURCEVIEW_LIBRARIES}
   sancho-system
   sancho-db-core
+  sancho-db-model
   sancho-ui-gtk
   )
 
-target_link_libraries(sancho-ui-gtk sancho-system)
+target_link_libraries(sancho-ui-gtk sancho-system sancho-db-model)
 
 cotire(${EXECUTABLE_NAME})
 

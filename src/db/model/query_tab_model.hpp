@@ -4,6 +4,7 @@
 #include "abstract_tab_model.hpp"
 
 namespace sancho {
+namespace db {
 class QueryTabModel : public AbstractTabModel {
   public:
     QueryTabModel(
@@ -16,5 +17,6 @@ class QueryTabModel : public AbstractTabModel {
 };
 
 } // namespace sancho
+}
 
 #endif

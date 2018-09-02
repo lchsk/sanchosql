@@ -1,6 +1,7 @@
 #include "list_tab_model.hpp"
 
 namespace sancho {
+namespace db {
 SimpleTabModel::SimpleTabModel(
                                const std::shared_ptr<sancho::db::ConnectionDetails> &conn_details,
     const Glib::ustring &p_table_name, const Glib::ustring &p_schema_name)
@@ -356,3 +357,4 @@ const bool SimpleTabModel::is_part_of_pk(const Glib::ustring &column_name) {
 }
 
 } // namespace sancho
+}

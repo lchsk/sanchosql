@@ -147,7 +147,7 @@ QueryTab::QueryTab(const Glib::ustring &tab_name)
 }
 
 SimpleTab::SimpleTab(const Glib::ustring &tab_name,
-                     std::shared_ptr<sancho::SimpleTabModel> &model)
+                     std::shared_ptr<sancho::db::SimpleTabModel> &model)
     : AbstractTab(tab_name, TabType::List),
       tree(Gtk::manage(new Gtk::TreeView)), model(model) {
     tv = Gtk::manage(new Gtk::TextView);
