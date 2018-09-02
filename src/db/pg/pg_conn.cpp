@@ -3,6 +3,7 @@
 #include "pg_conn.hpp"
 
 namespace sancho {
+namespace db {
     sancho::db::Connections sancho::db::Connections::ins;
 
 PostgresConnection::PostgresConnection(
@@ -143,7 +144,7 @@ void PostgresConnection::init_connection() {
         error_message_ = e.what();
         is_open_ = false;
 
-        throw sancho::NoConnection(e.what());
+        throw sancho::db::NoConnection(e.what());
     }
 }
 
@@ -170,3 +171,4 @@ void PostgresConnection::load_oids() {
     }
 }
 } // namespace sancho
+}

@@ -132,12 +132,12 @@ void NewConnectionWindow::on_btn_test_connection_clicked() {
     conn->port = text_port->get_text();
     ;
 
-    sancho::PostgresConnection pg_conn(conn);
+    sancho::db::PostgresConnection pg_conn(conn);
 
     try {
         pg_conn.init_connection();
         g_debug("Test connection OK: %s", conn->postgres_string_safe().c_str());
-    } catch (const sancho::NoConnection &e) {
+    } catch (const sancho::db::NoConnection &e) {
         g_debug("Test connection failed: %s",
                 conn->postgres_string_safe().c_str());
     }
@@ -150,7 +150,7 @@ void NewConnectionWindow::reset_connection_status() {
 }
 
 void NewConnectionWindow::update_connection_status(
-    const sancho::PostgresConnection &pg_conn) {
+                                                   const sancho::db::PostgresConnection &pg_conn) {
     if (pg_conn.is_open()) {
         label_connection_status->set_text("Success");
         label_connection_status->override_color(Gdk::RGBA("green"),

@@ -7,7 +7,7 @@
 
 #include "config.hpp"
 #include "ui/gtk/main_window.hpp"
-#include "pg_conn.hpp"
+#include "db/pg/pg_conn.hpp"
 
 template <typename T_ArgType>
 static bool get_arg_value(const Glib::RefPtr<Glib::VariantDict> &options,

@@ -7,7 +7,7 @@
 
 #include "../../db/model/list_tab_model.hpp"
 #include "../../db/model/query_tab_model.hpp"
-#include "../../pg_conn.hpp"
+#include "../../db/pg/pg_conn.hpp"
 #include "tab.hpp"
 #include "win_new_connection.hpp"
 
@@ -218,7 +218,7 @@ class MainWindow : public Gtk::Window {
 
     bool on_key_press_event(GdkEventKey *key_event);
 
-    std::shared_ptr<sancho::PostgresConnection>
+    std::shared_ptr<sancho::db::PostgresConnection>
     connect(const std::shared_ptr<sancho::db::ConnectionDetails> &conn_details);
 
     void on_primary_key_warning_clicked(const Glib::ustring table_name);
@@ -237,7 +237,7 @@ class MainWindow : public Gtk::Window {
 
     std::shared_ptr<sancho::db::ConnectionDetails> &find_current_connection();
 
-    std::shared_ptr<sancho::PostgresConnection> handle_connect();
+    std::shared_ptr<sancho::db::PostgresConnection> handle_connect();
 
     bool on_browser_button_released(GdkEventButton *button_event);
 
@@ -270,7 +270,7 @@ class MainWindow : public Gtk::Window {
     void on_action_file_about();
 
     void refresh_connections_list();
-    void refresh_browser(const std::shared_ptr<sancho::PostgresConnection> &);
+    void refresh_browser(const std::shared_ptr<sancho::db::PostgresConnection> &);
     void refresh_tree_connections();
     void reset_browser();
 

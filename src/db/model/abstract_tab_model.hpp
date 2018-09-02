@@ -2,7 +2,7 @@
 #define ABSTRACT_TAB_MODEL_HPP
 
 #include "../../config.hpp"
-#include "../../pg_conn.hpp"
+#include "../pg/pg_conn.hpp"
 
 // #ifdef MOCK_PG_CONN
 
@@ -12,7 +12,7 @@
 
 // #else
 
-#define PG_CLASS sancho::PostgresConnection
+#define PG_CLASS sancho::db::PostgresConnection
 
 // #endif
 
@@ -34,7 +34,7 @@ class AbstractTabModel {
 
     virtual ~AbstractTabModel() {}
 
-    sancho::PostgresConnection &conn() const { return *connection; }
+    sancho::db::PostgresConnection &conn() const { return *connection; }
 
     virtual const std::string get_query() const = 0;
 
@@ -56,7 +56,7 @@ class AbstractTabModel {
 
   private:
     std::shared_ptr<sancho::db::ConnectionDetails> conn_details;
-    std::unique_ptr<sancho::PostgresConnection> connection;
+    std::unique_ptr<sancho::db::PostgresConnection> connection;
 
     const std::string EMPTY_SORT_COLUMN = "";
 };

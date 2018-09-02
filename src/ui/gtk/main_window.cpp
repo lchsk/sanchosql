@@ -878,7 +878,7 @@ void MainWindow::refresh_tree_connections() {
 }
 
 void MainWindow::refresh_browser(
-    const std::shared_ptr<sancho::PostgresConnection> &pc) {
+                                 const std::shared_ptr<sancho::db::PostgresConnection> &pc) {
     browser_store->clear();
 
     const Glib::ustring schema_name = combo_schemas.get_active_text();
@@ -1114,10 +1114,10 @@ bool MainWindow::on_key_press_event(GdkEventKey *key_event) {
     return Gtk::Window::on_key_press_event(key_event);
 }
 
-std::shared_ptr<sancho::PostgresConnection> MainWindow::connect(
+    std::shared_ptr<sancho::db::PostgresConnection> MainWindow::connect(
 																const std::shared_ptr<sancho::db::ConnectionDetails> &conn_details) {
-    std::shared_ptr<sancho::PostgresConnection> pc =
-        std::make_shared<sancho::PostgresConnection>(conn_details);
+        std::shared_ptr<sancho::db::PostgresConnection> pc =
+            std::make_shared<sancho::db::PostgresConnection>(conn_details);
     pc->init_connection();
 
     return pc;
@@ -1267,17 +1267,17 @@ MainWindow::find_current_connection() {
     return sancho::db::Connections::instance()->find_connection(connection_name);
 }
 
-std::shared_ptr<sancho::PostgresConnection> MainWindow::handle_connect() {
+    std::shared_ptr<sancho::db::PostgresConnection> MainWindow::handle_connect() {
     auto current_connection = find_current_connection();
 
     if (current_connection == sancho::db::Connections::instance()->end())
         return nullptr;
 
-    std::shared_ptr<sancho::PostgresConnection> pc = nullptr;
+    std::shared_ptr<sancho::db::PostgresConnection> pc = nullptr;
 
     try {
         pc = connect(current_connection);
-    } catch (const sancho::NoConnection &e) {
+    } catch (const sancho::db::NoConnection &e) {
         Glib::ustring error_message;
 
         if (current_connection->password.empty()) {

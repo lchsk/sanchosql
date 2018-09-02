@@ -5,7 +5,7 @@
 
 #include <gtkmm.h>
 
-#include "../../pg_conn.hpp"
+#include "../pg/pg_conn.hpp"
 #include "abstract_tab_model.hpp"
 
 namespace sancho {
@@ -38,7 +38,7 @@ class SimpleTabModel : public AbstractTabModel {
 
     const bool has_primary_key() const { return primary_key.size(); }
 
-    const std::vector<sancho::PrimaryKey> get_primary_key() const {
+    const std::vector<sancho::db::PrimaryKey> get_primary_key() const {
         return primary_key;
     }
 
@@ -85,7 +85,7 @@ class SimpleTabModel : public AbstractTabModel {
 
     const Glib::ustring table_name;
     const Glib::ustring schema_name;
-    const std::vector<sancho::PrimaryKey> primary_key;
+    const std::vector<sancho::db::PrimaryKey> primary_key;
 
     unsigned limit;
     unsigned offset;

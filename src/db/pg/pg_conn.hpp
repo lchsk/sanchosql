@@ -7,11 +7,12 @@
 
 #include <pqxx/pqxx>
 
-#include "db/core/connection_details.hpp"
-#include "db/core/connections.hpp"
-#include "db/core/query_result.hpp"
+#include "../core/connection_details.hpp"
+#include "../core/connections.hpp"
+#include "../core/query_result.hpp"
 
 namespace sancho {
+namespace db {
 class PrimaryKey {
   public:
     std::string column_name;
@@ -67,5 +68,6 @@ class PostgresConnection {
         oid_names;
 };
 } // namespace sancho
+}
 
 #endif

@@ -105,7 +105,6 @@ add_custom_target(resources
 
 add_executable(${EXECUTABLE_NAME}
     src/sanchosql.cpp
-    src/pg_conn.cpp
 
     src/string.cpp
 
@@ -128,6 +127,9 @@ add_executable(${EXECUTABLE_NAME}
     )
   add_library(sancho-db-model
     src/db/model/list_tab_model.cpp
+    )
+  add_library(sancho-db-pg
+    src/db/pg/pg_conn.cpp
     )
   add_library(sancho-ui-gtk
     src/ui/gtk/tab.cpp
@@ -154,18 +156,20 @@ include_directories(
   )
 target_link_libraries(
   ${EXECUTABLE_NAME}
+  sancho-system
+  sancho-db-core
+  sancho-db-model
+  sancho-db-pg
+  sancho-ui-gtk
+
   ${GTKMM_LIBRARIES}
   ${PQXX_LIBRARIES}
   -lpq
   ${EXTRA_TARGET_LIB}
   ${GTKSOURCEVIEW_LIBRARIES}
-  sancho-system
-  sancho-db-core
-  sancho-db-model
-  sancho-ui-gtk
   )
 
-target_link_libraries(sancho-ui-gtk sancho-system sancho-db-model)
+target_link_libraries(sancho-ui-gtk sancho-system sancho-db-model sancho-db-core sancho-db-pg)
 
 cotire(${EXECUTABLE_NAME})
 

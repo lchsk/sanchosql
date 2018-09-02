@@ -3,7 +3,7 @@
 
 #include <gtkmm.h>
 
-#include "../../pg_conn.hpp"
+#include "../../db/pg/pg_conn.hpp"
 
 namespace sancho {
 namespace ui {
@@ -21,7 +21,7 @@ class NewConnectionWindow : public Gtk::Window {
     // Name of the connection currently being edited
     Glib::ustring edited_conn_name;
 
-    void update_connection_status(const sancho::PostgresConnection &pg_conn);
+    void update_connection_status(const sancho::db::PostgresConnection &pg_conn);
     void reset_connection_status();
 
     void set_adding_mode();
