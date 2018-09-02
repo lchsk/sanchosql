@@ -2,7 +2,7 @@
 
 namespace sancho {
 SimpleTabModel::SimpleTabModel(
-    const std::shared_ptr<sancho::ConnectionDetails> &conn_details,
+                               const std::shared_ptr<sancho::db::ConnectionDetails> &conn_details,
     const Glib::ustring &p_table_name, const Glib::ustring &p_schema_name)
     : AbstractTabModel(conn_details), table_name(p_table_name),
       schema_name(p_schema_name),

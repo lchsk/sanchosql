@@ -6,17 +6,18 @@
 
 #include <glibmm.h>
 
-#include "connection_details.hpp"
+#include "db/core/connection_details.hpp"
 #include "string.hpp"
 
 namespace sancho {
+    namespace db{
 class Connections {
   public:
     Connections();
 
-    std::shared_ptr<sancho::ConnectionDetails> &end() { return conn_end; }
+    std::shared_ptr<sancho::db::ConnectionDetails> &end() { return conn_end; }
 
-    std::shared_ptr<sancho::ConnectionDetails> &
+    std::shared_ptr<sancho::db::ConnectionDetails> &
     find_connection(const Glib::ustring &connection_name);
 
     void add(const Glib::ustring &name, const std::string &host,
@@ -26,14 +27,14 @@ class Connections {
 
     static Connections *instance() { return &ins; }
 
-    const std::map<Glib::ustring, std::shared_ptr<sancho::ConnectionDetails>> &
+    const std::map<Glib::ustring, std::shared_ptr<sancho::db::ConnectionDetails>> &
     get_connections() const {
         return connections;
     };
 
     const unsigned size() const { return connections.size(); }
 
-    std::shared_ptr<sancho::ConnectionDetails> &
+    std::shared_ptr<sancho::db::ConnectionDetails> &
     get(const Glib::ustring &conn_name);
 
     bool exists(const Glib::ustring &conn_name) const {
@@ -65,7 +66,7 @@ class Connections {
 
     Glib::ustring CONN_PATH = "connections";
 
-    std::shared_ptr<sancho::ConnectionDetails> current_connection;
+    std::shared_ptr<sancho::db::ConnectionDetails> current_connection;
 
   private:
     void open_conn_file();
@@ -76,15 +77,17 @@ class Connections {
                                    const Glib::ustring &) const;
 
     // Returned if the actual connection was not found
-    std::shared_ptr<sancho::ConnectionDetails> conn_end;
+    std::shared_ptr<sancho::db::ConnectionDetails> conn_end;
 
-    std::map<Glib::ustring, std::shared_ptr<sancho::ConnectionDetails>>
+    std::map<Glib::ustring, std::shared_ptr<sancho::db::ConnectionDetails>>
         connections;
 
     static Connections ins;
 
+    // TODO: Move it somewhere else
     Glib::KeyFile conn_file;
 };
 } // namespace sancho
+}
 
 #endif

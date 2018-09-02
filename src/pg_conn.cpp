@@ -3,10 +3,10 @@
 #include "pg_conn.hpp"
 
 namespace sancho {
-sancho::Connections sancho::Connections::ins;
+    sancho::db::Connections sancho::db::Connections::ins;
 
 PostgresConnection::PostgresConnection(
-    const std::shared_ptr<sancho::ConnectionDetails> &conn_details)
+                                       const std::shared_ptr<sancho::db::ConnectionDetails> &conn_details)
     : conn_details(conn_details), is_open_(false), error_message_(""),
       oid_names(std::make_shared<
                 std::unordered_map<pqxx::oid, sancho::OidMapping>>()) {}

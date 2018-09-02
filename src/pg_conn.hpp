@@ -7,7 +7,7 @@
 
 #include <pqxx/pqxx>
 
-#include "connection_details.hpp"
+#include "db/core/connection_details.hpp"
 #include "connections.hpp"
 #include "db/core/query_result.hpp"
 
@@ -29,7 +29,7 @@ class NoConnection : public std::runtime_error {
 class PostgresConnection {
   public:
     explicit PostgresConnection(
-        const std::shared_ptr<sancho::ConnectionDetails> &conn_details);
+                                const std::shared_ptr<sancho::db::ConnectionDetails> &conn_details);
     virtual ~PostgresConnection();
 
     virtual std::shared_ptr<sancho::QueryResult>
@@ -56,7 +56,7 @@ class PostgresConnection {
   private:
     void load_oids();
 
-    std::shared_ptr<sancho::ConnectionDetails> conn_details;
+    std::shared_ptr<sancho::db::ConnectionDetails> conn_details;
 
     std::unique_ptr<pqxx::connection> conn;
 

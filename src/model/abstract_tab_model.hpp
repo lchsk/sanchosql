@@ -20,7 +20,7 @@ namespace sancho {
 class AbstractTabModel {
   public:
     AbstractTabModel(
-        const std::shared_ptr<sancho::ConnectionDetails> &conn_details)
+					 const std::shared_ptr<sancho::db::ConnectionDetails> &conn_details)
         : conn_details(conn_details),
           connection(std::make_unique<PG_CLASS>(conn_details)) {
 #ifdef MOCK_PG_CONN
@@ -54,7 +54,7 @@ class AbstractTabModel {
 #endif
 
   private:
-    std::shared_ptr<sancho::ConnectionDetails> conn_details;
+    std::shared_ptr<sancho::db::ConnectionDetails> conn_details;
     std::unique_ptr<sancho::PostgresConnection> connection;
 
     const std::string EMPTY_SORT_COLUMN = "";

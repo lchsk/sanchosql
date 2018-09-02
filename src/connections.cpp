@@ -3,8 +3,9 @@
 #include "connections.hpp"
 
 namespace sancho {
+    namespace db{
 Connections::Connections() {
-    conn_end = std::make_shared<sancho::ConnectionDetails>();
+    conn_end = std::make_shared<sancho::db::ConnectionDetails>();
 
     conn_end->host = "";
     conn_end->user = "";
@@ -126,7 +127,7 @@ void Connections::add(const Glib::ustring &name, const std::string &host,
                       const std::string &user, const std::string &password,
                       const std::string &dbname, const std::string &port,
                       bool save_password) {
-    auto conn = std::make_shared<sancho::ConnectionDetails>();
+    auto conn = std::make_shared<sancho::db::ConnectionDetails>();
 
     conn->name = name;
     conn->host = host;
@@ -177,7 +178,7 @@ bool Connections::any_fields_empty(const Glib::ustring &host,
     return false;
 }
 
-std::shared_ptr<sancho::ConnectionDetails> &
+    std::shared_ptr<sancho::db::ConnectionDetails> &
 Connections::get(const Glib::ustring &conn_name) {
     return connections.at(conn_name);
 }
@@ -209,7 +210,7 @@ bool Connections::can_update_conn_details(
     return false;
 }
 
-std::shared_ptr<sancho::ConnectionDetails> &
+    std::shared_ptr<sancho::db::ConnectionDetails> &
 Connections::find_connection(const Glib::ustring &connection_name) {
     if (!exists(connection_name))
         return end();
@@ -225,3 +226,4 @@ void Connections::remove(const Glib::ustring &conn_name) {
 }
 
 } // namespace sancho
+}

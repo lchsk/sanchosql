@@ -14,7 +14,7 @@ class SimpleTabModel : public AbstractTabModel {
     enum class ColumnSortType { None, Asc, Desc };
 
     SimpleTabModel(
-        const std::shared_ptr<sancho::ConnectionDetails> &conn_details,
+                   const std::shared_ptr<sancho::db::ConnectionDetails> &conn_details,
         const Glib::ustring &p_table_name, const Glib::ustring &p_schema_name);
 
     void set_limit(const std::string &p_limit);

@@ -17,9 +17,9 @@ MainWindow::MainWindow()
             sancho::config::current_version.c_str(), GLIB_MAJOR_VERSION,
             GLIB_MINOR_VERSION, GLIB_MICRO_VERSION);
 
-    sancho::Connections::instance()->CONN_PATH =
+    sancho::db::Connections::instance()->CONN_PATH =
         sancho::files::get_connections_file_path();
-    sancho::Connections::instance()->init_connections();
+    sancho::db::Connections::instance()->init_connections();
 
     set_title("SanchoSQL");
     set_border_width(0);
@@ -605,7 +605,7 @@ void MainWindow::on_tab_close_button_clicked(Gtk::ScrolledWindow *tree) {
 
 void MainWindow::on_open_sql_editor_clicked() {
     const auto current_connection =
-        sancho::Connections::instance()->current_connection;
+        sancho::db::Connections::instance()->current_connection;
 
     if (!current_connection) {
         show_warning("Please select a connection first!");
@@ -667,7 +667,7 @@ void MainWindow::on_browser_row_activated(const Gtk::TreeModel::Path &path,
     Glib::ustring table_name = current_row[browser_model.table];
 
     const auto current_connection =
-        sancho::Connections::instance()->current_connection;
+        sancho::db::Connections::instance()->current_connection;
 
     if (!current_connection)
         return;
@@ -797,8 +797,8 @@ void MainWindow::handle_results_sort(const sancho::SimpleTabModel *model,
 void MainWindow::refresh_connections_list() {
     Glib::ustring name;
 
-    if (Connections::instance()->current_connection) {
-        name = sancho::Connections::instance()->current_connection->name;
+    if (sancho::db::Connections::instance()->current_connection) {
+        name = sancho::db::Connections::instance()->current_connection->name;
     }
 
     combo_connections.remove_all();
@@ -808,7 +808,7 @@ void MainWindow::refresh_connections_list() {
     unsigned i = 1, selected = 0;
 
     for (const auto &details :
-         sancho::Connections::instance()->get_connections()) {
+             sancho::db::Connections::instance()->get_connections()) {
         combo_connections.append(details.second->name);
 
         if (!name.empty() && details.second->name == name) {
@@ -824,7 +824,7 @@ void MainWindow::refresh_connections_list() {
 void MainWindow::on_connection_changed() {
     const auto current_connection = find_current_connection();
 
-    if (current_connection == sancho::Connections::instance()->end())
+    if (current_connection == sancho::db::Connections::instance()->end())
         return;
 
     auto pc = handle_connect();
@@ -847,7 +847,7 @@ void MainWindow::on_connection_changed() {
 
     combo_schemas.set_active(selected_id);
 
-    sancho::Connections::instance()->current_connection = current_connection;
+    sancho::db::Connections::instance()->current_connection = current_connection;
 
     refresh_browser(pc);
 }
@@ -865,7 +865,7 @@ void MainWindow::refresh_tree_connections() {
     store_connections->clear();
 
     for (const auto &details :
-         sancho::Connections::instance()->get_connections()) {
+             sancho::db::Connections::instance()->get_connections()) {
         Gtk::TreeModel::Row row = *(store_connections->append());
 
         row[connections_model.name] = details.second->name;
@@ -1113,7 +1113,7 @@ bool MainWindow::on_key_press_event(GdkEventKey *key_event) {
 }
 
 std::shared_ptr<sancho::PostgresConnection> MainWindow::connect(
-    const std::shared_ptr<sancho::ConnectionDetails> &conn_details) {
+																const std::shared_ptr<sancho::db::ConnectionDetails> &conn_details) {
     std::shared_ptr<sancho::PostgresConnection> pc =
         std::make_shared<sancho::PostgresConnection>(conn_details);
     pc->init_connection();
@@ -1258,17 +1258,17 @@ void MainWindow::on_browser_refresh_clicked() {
     refresh_browser(pc);
 }
 
-std::shared_ptr<sancho::ConnectionDetails> &
+    std::shared_ptr<sancho::db::ConnectionDetails> &
 MainWindow::find_current_connection() {
     const Glib::ustring connection_name = combo_connections.get_active_text();
 
-    return sancho::Connections::instance()->find_connection(connection_name);
+    return sancho::db::Connections::instance()->find_connection(connection_name);
 }
 
 std::shared_ptr<sancho::PostgresConnection> MainWindow::handle_connect() {
     auto current_connection = find_current_connection();
 
-    if (current_connection == sancho::Connections::instance()->end())
+    if (current_connection == sancho::db::Connections::instance()->end())
         return nullptr;
 
     std::shared_ptr<sancho::PostgresConnection> pc = nullptr;
@@ -1331,7 +1331,7 @@ bool MainWindow::on_browser_button_released(GdkEventButton *button_event) {
 
 void MainWindow::reset_browser() {
     // Reset current_connection first before triggering events
-    sancho::Connections::instance()->current_connection = nullptr;
+    sancho::db::Connections::instance()->current_connection = nullptr;
 
     browser_store->clear();
     combo_connections.set_active(0);

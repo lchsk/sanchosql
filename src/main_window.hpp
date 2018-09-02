@@ -217,7 +217,7 @@ class MainWindow : public Gtk::Window {
     bool on_key_press_event(GdkEventKey *key_event);
 
     std::shared_ptr<sancho::PostgresConnection>
-    connect(const std::shared_ptr<sancho::ConnectionDetails> &conn_details);
+    connect(const std::shared_ptr<sancho::db::ConnectionDetails> &conn_details);
 
     void on_primary_key_warning_clicked(const Glib::ustring table_name);
 
@@ -233,7 +233,7 @@ class MainWindow : public Gtk::Window {
 
     void on_browser_refresh_clicked();
 
-    std::shared_ptr<sancho::ConnectionDetails> &find_current_connection();
+    std::shared_ptr<sancho::db::ConnectionDetails> &find_current_connection();
 
     std::shared_ptr<sancho::PostgresConnection> handle_connect();
 

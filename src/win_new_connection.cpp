@@ -98,13 +98,13 @@ NewConnectionWindow::NewConnectionWindow(
 
 void NewConnectionWindow::on_btn_save_clicked() {
     if (mode == Mode::Adding) {
-        sancho::Connections::instance()->add(
+        sancho::db::Connections::instance()->add(
             text_connection_name->get_text(), text_host->get_text(),
             text_user->get_text(), text_password->get_text(),
             text_db->get_text(), text_port->get_text(),
             checkbox_save_password->get_active());
     } else if (mode == Mode::Editing) {
-        sancho::Connections::instance()->update_conn(
+        sancho::db::Connections::instance()->update_conn(
             edited_conn_name, text_connection_name->get_text(),
             text_host->get_text(), text_user->get_text(),
             text_password->get_text(), text_db->get_text(),
@@ -118,8 +118,8 @@ void NewConnectionWindow::on_btn_save_clicked() {
 void NewConnectionWindow::on_btn_close_clicked() { hide(); }
 
 void NewConnectionWindow::on_btn_test_connection_clicked() {
-    std::shared_ptr<sancho::ConnectionDetails> conn =
-        std::make_shared<sancho::ConnectionDetails>();
+    std::shared_ptr<sancho::db::ConnectionDetails> conn =
+        std::make_shared<sancho::db::ConnectionDetails>();
 
     conn->set_host(text_host->get_text());
     conn->user = text_user->get_text();
@@ -183,7 +183,7 @@ void NewConnectionWindow::on_btn_del_connection_clicked() {
     const int result = dialog.run();
 
     if (result == Gtk::RESPONSE_OK) {
-        sancho::Connections::instance()->remove(conn_name);
+        sancho::db::Connections::instance()->remove(conn_name);
 
         on_win_show();
     }
@@ -193,7 +193,7 @@ void NewConnectionWindow::on_win_show() {
     connections_model->clear();
 
     for (const auto &conn :
-         sancho::Connections::instance()->get_connections()) {
+             sancho::db::Connections::instance()->get_connections()) {
         Gtk::TreeModel::Row row = *(connections_model->append());
         row[connection_columns.col_name] = conn.first;
     }
@@ -202,7 +202,7 @@ void NewConnectionWindow::on_win_show() {
 }
 
 void NewConnectionWindow::on_win_hide() {
-    sancho::Connections::instance()->save_connections();
+    sancho::db::Connections::instance()->save_connections();
 }
 
 void NewConnectionWindow::on_checkbox_save_password_toggled() {
@@ -228,7 +228,7 @@ void NewConnectionWindow::on_selected_connection_changed() {
     const std::string conn_name = row.get_value(connection_columns.col_name);
     edited_conn_name = conn_name;
 
-    auto &connection_details = sancho::Connections::instance()->get(conn_name);
+    auto &connection_details = sancho::db::Connections::instance()->get(conn_name);
 
     text_connection_name->set_text(connection_details->name);
     text_host->set_text(connection_details->host);
@@ -265,7 +265,7 @@ void NewConnectionWindow::update_save_btn() {
 }
 
 bool NewConnectionWindow::can_save_edited_connection() const {
-    return sancho::Connections::instance()->can_update_conn_details(
+    return sancho::db::Connections::instance()->can_update_conn_details(
         edited_conn_name, text_connection_name->get_text(),
         text_host->get_text(), text_user->get_text(), text_password->get_text(),
         // get_password(),
@@ -274,12 +274,12 @@ bool NewConnectionWindow::can_save_edited_connection() const {
 }
 
 bool NewConnectionWindow::can_add_new_connection() const {
-    if (sancho::Connections::instance()->any_fields_empty(
+    if (sancho::db::Connections::instance()->any_fields_empty(
             text_host->get_text(), text_port->get_text(), text_db->get_text(),
             text_user->get_text(), text_connection_name->get_text()))
         return false;
 
-    if (sancho::Connections::instance()->exists(
+    if (sancho::db::Connections::instance()->exists(
             text_connection_name->get_text()))
         return false;
 
@@ -289,7 +289,7 @@ bool NewConnectionWindow::can_add_new_connection() const {
 void NewConnectionWindow::reset_widgets() {
     text_connection_name->set_text(
         "Connection " +
-        std::to_string(sancho::Connections::instance()->size() + 1));
+        std::to_string(sancho::db::Connections::instance()->size() + 1));
     text_host->set_text("127.0.0.1");
     text_port->set_text("5432");
     text_db->set_text("");
