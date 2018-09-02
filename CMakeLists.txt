@@ -106,7 +106,6 @@ add_custom_target(resources
 add_executable(${EXECUTABLE_NAME}
     src/sanchosql.cpp
     src/pg_conn.cpp
-    src/connections.cpp
     src/tab.cpp
     src/string.cpp
 
@@ -132,6 +131,7 @@ add_executable(${EXECUTABLE_NAME}
     src/db/core/conn_util.cpp
     src/db/core/query_result.cpp
     src/db/core/connection_details.cpp
+    src/db/core/connections.cpp
     )
 
 if ( CMAKE_COMPILER_IS_GNUCC )

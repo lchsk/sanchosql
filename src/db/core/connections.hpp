@@ -6,8 +6,8 @@
 
 #include <glibmm.h>
 
-#include "db/core/connection_details.hpp"
-#include "string.hpp"
+#include "connection_details.hpp"
+#include "../../string.hpp"
 
 namespace sancho {
     namespace db{

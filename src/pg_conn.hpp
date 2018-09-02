@@ -8,7 +8,7 @@
 #include <pqxx/pqxx>
 
 #include "db/core/connection_details.hpp"
-#include "connections.hpp"
+#include "db/core/connections.hpp"
 #include "db/core/query_result.hpp"
 
 namespace sancho {
