@@ -106,8 +106,6 @@ add_custom_target(resources
 add_executable(${EXECUTABLE_NAME}
     src/sanchosql.cpp
     src/pg_conn.cpp
-    src/conn_util.cpp
-    src/query_result.cpp
     src/connection_details.cpp
     src/connections.cpp
     src/tab.cpp
@@ -130,6 +128,10 @@ add_executable(${EXECUTABLE_NAME}
 
   add_library(sancho-system
     src/system/files.cpp
+    )
+  add_library(sancho-db-core
+    src/db/core/conn_util.cpp
+    src/db/core/query_result.cpp
     )
 
 if ( CMAKE_COMPILER_IS_GNUCC )
@@ -156,6 +158,7 @@ target_link_libraries(
   ${EXTRA_TARGET_LIB}
   ${GTKSOURCEVIEW_LIBRARIES}
   sancho-system
+  sancho-db-core
   )
 cotire(${EXECUTABLE_NAME})
 

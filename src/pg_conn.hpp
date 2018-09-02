@@ -7,10 +7,9 @@
 
 #include <pqxx/pqxx>
 
-#include "conn_util.hpp"
 #include "connection_details.hpp"
 #include "connections.hpp"
-#include "query_result.hpp"
+#include "db/core/query_result.hpp"
 
 namespace sancho {
 class PrimaryKey {
