@@ -1,7 +1,9 @@
 #include "tab.hpp"
-#include "string.hpp"
+#include "../../string.hpp"
 
 namespace sancho {
+namespace ui {
+namespace gtk {
 const int LOG_BUFFER_MAX_SIZE = 2000; // characters
 
 void insert_log_message(Glib::RefPtr<Gsv::Buffer> &log_buffer,
@@ -239,3 +241,5 @@ SimpleTab::SimpleTab(const Glib::ustring &tab_name,
                                      Gtk::POLICY_AUTOMATIC);
 }
 } // namespace sancho
+}
+}

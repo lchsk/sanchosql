@@ -8,7 +8,7 @@
 #include "model/list_tab_model.hpp"
 #include "model/query_tab_model.hpp"
 #include "pg_conn.hpp"
-#include "tab.hpp"
+#include "ui/gtk/tab.hpp"
 #include "win_new_connection.hpp"
 
 namespace sancho {
@@ -188,21 +188,21 @@ class MainWindow : public Gtk::Window {
     sancho::SimpleTabModel &get_simple_tab_model(Gtk::ScrolledWindow *);
     sancho::QueryTabModel &get_query_tab_model(Gtk::ScrolledWindow *);
 
-    sancho::SimpleTab &get_simple_tab(Gtk::ScrolledWindow *);
-    sancho::QueryTab &get_query_tab(Gtk::ScrolledWindow *);
+    sancho::ui::gtk::SimpleTab &get_simple_tab(Gtk::ScrolledWindow *);
+    sancho::ui::gtk::QueryTab &get_query_tab(Gtk::ScrolledWindow *);
 
     Gtk::ScrolledWindow *get_current_swindow();
 
-    sancho::TabType get_tab_type(Gtk::ScrolledWindow *win);
+    sancho::ui::gtk::TabType get_tab_type(Gtk::ScrolledWindow *win);
 
     void cellrenderer_validated_on_edited(const Glib::ustring &path_string,
                                           const Glib::ustring &new_text,
-                                          sancho::SimpleTab *tab,
+                                          sancho::ui::gtk::SimpleTab *tab,
                                           sancho::SimpleTabModel *model,
                                           const std::string &column_name);
     void cellrenderer_validated_on_editing_started(
         Gtk::CellEditable *cell_editable, const Glib::ustring &path_string,
-        sancho::SimpleTab *tab, sancho::SimpleTabModel *model,
+        sancho::ui::gtk::SimpleTab *tab, sancho::SimpleTabModel *model,
         const std::string &column_name);
 
     void on_connection_changed();
@@ -225,10 +225,10 @@ class MainWindow : public Gtk::Window {
                       const Glib::ustring &secondary = Glib::ustring());
 
     void on_menu_file_popup_generic(Gtk::ScrolledWindow *window,
-                                    sancho::SimpleTab *tab,
+                                    sancho::ui::gtk::SimpleTab *tab,
                                     sancho::SimpleTabModel *model);
 
-    bool on_list_press(GdkEventButton *button_event, sancho::SimpleTab *tab,
+    bool on_list_press(GdkEventButton *button_event, sancho::ui::gtk::SimpleTab *tab,
                        sancho::SimpleTabModel *model);
 
     void on_browser_refresh_clicked();
@@ -254,7 +254,7 @@ class MainWindow : public Gtk::Window {
     void on_submit_query_clicked(Gtk::ScrolledWindow *,
                                  Glib::RefPtr<Gsv::Buffer> &);
 
-    void on_btn_accept_changes_clicked(sancho::SimpleTab *tab,
+    void on_btn_accept_changes_clicked(sancho::ui::gtk::SimpleTab *tab,
                                        sancho::SimpleTabModel *model);
 
     void load_list_results(Gtk::ScrolledWindow *);
@@ -304,7 +304,7 @@ class MainWindow : public Gtk::Window {
         tab_models;
 
     std::unordered_map<Gtk::ScrolledWindow *,
-                       std::shared_ptr<sancho::AbstractTab>>
+                       std::shared_ptr<sancho::ui::gtk::AbstractTab>>
         tabs;
 };
 } // namespace sancho

@@ -7,10 +7,12 @@
 #include <gtkmm.h>
 #include <gtksourceviewmm.h>
 
-#include "model/list_tab_model.hpp"
-#include "widgets/number_entry.hpp"
+#include "../../model/list_tab_model.hpp"
+#include "../../widgets/number_entry.hpp"
 
 namespace sancho {
+namespace ui {
+namespace gtk {
 void insert_log_message(Glib::RefPtr<Gsv::Buffer> &log_buffer,
                         const Glib::ustring &message);
 
@@ -101,5 +103,7 @@ class SimpleTab : public AbstractTab {
     std::shared_ptr<sancho::SimpleTabModel> model;
 };
 } // namespace sancho
+}
+}
 
 #endif
