@@ -8,7 +8,7 @@
 #include <gtksourceviewmm.h>
 
 #include "../../model/list_tab_model.hpp"
-#include "../../widgets/number_entry.hpp"
+#include "number_entry.hpp"
 
 namespace sancho {
 namespace ui {
@@ -85,8 +85,8 @@ class SimpleTab : public AbstractTab {
     Gtk::Button *btn_next;
     Gtk::Label *label_offset;
     Gtk::Label *label_limit;
-    sancho::NumberEntry *number_offset;
-    sancho::NumberEntry *number_limit;
+    sancho::ui::gtk::NumberEntry *number_offset;
+    sancho::ui::gtk::NumberEntry *number_limit;
     Gtk::TreeView *tree;
     Gtk::ScrolledWindow *data_scrolled_window;
 

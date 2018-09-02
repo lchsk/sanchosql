@@ -135,6 +135,7 @@ add_executable(${EXECUTABLE_NAME}
     )
   add_library(sancho-ui-gtk
     src/ui/gtk/tab.cpp
+    src/ui/gtk/number_entry.hpp
     )
 
 if ( CMAKE_COMPILER_IS_GNUCC )

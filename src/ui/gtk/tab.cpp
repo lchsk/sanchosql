@@ -215,8 +215,8 @@ SimpleTab::SimpleTab(const Glib::ustring &tab_name,
     label_limit = Gtk::manage(new Gtk::Label);
     label_limit->set_text("Show Results:");
 
-    number_offset = Gtk::manage(new sancho::NumberEntry);
-    number_limit = Gtk::manage(new sancho::NumberEntry);
+    number_offset = Gtk::manage(new sancho::ui::gtk::NumberEntry);
+    number_limit = Gtk::manage(new sancho::ui::gtk::NumberEntry);
     browse_box = Gtk::manage(new Gtk::Box);
 
     browse_box->pack_start(*btn_insert);
