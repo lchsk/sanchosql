@@ -190,7 +190,7 @@ void QueryResult::handle_results(const pqxx::result &result) {
             is_nullable = columns_data.at(result.column_name(i)).is_nullable;
         }
 
-        columns.push_back(sancho::Column(
+        columns.push_back(sancho::db::Column(
             result.column_name(i),
             sancho::get_data_type(result.column_type(i), *oid_names),
             char_length, is_nullable));

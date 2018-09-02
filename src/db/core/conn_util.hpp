@@ -17,6 +17,7 @@ class OidMapping {
     std::string data_type;
 };
 
+    namespace db {
 class Column {
   public:
     Column(const std::string &column_name,
@@ -34,6 +35,7 @@ private:
     const std::string m_char_length;
     const bool m_is_nullable;
 };
+    }
 
 class ColumnMetadata {
   public:

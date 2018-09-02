@@ -24,7 +24,7 @@ struct QueryResult {
         std::shared_ptr<std::unordered_map<pqxx::oid, sancho::OidMapping>>
             &oid_names);
 
-    std::vector<sancho::Column> columns;
+    std::vector<sancho::db::Column> columns;
     std::vector<std::vector<std::string>> data;
 
     // Return data where each row is a map column name -> value

@@ -1,6 +1,7 @@
 #include "conn_util.hpp"
 
 namespace sancho {
+    namespace db{
     Column::Column(const std::string &column_name,
            const std::string &data_type, const std::string &char_length,
            bool is_nullable) :
@@ -25,7 +26,7 @@ namespace sancho {
     {
         return m_is_nullable;
     }
-
+    }
 
 const std::string
 get_data_type(const pqxx::oid oid,
