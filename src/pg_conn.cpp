@@ -166,8 +166,7 @@ void PostgresConnection::load_oids() {
     for (auto &row : query_result->as_map()) {
         const pqxx::oid oid = std::atoi(row["oid"].c_str());
 
-        (*oid_names)[oid] =
-            sancho::OidMapping(oid, row["udt_name"], row["data_type"]);
+        oid_names->emplace(oid, sancho::OidMapping(oid, row["udt_name"], row["data_type"]));
     }
 }
 } // namespace sancho

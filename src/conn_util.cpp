@@ -7,7 +7,7 @@ get_data_type(const pqxx::oid oid,
     if (oid_names.find(oid) == oid_names.end()) {
         return std::to_string(oid);
     } else {
-        return oid_names[oid].data_type;
+        return oid_names.at(oid).data_type;
     }
 }
 } // namespace sancho
