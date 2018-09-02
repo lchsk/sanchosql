@@ -39,9 +39,6 @@ class ColumnMetadata {
         : character_maximum_length(character_maximum_length),
           is_nullable(is_nullable){};
 
-    // TODO: Refactor so it's not needed
-    ColumnMetadata() {}
-
     std::string character_maximum_length;
     bool is_nullable;
 };

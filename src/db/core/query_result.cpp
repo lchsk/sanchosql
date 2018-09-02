@@ -70,8 +70,7 @@ QueryResult::get_columns_data(pqxx::connection &conn,
             is_nullable = true;
         }
 
-        columns[column_name] =
-            sancho::ColumnMetadata(character_maximum_length, is_nullable);
+        columns.emplace(column_name, sancho::ColumnMetadata(character_maximum_length, is_nullable));
     }
 
     return columns;
@@ -187,8 +186,8 @@ void QueryResult::handle_results(const pqxx::result &result) {
 
         if (use_columns && IN_MAP(columns_data, result.column_name(i))) {
             char_length =
-                columns_data[result.column_name(i)].character_maximum_length;
-            is_nullable = columns_data[result.column_name(i)].is_nullable;
+                columns_data.at(result.column_name(i)).character_maximum_length;
+            is_nullable = columns_data.at(result.column_name(i)).is_nullable;
         }
 
         columns.push_back(sancho::Column(
