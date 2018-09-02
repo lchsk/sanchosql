@@ -310,9 +310,9 @@ void MainWindow::load_list_results(Gtk::ScrolledWindow *window) {
     for (const auto &column : result->columns) {
         Gtk::TreeModelColumn<Glib::ustring> col;
 
-        model.cols[column.column_name] = col;
+        model.cols[column.get_column_name()] = col;
 
-        tab.cr->add(model.cols[column.column_name]);
+        tab.cr->add(model.cols[column.get_column_name()]);
     }
 
     tab.list_store = Gtk::ListStore::create(*(tab.cr));
@@ -320,27 +320,27 @@ void MainWindow::load_list_results(Gtk::ScrolledWindow *window) {
 
     for (const auto &column : result->columns) {
         const std::string escaped_column_name =
-            sancho::string::replace_all(column.column_name, "_", "__");
-        const std::string data_type = column.data_type;
+            sancho::string::replace_all(column.get_column_name(), "_", "__");
+        const std::string data_type = column.get_data_type();
 
         std::stringstream column_name;
 
-        if (model.is_part_of_pk(column.column_name)) {
+        if (model.is_part_of_pk(column.get_column_name())) {
             column_name << "(PK) ";
         }
 
         column_name << escaped_column_name << "\n" << data_type;
 
-        if (!column.char_length.empty()) {
-            column_name << " (" << column.char_length << ")";
+        if (!column.get_char_length().empty()) {
+            column_name << " (" << column.get_char_length() << ")";
         }
 
-        if (column.is_nullable) {
+        if (column.is_nullable()) {
             column_name << " [N]";
         }
 
         const int c = tab.tree->append_column_editable(
-            column_name.str(), model.cols[column.column_name]);
+                                                       column_name.str(), model.cols[column.get_column_name()]);
 
         Gtk::TreeViewColumn *tree_view_column = tab.tree->get_columns()[c - 1];
 
@@ -367,7 +367,7 @@ void MainWindow::load_list_results(Gtk::ScrolledWindow *window) {
                            const std::string>(
                     sigc::mem_fun(
                         *this, &MainWindow::cellrenderer_validated_on_edited),
-                    &tab, &model, column.column_name);
+                    &tab, &model, column.get_column_name());
 
             crtext->signal_edited().connect(signal_edited_slot);
 
@@ -377,7 +377,7 @@ void MainWindow::load_list_results(Gtk::ScrolledWindow *window) {
                     sigc::mem_fun(
                         *this,
                         &MainWindow::cellrenderer_validated_on_editing_started),
-                    &tab, &model, column.column_name);
+                    &tab, &model, column.get_column_name());
 
             crtext->signal_editing_started().connect(editing_started_slot);
         }
@@ -387,11 +387,11 @@ void MainWindow::load_list_results(Gtk::ScrolledWindow *window) {
                 sigc::mem_fun(*this, &MainWindow::on_results_column_clicked),
                 window, tree_view_column));
 
-        if (column.column_name == model.get_sort_column()) {
+        if (column.get_column_name() == model.get_sort_column()) {
             sorted_col = tree_view_column;
         }
 
-        tab.col_names[tree_view_column] = column.column_name;
+        tab.col_names[tree_view_column] = column.get_column_name();
     }
 
     tab.tree->set_headers_clickable();
@@ -412,7 +412,7 @@ void MainWindow::load_list_results(Gtk::ScrolledWindow *window) {
         r[*model.col_color] = model.col_white;
 
         for (const auto &c : result->columns) {
-            r[model.cols[c.column_name]] =
+            r[model.cols[c.get_column_name()]] =
                 sancho::string::escape_db_data(row[i]);
 
             i++;
@@ -458,9 +458,9 @@ void MainWindow::load_query_results(Gtk::ScrolledWindow *window) {
     for (const auto &column : result->columns) {
         Gtk::TreeModelColumn<Glib::ustring> col;
 
-        model.cols[column.column_name] = col;
+        model.cols[column.get_column_name()] = col;
 
-        tab.cr->add(model.cols[column.column_name]);
+        tab.cr->add(model.cols[column.get_column_name()]);
     }
 
     tab.list_store = Gtk::ListStore::create(*(tab.cr));
@@ -468,17 +468,17 @@ void MainWindow::load_query_results(Gtk::ScrolledWindow *window) {
 
     for (const auto &column : result->columns) {
         const std::string escaped_column_name =
-            sancho::string::replace_all(column.column_name, "_", "__");
-        const std::string data_type = column.data_type;
+            sancho::string::replace_all(column.get_column_name(), "_", "__");
+        const std::string data_type = column.get_data_type();
         const std::string column_name = escaped_column_name + "\n" + data_type;
 
         int c = tab.tree->append_column(column_name,
-                                        model.cols[column.column_name]);
+                                        model.cols[column.get_column_name()]);
         Gtk::TreeViewColumn *tree_view_column = tab.tree->get_columns()[c - 1];
 
         tree_view_column->set_resizable();
 
-        tab.col_names[tree_view_column] = column.column_name;
+        tab.col_names[tree_view_column] = column.get_column_name();
     }
 
     unsigned row_i = 1;
@@ -491,7 +491,7 @@ void MainWindow::load_query_results(Gtk::ScrolledWindow *window) {
         r[model.cols["#"]] = std::to_string(row_i++);
 
         for (const auto &c : result->columns) {
-            r[model.cols[c.column_name]] =
+            r[model.cols[c.get_column_name()]] =
                 sancho::string::escape_db_data(row[i]);
 
             i++;

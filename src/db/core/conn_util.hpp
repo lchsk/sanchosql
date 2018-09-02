@@ -19,17 +19,20 @@ class OidMapping {
 
 class Column {
   public:
-    Column(const pqxx::oid &oid, const std::string &column_name,
+    Column(const std::string &column_name,
            const std::string &data_type, const std::string &char_length,
-           bool is_nullable)
-        : oid(oid), column_name(column_name), data_type(data_type),
-          char_length(char_length), is_nullable(is_nullable) {}
+           bool is_nullable);
 
-    pqxx::oid oid;
-    std::string column_name;
-    std::string data_type;
-    std::string char_length;
-    bool is_nullable;
+    const std::string& get_column_name() const noexcept;
+    const std::string& get_data_type() const noexcept;
+    const std::string& get_char_length() const noexcept;
+    bool is_nullable() const noexcept;
+
+private:
+    const std::string m_column_name;
+    const std::string m_data_type;
+    const std::string m_char_length;
+    const bool m_is_nullable;
 };
 
 class ColumnMetadata {

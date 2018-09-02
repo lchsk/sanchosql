@@ -35,7 +35,7 @@ std::vector<std::map<std::string, std::string>> QueryResult::as_map() const {
         std::map<std::string, std::string> m;
 
         for (unsigned j = 0; j < columns.size(); j++) {
-            m[columns[j].column_name] = data[i][j];
+            m[columns[j].get_column_name()] = data[i][j];
         }
 
         v.push_back(m);
@@ -191,7 +191,7 @@ void QueryResult::handle_results(const pqxx::result &result) {
         }
 
         columns.push_back(sancho::Column(
-            result.column_type(i), result.column_name(i),
+            result.column_name(i),
             sancho::get_data_type(result.column_type(i), *oid_names),
             char_length, is_nullable));
     }
