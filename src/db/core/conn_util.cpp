@@ -26,6 +26,24 @@ namespace sancho {
     {
         return m_is_nullable;
     }
+
+
+    ColumnMetadata::ColumnMetadata(const std::string &character_maximum_length,
+                   bool is_nullable)
+        : m_character_maximum_length(character_maximum_length),
+          m_is_nullable(is_nullable)
+    {};
+
+    const std::string& ColumnMetadata::get_character_maximum_length() const noexcept
+    {
+        return m_character_maximum_length;
+    }
+
+    bool ColumnMetadata::get_is_nullable() const noexcept
+    {
+        return m_is_nullable;
+    }
+
     }
 
 const std::string

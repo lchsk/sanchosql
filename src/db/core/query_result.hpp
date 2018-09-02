@@ -41,7 +41,7 @@ struct QueryResult {
     void run(pqxx::connection &conn, const sancho::QueryType &query_type,
              const std::string &query, const std::string &columns_query);
 
-    const std::map<std::string, sancho::ColumnMetadata>
+    const std::map<std::string, sancho::db::ColumnMetadata>
     get_columns_data(pqxx::connection &conn,
                      const std::string &columns_query) const;
 
@@ -69,7 +69,7 @@ struct QueryResult {
     // some kind of SELECT query that didn't error.
     bool show_results;
 
-    std::map<std::string, sancho::ColumnMetadata> columns_data;
+    std::map<std::string, sancho::db::ColumnMetadata> columns_data;
 
     std::shared_ptr<std::unordered_map<pqxx::oid, sancho::OidMapping>>
         oid_names;

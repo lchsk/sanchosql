@@ -35,18 +35,21 @@ private:
     const std::string m_char_length;
     const bool m_is_nullable;
 };
-    }
+
 
 class ColumnMetadata {
   public:
     ColumnMetadata(const std::string &character_maximum_length,
-                   bool is_nullable)
-        : character_maximum_length(character_maximum_length),
-          is_nullable(is_nullable){};
+                   bool is_nullable);
 
-    std::string character_maximum_length;
-    bool is_nullable;
+    const std::string& get_character_maximum_length() const noexcept;
+    bool get_is_nullable() const noexcept;
+
+private:
+    std::string m_character_maximum_length;
+    bool m_is_nullable;
 };
+    }
 
 const std::string
 get_data_type(const pqxx::oid oid,

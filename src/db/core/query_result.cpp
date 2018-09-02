@@ -44,7 +44,7 @@ std::vector<std::map<std::string, std::string>> QueryResult::as_map() const {
     return v;
 }
 
-const std::map<std::string, sancho::ColumnMetadata>
+    const std::map<std::string, sancho::db::ColumnMetadata>
 QueryResult::get_columns_data(pqxx::connection &conn,
                               const std::string &columns_query) const {
     // TODO: Make sure only SELECT can be run here
@@ -52,7 +52,7 @@ QueryResult::get_columns_data(pqxx::connection &conn,
     pqxx::result result = work.exec(columns_query);
     work.commit();
 
-    std::map<std::string, sancho::ColumnMetadata> columns;
+    std::map<std::string, sancho::db::ColumnMetadata> columns;
 
     // TODO: Handle cases when 'row' does not contain the columns mentioned
     // below
@@ -70,7 +70,7 @@ QueryResult::get_columns_data(pqxx::connection &conn,
             is_nullable = true;
         }
 
-        columns.emplace(column_name, sancho::ColumnMetadata(character_maximum_length, is_nullable));
+        columns.emplace(column_name, sancho::db::ColumnMetadata(character_maximum_length, is_nullable));
     }
 
     return columns;
@@ -186,8 +186,8 @@ void QueryResult::handle_results(const pqxx::result &result) {
 
         if (use_columns && IN_MAP(columns_data, result.column_name(i))) {
             char_length =
-                columns_data.at(result.column_name(i)).character_maximum_length;
-            is_nullable = columns_data.at(result.column_name(i)).is_nullable;
+                columns_data.at(result.column_name(i)).get_character_maximum_length();
+            is_nullable = columns_data.at(result.column_name(i)).get_is_nullable();
         }
 
         columns.push_back(sancho::db::Column(
