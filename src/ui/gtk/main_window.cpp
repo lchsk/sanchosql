@@ -2,11 +2,13 @@
 
 #include <glib.h>
 
-#include "system/files.hpp"
 #include "main_window.hpp"
-#include "string.hpp"
+#include "../../string.hpp"
+#include "../../system/files.hpp"
 
 namespace sancho {
+namespace ui {
+namespace gtk {
 MainWindow::MainWindow()
     : win_connections(nullptr), main_box(Gtk::ORIENTATION_VERTICAL),
       box_main_pane(Gtk::ORIENTATION_VERTICAL),
@@ -660,7 +662,7 @@ void MainWindow::on_browser_row_activated(const Gtk::TreeModel::Path &path,
 
     Gtk::TreeModel::Row current_row = *iter;
 
-    if (current_row[browser_model.type] == sancho::BrowserItemType::Header) {
+    if (current_row[browser_model.type] == BrowserItemType::Header) {
         return;
     }
 
@@ -885,13 +887,13 @@ void MainWindow::refresh_browser(
 
     Gtk::TreeModel::Row row = *(browser_store->append());
     row[browser_model.table] = "Tables";
-    row[browser_model.type] = sancho::BrowserItemType::Header;
+    row[browser_model.type] = BrowserItemType::Header;
 
     for (const std::string &table_name : tables) {
         Gtk::TreeModel::Row table_row =
             *(browser_store->append(row.children()));
         table_row[browser_model.table] = table_name;
-        table_row[browser_model.type] = sancho::BrowserItemType::Table;
+        table_row[browser_model.type] = BrowserItemType::Table;
     }
 
     browser.expand_all();
@@ -1315,7 +1317,7 @@ bool MainWindow::on_browser_button_released(GdkEventButton *button_event) {
         Gtk::TreeModel::Row current_row = *iter;
 
         if (current_row[browser_model.type] ==
-            sancho::BrowserItemType::Header) {
+            BrowserItemType::Header) {
             // gtkmm 3.22 only:
             // popup_browser_header.popup_at_pointer((GdkEvent*)
             // button_event);
@@ -1340,3 +1342,5 @@ void MainWindow::reset_browser() {
 }
 
 } // namespace sancho
+}
+}

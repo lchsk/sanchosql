@@ -5,13 +5,15 @@
 
 #include <gtkmm.h>
 
-#include "model/list_tab_model.hpp"
-#include "model/query_tab_model.hpp"
-#include "pg_conn.hpp"
-#include "ui/gtk/tab.hpp"
-#include "ui/gtk/win_new_connection.hpp"
+#include "../../model/list_tab_model.hpp"
+#include "../../model/query_tab_model.hpp"
+#include "../../pg_conn.hpp"
+#include "tab.hpp"
+#include "win_new_connection.hpp"
 
 namespace sancho {
+namespace ui {
+namespace gtk {
 enum class BrowserItemType { Header, Table };
 
 class MainMenu {
@@ -159,7 +161,7 @@ class MainWindow : public Gtk::Window {
         }
 
         Gtk::TreeModelColumn<Glib::ustring> table;
-        Gtk::TreeModelColumn<sancho::BrowserItemType> type;
+        Gtk::TreeModelColumn<BrowserItemType> type;
     };
 
     class ConnectionsModel : public Gtk::TreeModel::ColumnRecord {
@@ -308,5 +310,7 @@ class MainWindow : public Gtk::Window {
         tabs;
 };
 } // namespace sancho
+}
+}
 
 #endif

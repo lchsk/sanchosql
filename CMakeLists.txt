@@ -113,7 +113,7 @@ add_executable(${EXECUTABLE_NAME}
     src/model/list_tab_model.cpp
 
     # Windows
-    src/main_window.cpp
+
 
     # Resources
     src/resources.c
@@ -136,6 +136,7 @@ add_executable(${EXECUTABLE_NAME}
     src/ui/gtk/tab.cpp
     src/ui/gtk/number_entry.hpp
     src/ui/gtk/win_new_connection.cpp
+    src/ui/gtk/main_window.cpp
     )
 
 if ( CMAKE_COMPILER_IS_GNUCC )
@@ -165,6 +166,9 @@ target_link_libraries(
   sancho-db-core
   sancho-ui-gtk
   )
+
+target_link_libraries(sancho-ui-gtk sancho-system)
+
 cotire(${EXECUTABLE_NAME})
 
 # Installation

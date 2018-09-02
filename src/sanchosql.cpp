@@ -6,7 +6,7 @@
 #include <pqxx/pqxx>
 
 #include "config.hpp"
-#include "main_window.hpp"
+#include "ui/gtk/main_window.hpp"
 #include "pg_conn.hpp"
 
 template <typename T_ArgType>
@@ -60,7 +60,7 @@ int main(int argc, char *argv[]) {
             settings->property_gtk_theme_name().get_value().c_str());
 #endif
 
-    sancho::MainWindow main_window;
+    sancho::ui::gtk::MainWindow main_window;
 
     return app->run(main_window);
 }
