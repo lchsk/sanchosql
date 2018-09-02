@@ -3,9 +3,11 @@
 
 #include <gtkmm.h>
 
-#include "pg_conn.hpp"
+#include "../../pg_conn.hpp"
 
 namespace sancho {
+namespace ui {
+namespace gtk {
 class NewConnectionWindow : public Gtk::Window {
   public:
     NewConnectionWindow(BaseObjectType *cobject,
@@ -78,5 +80,7 @@ class NewConnectionWindow : public Gtk::Window {
     Gtk::Entry *text_password;
 };
 } // namespace sancho
+}
+}
 
 #endif

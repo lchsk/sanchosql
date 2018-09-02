@@ -9,7 +9,7 @@
 #include "model/query_tab_model.hpp"
 #include "pg_conn.hpp"
 #include "ui/gtk/tab.hpp"
-#include "win_new_connection.hpp"
+#include "ui/gtk/win_new_connection.hpp"
 
 namespace sancho {
 enum class BrowserItemType { Header, Table };
@@ -180,7 +180,7 @@ class MainWindow : public Gtk::Window {
   private:
     BrowserModel browser_model;
     ConnectionsModel connections_model;
-    sancho::NewConnectionWindow *win_connections;
+    sancho::ui::gtk::NewConnectionWindow *win_connections;
 
     Glib::RefPtr<Gtk::AccelGroup> group;
     MainMenu main_menu;

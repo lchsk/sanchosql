@@ -2,9 +2,11 @@
 
 #include "win_new_connection.hpp"
 
-#include "string.hpp"
+#include "../../string.hpp"
 
 namespace sancho {
+namespace ui {
+namespace gtk {
 NewConnectionWindow::NewConnectionWindow(
     BaseObjectType *cobject, const Glib::RefPtr<Gtk::Builder> &builder)
     : Gtk::Window(cobject), builder(builder) {
@@ -301,3 +303,5 @@ void NewConnectionWindow::reset_widgets() {
 
 void NewConnectionWindow::prepare_adding() { reset_widgets(); }
 } // namespace sancho
+}
+}

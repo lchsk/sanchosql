@@ -114,7 +114,6 @@ add_executable(${EXECUTABLE_NAME}
 
     # Windows
     src/main_window.cpp
-    src/win_new_connection.cpp
 
     # Resources
     src/resources.c
@@ -136,6 +135,7 @@ add_executable(${EXECUTABLE_NAME}
   add_library(sancho-ui-gtk
     src/ui/gtk/tab.cpp
     src/ui/gtk/number_entry.hpp
+    src/ui/gtk/win_new_connection.cpp
     )
 
 if ( CMAKE_COMPILER_IS_GNUCC )
