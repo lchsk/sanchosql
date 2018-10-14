@@ -17,6 +17,15 @@ class NewConnectionWindow : public Gtk::Window {
   private:
     enum class Mode { Adding, Editing };
 
+  const std::vector<std::string> sslmode_values = {
+                                                   "disable",
+                                                   "allow",
+                                                   "prefer",
+                                                   "require",
+                                                   "verify-ca",
+                                                   "verify-full",
+  };
+
     Mode mode;
     // Name of the connection currently being edited
     Glib::ustring edited_conn_name;
@@ -78,6 +87,7 @@ class NewConnectionWindow : public Gtk::Window {
     Gtk::Entry *text_db;
     Gtk::Entry *text_user;
     Gtk::Entry *text_password;
+  Gtk::ComboBoxText *combo_sslmode;
 };
 } // namespace sancho
 }

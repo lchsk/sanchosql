@@ -22,7 +22,7 @@ class Connections {
 
     void add(const Glib::ustring &name, const std::string &host,
              const std::string &user, const std::string &password,
-             const std::string &dbname, const std::string &port,
+             const std::string &dbname, const std::string &port, const std::string &sslmode,
              bool save_password);
 
     static Connections *instance() { return &ins; }
@@ -49,13 +49,13 @@ class Connections {
                                  const std::string &user,
                                  const std::string &password,
                                  const std::string &dbname,
-                                 const std::string &port, bool save_password);
+                                 const std::string &port, const std::string &sslmode, bool save_password);
 
     void update_conn(const Glib::ustring &old_conn_name,
                      const Glib::ustring &new_conn_name,
                      const std::string &host, const std::string &user,
                      const std::string &password, const std::string &dbname,
-                     const std::string &port, bool save_password);
+                     const std::string &port, const std::string &sslmode, bool save_password);
 
     bool any_fields_empty(const Glib::ustring &host, const Glib::ustring &port,
                           const Glib::ustring &db, const Glib::ustring &user,

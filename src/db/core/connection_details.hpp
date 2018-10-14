@@ -20,6 +20,7 @@ class ConnectionDetails {
     std::string password;
     std::string dbname;
     std::string port;
+    std::string sslmode;
     bool save_password;
 
     std::unique_ptr<std::vector<Glib::ustring>> schemas;

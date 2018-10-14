@@ -1,4 +1,5 @@
 #include <iostream>
+#include <cassert>
 
 #include "win_new_connection.hpp"
 
@@ -31,6 +32,7 @@ NewConnectionWindow::NewConnectionWindow(
     builder->get_widget("text_db", text_db);
     builder->get_widget("text_username", text_user);
     builder->get_widget("text_password", text_password);
+    builder->get_widget("combo_sslmode", combo_sslmode);
 
     // After widgets were loaded
     set_adding_mode();
@@ -77,6 +79,9 @@ NewConnectionWindow::NewConnectionWindow(
     text_password->signal_changed().connect(
         sigc::mem_fun(*this, &NewConnectionWindow::update_save_btn));
 
+    combo_sslmode->signal_changed().connect(
+        sigc::mem_fun(*this, &NewConnectionWindow::update_save_btn));
+
     tree_connections.signal_cursor_changed().connect(sigc::mem_fun(
         *this, &NewConnectionWindow::on_selected_connection_changed));
 
@@ -91,6 +96,10 @@ NewConnectionWindow::NewConnectionWindow(
     tree_connections.append_column("Postgres connections",
                                    connection_columns.col_name);
 
+    for (const auto& sslmode : sslmode_values) {
+      combo_sslmode->append(sslmode);
+    }
+
     show_all_children();
 
     int w, h;
@@ -104,13 +113,15 @@ void NewConnectionWindow::on_btn_save_clicked() {
             text_connection_name->get_text(), text_host->get_text(),
             text_user->get_text(), text_password->get_text(),
             text_db->get_text(), text_port->get_text(),
+            combo_sslmode->get_active_text(),
             checkbox_save_password->get_active());
     } else if (mode == Mode::Editing) {
         sancho::db::Connections::instance()->update_conn(
             edited_conn_name, text_connection_name->get_text(),
             text_host->get_text(), text_user->get_text(),
             text_password->get_text(), text_db->get_text(),
-            text_port->get_text(), checkbox_save_password->get_active());
+            text_port->get_text(), combo_sslmode->get_active_text(),
+            checkbox_save_password->get_active());
     }
 
     on_win_show();
@@ -239,6 +250,18 @@ void NewConnectionWindow::on_selected_connection_changed() {
     text_db->set_text(connection_details->dbname);
     text_port->set_text(connection_details->port);
 
+    std::string sslmode = connection_details->sslmode;
+
+    if (sslmode.empty())
+      sslmode = "prefer";
+
+    const auto sslmode_id = std::distance(sslmode_values.cbegin(),
+                                          std::find(sslmode_values.cbegin(),
+                                                    sslmode_values.cend(),
+                                                    sslmode)
+                                          );
+    combo_sslmode->set_active(sslmode_id);
+
     checkbox_save_password->set_active(connection_details->save_password);
 
     btn_del_connection->set_sensitive(true);
@@ -272,6 +295,7 @@ bool NewConnectionWindow::can_save_edited_connection() const {
         text_host->get_text(), text_user->get_text(), text_password->get_text(),
         // get_password(),
         text_db->get_text(), text_port->get_text(),
+        combo_sslmode->get_active_text(),
         checkbox_save_password->get_active());
 }
 
@@ -297,6 +321,12 @@ void NewConnectionWindow::reset_widgets() {
     text_db->set_text("");
     text_user->set_text("");
     text_password->set_text("");
+
+    // Use "prefer" by default
+    const auto sslmode_prefer_id = 2;
+    const std::string sslmode = sslmode_values[sslmode_prefer_id];
+    assert(sslmode == "prefer");
+    combo_sslmode->set_active(sslmode_prefer_id);
 
     reset_connection_status();
 }

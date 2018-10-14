@@ -69,12 +69,13 @@ void Connections::load_connections() {
         const Glib::ustring password = get_conn_value(group, "password");
         const Glib::ustring dbname = get_conn_value(group, "dbname");
         const Glib::ustring port = get_conn_value(group, "port");
+        const Glib::ustring sslmode = get_conn_value(group, "sslmode");
         const bool save_password = get_conn_value_bool(group, "save_password");
 
         if (sancho::string::is_empty(name))
             continue;
 
-        add(name, host, user, password, dbname, port, save_password);
+        add(name, host, user, password, dbname, port, sslmode, save_password);
 
         i++;
     }
@@ -114,6 +115,7 @@ void Connections::save_connections() {
         conn_file.set_string(group, "password", password);
         conn_file.set_string(group, "dbname", conn_details.second->dbname);
         conn_file.set_string(group, "port", conn_details.second->port);
+        conn_file.set_string(group, "sslmode", conn_details.second->sslmode);
         conn_file.set_boolean(group, "save_password",
                               conn_details.second->save_password);
 
@@ -126,6 +128,7 @@ void Connections::save_connections() {
 void Connections::add(const Glib::ustring &name, const std::string &host,
                       const std::string &user, const std::string &password,
                       const std::string &dbname, const std::string &port,
+                      const std::string &sslmode,
                       bool save_password) {
     auto conn = std::make_shared<sancho::db::ConnectionDetails>();
 
@@ -135,6 +138,7 @@ void Connections::add(const Glib::ustring &name, const std::string &host,
     conn->password = password;
     conn->dbname = dbname;
     conn->port = port;
+    conn->sslmode = sslmode;
     conn->save_password = save_password;
 
     connections[name] = conn;
@@ -145,7 +149,7 @@ void Connections::update_conn(const Glib::ustring &old_conn_name,
                               const std::string &host, const std::string &user,
                               const std::string &password,
                               const std::string &dbname,
-                              const std::string &port, bool save_password) {
+                              const std::string &port, const std::string &sslmode, bool save_password) {
     if (!exists(old_conn_name))
         return;
 
@@ -159,6 +163,7 @@ void Connections::update_conn(const Glib::ustring &old_conn_name,
     conn->password = password;
     conn->dbname = dbname;
     conn->port = port;
+    conn->sslmode = sslmode;
     conn->save_password = save_password;
 
     connections[new_conn_name] = conn;
@@ -187,7 +192,7 @@ bool Connections::can_update_conn_details(
     const Glib::ustring &old_conn_name, const Glib::ustring &new_conn_name,
     const std::string &host, const std::string &user,
     const std::string &password, const std::string &dbname,
-    const std::string &port, bool save_password) {
+    const std::string &port, const std::string &sslmode, bool save_password) {
     if (any_fields_empty(host, port, dbname, user, new_conn_name))
         return false;
 
@@ -204,7 +209,7 @@ bool Connections::can_update_conn_details(
 
     if (conn->host != host || conn->user != user ||
         conn->password != password || conn->save_password != save_password ||
-        conn->dbname != dbname || conn->port != port)
+        conn->dbname != dbname || conn->port != port || conn->sslmode != sslmode)
         return true;
 
     return false;

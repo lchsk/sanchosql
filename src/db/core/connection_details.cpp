@@ -25,7 +25,7 @@ const std::string ConnectionDetails::postgres_string_(bool include_password) {
         conn << "****";
     }
 
-    conn << " dbname = " << dbname << " port = " << port;
+    conn << " dbname = " << dbname << " port = " << port << " sslmode = " << sslmode;
 
     return conn.str();
 }
