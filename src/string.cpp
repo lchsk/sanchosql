@@ -18,6 +18,24 @@ std::string replace_all(std::string str, const std::string &from,
     return str;
 }
 
+
+  std::vector<std::string> split(std::string str, const std::string& delimiter) {
+    std::size_t pos = 0;
+    std::string token;
+
+    std::vector<std::string> tokens;
+
+    while ((pos = str.find(delimiter)) != std::string::npos) {
+      token = str.substr(0, pos);
+      tokens.push_back(token);
+      str.erase(0, pos + delimiter.length());
+    }
+
+    tokens.push_back(str);
+
+    return tokens;
+  }
+
 std::string escape_sql(std::string str) {
     return sancho::string::replace_all(str, "'", "''");
 }

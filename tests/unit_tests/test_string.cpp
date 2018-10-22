@@ -55,6 +55,19 @@ TEST(Util, in_map_macro)
     EXPECT_FALSE(IN_MAP(m, "test"));
 }
 
+TEST(Util, split)
+{
+  const std::vector<std::pair<std::string, std::vector<std::string>>> data = {
+    {"1, 2, 3", std::vector<std::string>{"1", " 2", " 3"}},
+    {"1,2,3", std::vector<std::string>{"1", "2", "3"}},
+    {"1 2 3", std::vector<std::string>{"1 2 3"}},
+  };
+
+  for (const auto& str : data) {
+    ASSERT_EQ(sancho::string::split(str.first, ","), str.second);
+  }
+}
+
 TEST(Query, get_query)
 {
     const std::vector<std::pair<Glib::ustring, std::string>> data = {

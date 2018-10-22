@@ -1,6 +1,8 @@
 #ifndef STRING_HPP
 #define STRING_HPP
 
+#include <vector>
+
 #include <glibmm.h>
 
 #define IN_MAP(map, item) (map.find(item) != map.end())
@@ -13,6 +15,7 @@ const std::string EMPTY_DB_STRING = "\"\"";
 std::string replace_all(std::string str, const std::string &from,
                         const std::string &to);
 
+std::vector<std::string> split(std::string str, const std::string& delimiter);
 std::string escape_sql(std::string str);
 std::string escape_db_data(std::string str);
 std::string prepare_sql_value(std::string str, bool handle_strings = false);
