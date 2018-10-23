@@ -73,7 +73,6 @@ class SimpleTab : public AbstractTab {
   public:
     SimpleTab(const Glib::ustring &tab_name,
               std::shared_ptr<sancho::db::SimpleTabModel> &model);
-
     // Browse box
     Gtk::Box *browse_box;
     Gtk::Button *btn_insert;
@@ -81,6 +80,8 @@ class SimpleTab : public AbstractTab {
     Gtk::ToolButton *btn_accept;
     Gtk::ToolButton *btn_refresh;
     Gtk::ToolButton *btn_primary_key_warning;
+    Gtk::Entry *entry_column_mask;
+
     Gtk::Button *btn_prev;
     Gtk::Button *btn_next;
     Gtk::Label *label_offset;
@@ -89,7 +90,6 @@ class SimpleTab : public AbstractTab {
     sancho::ui::gtk::NumberEntry *number_limit;
     Gtk::TreeView *tree;
     Gtk::ScrolledWindow *data_scrolled_window;
-
     Gtk::Menu popup;
 
     Gtk::MenuItem *popup_item_delete_rows;

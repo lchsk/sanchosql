@@ -1,10 +1,11 @@
 #include <iostream>
 
+#include <algorithm>
 #include <glib.h>
 
-#include "main_window.hpp"
 #include "../../string.hpp"
 #include "../../system/files.hpp"
+#include "main_window.hpp"
 
 namespace sancho {
 namespace ui {
@@ -237,21 +238,22 @@ void MainWindow::on_win_connections_hide() {
     refresh_tree_connections();
 }
 
-	sancho::db::SimpleTabModel &
+sancho::db::SimpleTabModel &
 MainWindow::get_simple_tab_model(Gtk::ScrolledWindow *win) {
-        return static_cast<sancho::db::SimpleTabModel &>(*(tab_models[win]));
+    return static_cast<sancho::db::SimpleTabModel &>(*(tab_models[win]));
 }
 
-    sancho::db::QueryTabModel &
+sancho::db::QueryTabModel &
 MainWindow::get_query_tab_model(Gtk::ScrolledWindow *win) {
-        return static_cast<sancho::db::QueryTabModel &>(*(tab_models[win]));
+    return static_cast<sancho::db::QueryTabModel &>(*(tab_models[win]));
 }
 
-    sancho::ui::gtk::SimpleTab &MainWindow::get_simple_tab(Gtk::ScrolledWindow *win) {
-        return static_cast<sancho::ui::gtk::SimpleTab &>(*(tabs[win]));
+sancho::ui::gtk::SimpleTab &
+MainWindow::get_simple_tab(Gtk::ScrolledWindow *win) {
+    return static_cast<sancho::ui::gtk::SimpleTab &>(*(tabs[win]));
 }
 
-    sancho::ui::gtk::QueryTab &MainWindow::get_query_tab(Gtk::ScrolledWindow *win) {
+sancho::ui::gtk::QueryTab &MainWindow::get_query_tab(Gtk::ScrolledWindow *win) {
     return static_cast<sancho::ui::gtk::QueryTab &>(*(tabs[win]));
 }
 
@@ -308,19 +310,56 @@ void MainWindow::load_list_results(Gtk::ScrolledWindow *window) {
     tree_view_column->add_attribute(*tree_view_column->get_first_cell(),
                                     "background-rgba", *model.col_color);
 
+    std::vector<std::string> column_mask_list = sancho::string::split(
+        sancho::string::replace_all(tab.entry_column_mask->get_text(), " ", ""),
+        ",");
+
+    std::set<std::string> column_mask;
+
+    std::copy_if(column_mask_list.cbegin(), column_mask_list.cend(),
+                 std::inserter(column_mask, column_mask.end()),
+                 [](const auto &s) { return !s.empty(); });
+
+    if (column_mask.empty()) {
+        for (const auto &column : result->columns) {
+            column_mask.insert(column.get_column_name());
+        }
+    }
+
+    // Add Primary Keys to the list of columns (mask)
+    for (const auto &column : result->columns) {
+        const std::string col = column.get_column_name();
+
+        if (model.is_part_of_pk(col)) {
+            column_mask.insert(col);
+        }
+    }
+
     // Column records must be added before setting the model
     for (const auto &column : result->columns) {
+        const std::string column_name = column.get_column_name();
+
+        if (column_mask.find(column_name) == column_mask.end()) {
+            continue;
+        }
+
         Gtk::TreeModelColumn<Glib::ustring> col;
 
-        model.cols[column.get_column_name()] = col;
+        model.cols[column_name] = col;
 
-        tab.cr->add(model.cols[column.get_column_name()]);
+        tab.cr->add(model.cols[column_name]);
     }
 
     tab.list_store = Gtk::ListStore::create(*(tab.cr));
     tab.tree->set_model(tab.list_store);
 
     for (const auto &column : result->columns) {
+        const std::string column_name2 = column.get_column_name();
+
+        if (column_mask.find(column_name2) == column_mask.end()) {
+            continue;
+        }
+
         const std::string escaped_column_name =
             sancho::string::replace_all(column.get_column_name(), "_", "__");
         const std::string data_type = column.get_data_type();
@@ -342,7 +381,7 @@ void MainWindow::load_list_results(Gtk::ScrolledWindow *window) {
         }
 
         const int c = tab.tree->append_column_editable(
-                                                       column_name.str(), model.cols[column.get_column_name()]);
+            column_name.str(), model.cols[column.get_column_name()]);
 
         Gtk::TreeViewColumn *tree_view_column = tab.tree->get_columns()[c - 1];
 
@@ -365,8 +404,8 @@ void MainWindow::load_list_results(Gtk::ScrolledWindow *window) {
 
         if (crtext) {
             auto signal_edited_slot =
-                sigc::bind<sancho::ui::gtk::SimpleTab *, sancho::db::SimpleTabModel *,
-                           const std::string>(
+                sigc::bind<sancho::ui::gtk::SimpleTab *,
+                           sancho::db::SimpleTabModel *, const std::string>(
                     sigc::mem_fun(
                         *this, &MainWindow::cellrenderer_validated_on_edited),
                     &tab, &model, column.get_column_name());
@@ -374,8 +413,8 @@ void MainWindow::load_list_results(Gtk::ScrolledWindow *window) {
             crtext->signal_edited().connect(signal_edited_slot);
 
             auto editing_started_slot =
-                sigc::bind<sancho::ui::gtk::SimpleTab *, sancho::db::SimpleTabModel *,
-                           const std::string>(
+                sigc::bind<sancho::ui::gtk::SimpleTab *,
+                           sancho::db::SimpleTabModel *, const std::string>(
                     sigc::mem_fun(
                         *this,
                         &MainWindow::cellrenderer_validated_on_editing_started),
@@ -414,6 +453,12 @@ void MainWindow::load_list_results(Gtk::ScrolledWindow *window) {
         r[*model.col_color] = model.col_white;
 
         for (const auto &c : result->columns) {
+            const std::string column_name = c.get_column_name();
+
+            if (column_mask.find(column_name) == column_mask.end()) {
+                continue;
+            }
+
             r[model.cols[c.get_column_name()]] =
                 sancho::string::escape_db_data(row[i]);
 
@@ -679,8 +724,8 @@ void MainWindow::on_browser_row_activated(const Gtk::TreeModel::Path &path,
     auto shared_tab_model = std::make_shared<sancho::db::SimpleTabModel>(
         current_connection, table_name, schema_name);
 
-    auto tab =
-        std::make_shared<sancho::ui::gtk::SimpleTab>(table_name, shared_tab_model);
+    auto tab = std::make_shared<sancho::ui::gtk::SimpleTab>(table_name,
+                                                            shared_tab_model);
     Gtk::ScrolledWindow *window = tab->tree_scrolled_window;
 
     tab->tree->get_selection()->set_mode(Gtk::SELECTION_MULTIPLE);
@@ -691,19 +736,21 @@ void MainWindow::on_browser_row_activated(const Gtk::TreeModel::Path &path,
     tab->popup_item_delete_rows->set_sensitive(
         shared_tab_model->has_primary_key());
 
-    auto slot_delete = sigc::bind<Gtk::ScrolledWindow *, sancho::ui::gtk::SimpleTab *,
-                                  sancho::db::SimpleTabModel *>(
-        sigc::mem_fun(*this, &MainWindow::on_menu_file_popup_generic), window,
-        tab.get(), shared_tab_model.get());
+    auto slot_delete =
+        sigc::bind<Gtk::ScrolledWindow *, sancho::ui::gtk::SimpleTab *,
+                   sancho::db::SimpleTabModel *>(
+            sigc::mem_fun(*this, &MainWindow::on_menu_file_popup_generic),
+            window, tab.get(), shared_tab_model.get());
     tab->popup_item_delete_rows->signal_activate().connect(slot_delete);
     tab->popup.append(*tab->popup_item_delete_rows);
 
     tab->popup.accelerate(*this);
     tab->popup.show_all();
 
-    auto slot_popup = sigc::bind<sancho::ui::gtk::SimpleTab *, sancho::db::SimpleTabModel *>(
-        sigc::mem_fun(*this, &MainWindow::on_list_press), tab.get(),
-        shared_tab_model.get());
+    auto slot_popup =
+        sigc::bind<sancho::ui::gtk::SimpleTab *, sancho::db::SimpleTabModel *>(
+            sigc::mem_fun(*this, &MainWindow::on_list_press), tab.get(),
+            shared_tab_model.get());
 
     tab->tree->signal_button_release_event().connect(slot_popup);
 
@@ -714,7 +761,7 @@ void MainWindow::on_browser_row_activated(const Gtk::TreeModel::Path &path,
     sancho::db::SimpleTabModel *simple_tab_model = shared_tab_model.get();
 
     tab->btn_accept->signal_clicked().connect(
-                                              sigc::bind<sancho::ui::gtk::SimpleTab *, sancho::db::SimpleTabModel *>(
+        sigc::bind<sancho::ui::gtk::SimpleTab *, sancho::db::SimpleTabModel *>(
             sigc::mem_fun(*this, &MainWindow::on_btn_accept_changes_clicked),
             simple_tab, simple_tab_model));
 
@@ -810,7 +857,7 @@ void MainWindow::refresh_connections_list() {
     unsigned i = 1, selected = 0;
 
     for (const auto &details :
-             sancho::db::Connections::instance()->get_connections()) {
+         sancho::db::Connections::instance()->get_connections()) {
         combo_connections.append(details.second->name);
 
         if (!name.empty() && details.second->name == name) {
@@ -849,7 +896,8 @@ void MainWindow::on_connection_changed() {
 
     combo_schemas.set_active(selected_id);
 
-    sancho::db::Connections::instance()->current_connection = current_connection;
+    sancho::db::Connections::instance()->current_connection =
+        current_connection;
 
     refresh_browser(pc);
 }
@@ -867,7 +915,7 @@ void MainWindow::refresh_tree_connections() {
     store_connections->clear();
 
     for (const auto &details :
-             sancho::db::Connections::instance()->get_connections()) {
+         sancho::db::Connections::instance()->get_connections()) {
         Gtk::TreeModel::Row row = *(store_connections->append());
 
         row[connections_model.name] = details.second->name;
@@ -878,7 +926,7 @@ void MainWindow::refresh_tree_connections() {
 }
 
 void MainWindow::refresh_browser(
-                                 const std::shared_ptr<sancho::db::PostgresConnection> &pc) {
+    const std::shared_ptr<sancho::db::PostgresConnection> &pc) {
     browser_store->clear();
 
     const Glib::ustring schema_name = combo_schemas.get_active_text();
@@ -966,7 +1014,7 @@ void MainWindow::cellrenderer_validated_on_edited(
 
             if (!result->success) {
                 sancho::ui::gtk::insert_log_message(tab->log_buffer,
-                                           result->error_message);
+                                                    result->error_message);
 
                 show_warning("Changing primary key failed",
                              result->error_message);
@@ -1010,12 +1058,13 @@ void MainWindow::cellrenderer_validated_on_edited(
     model->pk_hist.clear();
 }
 
-    void MainWindow::on_btn_accept_changes_clicked(sancho::ui::gtk::SimpleTab *tab,
-                                               sancho::db::SimpleTabModel *model) {
+void MainWindow::on_btn_accept_changes_clicked(
+    sancho::ui::gtk::SimpleTab *tab, sancho::db::SimpleTabModel *model) {
     std::shared_ptr<sancho::QueryResult> result = model->accept_changes();
 
     if (!result->success) {
-        sancho::ui::gtk::insert_log_message(tab->log_buffer, result->error_message);
+        sancho::ui::gtk::insert_log_message(tab->log_buffer,
+                                            result->error_message);
 
         show_warning("Committing changes failed", result->error_message);
 
@@ -1045,7 +1094,7 @@ void MainWindow::cellrenderer_validated_on_edited(
                 }
             } else {
                 sancho::ui::gtk::insert_log_message(tab->log_buffer,
-                                           result->error_message);
+                                                    result->error_message);
 
                 show_warning("Inserting new row failed", result->error_message);
             }
@@ -1060,7 +1109,7 @@ Gtk::ScrolledWindow *MainWindow::get_current_swindow() {
         notebook.get_nth_page(notebook.get_current_page()));
 }
 
-    sancho::ui::gtk::TabType MainWindow::get_tab_type(Gtk::ScrolledWindow *win) {
+sancho::ui::gtk::TabType MainWindow::get_tab_type(Gtk::ScrolledWindow *win) {
     if (!IN_MAP(tabs, win)) {
         return sancho::ui::gtk::TabType::Invalid;
     }
@@ -1114,10 +1163,10 @@ bool MainWindow::on_key_press_event(GdkEventKey *key_event) {
     return Gtk::Window::on_key_press_event(key_event);
 }
 
-    std::shared_ptr<sancho::db::PostgresConnection> MainWindow::connect(
-																const std::shared_ptr<sancho::db::ConnectionDetails> &conn_details) {
-        std::shared_ptr<sancho::db::PostgresConnection> pc =
-            std::make_shared<sancho::db::PostgresConnection>(conn_details);
+std::shared_ptr<sancho::db::PostgresConnection> MainWindow::connect(
+    const std::shared_ptr<sancho::db::ConnectionDetails> &conn_details) {
+    std::shared_ptr<sancho::db::PostgresConnection> pc =
+        std::make_shared<sancho::db::PostgresConnection>(conn_details);
     pc->init_connection();
 
     return pc;
@@ -1230,7 +1279,7 @@ void MainWindow::on_menu_file_popup_generic(Gtk::ScrolledWindow *window,
                 load_list_results(window);
             } else {
                 sancho::ui::gtk::insert_log_message(tab->log_buffer,
-                                           result->error_message);
+                                                    result->error_message);
 
                 show_warning("Deleting rows failed", result->error_message);
             }
@@ -1260,14 +1309,15 @@ void MainWindow::on_browser_refresh_clicked() {
     refresh_browser(pc);
 }
 
-    std::shared_ptr<sancho::db::ConnectionDetails> &
+std::shared_ptr<sancho::db::ConnectionDetails> &
 MainWindow::find_current_connection() {
     const Glib::ustring connection_name = combo_connections.get_active_text();
 
-    return sancho::db::Connections::instance()->find_connection(connection_name);
+    return sancho::db::Connections::instance()->find_connection(
+        connection_name);
 }
 
-    std::shared_ptr<sancho::db::PostgresConnection> MainWindow::handle_connect() {
+std::shared_ptr<sancho::db::PostgresConnection> MainWindow::handle_connect() {
     auto current_connection = find_current_connection();
 
     if (current_connection == sancho::db::Connections::instance()->end())
@@ -1316,8 +1366,7 @@ bool MainWindow::on_browser_button_released(GdkEventButton *button_event) {
 
         Gtk::TreeModel::Row current_row = *iter;
 
-        if (current_row[browser_model.type] ==
-            BrowserItemType::Header) {
+        if (current_row[browser_model.type] == BrowserItemType::Header) {
             // gtkmm 3.22 only:
             // popup_browser_header.popup_at_pointer((GdkEvent*)
             // button_event);
