@@ -1158,6 +1158,18 @@ bool MainWindow::on_key_press_event(GdkEventKey *key_event) {
         }
 
         return true;
+    } else if (key_event->keyval == GDK_KEY_Return) {
+        Gtk::ScrolledWindow *window = get_current_swindow();
+        const sancho::ui::gtk::TabType type = get_tab_type(window);
+
+        if (type == sancho::ui::gtk::TabType::List) {
+          sancho::ui::gtk::SimpleTab &tab = get_simple_tab(window);
+
+          if (tab.entry_column_mask->is_focus()) {
+            on_reload_table_clicked(window);
+            return true;
+          }
+        }
     }
 
     return Gtk::Window::on_key_press_event(key_event);
