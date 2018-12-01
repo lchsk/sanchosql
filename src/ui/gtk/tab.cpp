@@ -168,7 +168,8 @@ SimpleTab::SimpleTab(const Glib::ustring &tab_name,
         "The table doesn't have primary key");
 
     entry_column_mask = Gtk::manage(new Gtk::Entry);
-    entry_column_mask->set_tooltip_text("Provide column names to show");
+    entry_column_mask->set_tooltip_text("List of column names to show");
+    entry_column_mask->set_placeholder_text("List of column names to show");
 
     toolbar->append(*btn_refresh);
     toolbar->append(*btn_accept);
