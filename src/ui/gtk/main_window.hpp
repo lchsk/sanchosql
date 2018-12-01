@@ -10,6 +10,7 @@
 #include "../../db/pg/pg_conn.hpp"
 #include "tab.hpp"
 #include "win_new_connection.hpp"
+#include "common_ui.hpp"
 
 namespace sancho {
 namespace ui {
@@ -187,15 +188,15 @@ class MainWindow : public Gtk::Window {
     Glib::RefPtr<Gtk::AccelGroup> group;
     MainMenu main_menu;
 
-    sancho::db::SimpleTabModel &get_simple_tab_model(Gtk::ScrolledWindow *);
-    sancho::db::QueryTabModel &get_query_tab_model(Gtk::ScrolledWindow *);
+  sancho::db::SimpleTabModel &get_simple_tab_model(sancho::ui::gtk::TabWindow*);
+    sancho::db::QueryTabModel &get_query_tab_model(sancho::ui::gtk::TabWindow*);
 
-    sancho::ui::gtk::SimpleTab &get_simple_tab(Gtk::ScrolledWindow *);
-    sancho::ui::gtk::QueryTab &get_query_tab(Gtk::ScrolledWindow *);
+    sancho::ui::gtk::SimpleTab &get_simple_tab(sancho::ui::gtk::TabWindow *);
+    sancho::ui::gtk::QueryTab &get_query_tab(sancho::ui::gtk::TabWindow *);
 
     Gtk::ScrolledWindow *get_current_swindow();
 
-    sancho::ui::gtk::TabType get_tab_type(Gtk::ScrolledWindow *win);
+    sancho::ui::gtk::TabType get_tab_type(sancho::ui::gtk::TabWindow *win);
 
     void cellrenderer_validated_on_edited(const Glib::ustring &path_string,
                                           const Glib::ustring &new_text,
