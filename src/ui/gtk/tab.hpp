@@ -75,11 +75,11 @@ class SimpleTab : public AbstractTab {
               std::shared_ptr<sancho::db::SimpleTabModel> &model);
     // Browse box
     Gtk::Box *browse_box;
-    Gtk::Button *btn_insert;
     // Accept DB changes
     Gtk::ToolButton *btn_accept;
     Gtk::ToolButton *btn_refresh;
     Gtk::ToolButton *btn_primary_key_warning;
+    Gtk::ToolButton *btn_insert;
     Gtk::Entry *entry_column_mask;
 
     Gtk::Button *btn_prev;

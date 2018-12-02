@@ -167,12 +167,17 @@ SimpleTab::SimpleTab(const Glib::ustring &tab_name,
     btn_primary_key_warning->set_tooltip_text(
         "The table doesn't have primary key");
 
+    btn_insert = Gtk::manage(new Gtk::ToolButton);
+    btn_insert->set_icon_name("add");
+    btn_insert->set_tooltip_text("Insert a new row");
+
     entry_column_mask = Gtk::manage(new Gtk::Entry);
     entry_column_mask->set_tooltip_text("List of column names to show");
     entry_column_mask->set_placeholder_text("List of column names to show");
 
     toolbar->append(*btn_refresh);
     toolbar->append(*btn_accept);
+    toolbar->append(*btn_insert);
     toolbar->append(*btn_primary_key_warning);
 
     tree_scrolled_window = Gtk::manage(new Gtk::ScrolledWindow);
@@ -206,8 +211,6 @@ SimpleTab::SimpleTab(const Glib::ustring &tab_name,
 
     box = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
 
-    btn_insert = Gtk::manage(new Gtk::Button);
-    btn_insert->set_label("Insert");
     btn_prev = Gtk::manage(new Gtk::Button);
     btn_prev->set_label("<");
     btn_next = Gtk::manage(new Gtk::Button);
@@ -223,7 +226,6 @@ SimpleTab::SimpleTab(const Glib::ustring &tab_name,
     number_limit = Gtk::manage(new sancho::ui::gtk::NumberEntry);
     browse_box = Gtk::manage(new Gtk::Box);
 
-    browse_box->pack_start(*btn_insert);
     browse_box->pack_start(*btn_prev);
     browse_box->pack_start(*btn_next);
 
