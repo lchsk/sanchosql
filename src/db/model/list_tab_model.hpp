@@ -30,9 +30,8 @@ class SimpleTabModel : public AbstractTabModel {
 
     void prev_page() { offset -= std::min(offset, limit); }
 
-    std::string get_limit() const { return std::to_string(limit); }
-
-    std::string get_offset() const { return std::to_string(offset); }
+    unsigned get_limit() const { return limit; }
+    unsigned get_offset() const { return offset; }
 
     const std::string &get_sort_column() const { return sort_column; }
 
@@ -93,7 +92,7 @@ class SimpleTabModel : public AbstractTabModel {
     std::string sort_column;
     ColumnSortType sort_type;
 
-    static const unsigned DEFAULT_LIMIT = 30;
+    static const unsigned DEFAULT_LIMIT = 100;
     static const unsigned DEFAULT_OFFSET = 0;
 };
 } // namespace sancho

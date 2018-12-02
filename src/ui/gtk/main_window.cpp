@@ -287,6 +287,11 @@ void MainWindow::load_list_results(Gtk::ScrolledWindow *window) {
 
     tab.col_names.clear();
     tab.tree->remove_all_columns();
+    tab.number_offset->set_text(std::to_string(model.get_offset()));
+    tab.number_limit->set_text(std::to_string(model.get_limit()));
+
+    tab.btn_prev->set_sensitive(model.get_offset() > 0);
+    tab.btn_next->set_sensitive(result->data.size() >= model.get_limit());
 
     tab.tree->set_grid_lines(
         Gtk::TreeViewGridLines::TREE_VIEW_GRID_LINES_VERTICAL);
@@ -560,8 +565,8 @@ void MainWindow::on_prev_results_page_clicked(Gtk::ScrolledWindow *window) {
 
     tab_model.prev_page();
 
-    tab.number_offset->set_text(tab_model.get_offset());
-    tab.number_limit->set_text(tab_model.get_limit());
+    tab.number_offset->set_text(std::to_string(tab_model.get_offset()));
+    tab.number_limit->set_text(std::to_string(tab_model.get_limit()));
 
     load_list_results(window);
 }
@@ -575,8 +580,8 @@ void MainWindow::on_next_results_page_clicked(Gtk::ScrolledWindow *window) {
 
     tab_model.next_page();
 
-    tab.number_offset->set_text(tab_model.get_offset());
-    tab.number_limit->set_text(tab_model.get_limit());
+    tab.number_offset->set_text(std::to_string(tab_model.get_offset()));
+    tab.number_limit->set_text(std::to_string(tab_model.get_limit()));
 
     load_list_results(window);
 }
@@ -588,8 +593,8 @@ void MainWindow::on_reload_table_clicked(Gtk::ScrolledWindow *window) {
     tab_model.set_offset(tab.number_offset->get_text());
     tab_model.set_limit(tab.number_limit->get_text());
 
-    tab.number_offset->set_text(tab_model.get_offset());
-    tab.number_limit->set_text(tab_model.get_limit());
+    tab.number_offset->set_text(std::to_string(tab_model.get_offset()));
+    tab.number_limit->set_text(std::to_string(tab_model.get_limit()));
 
     load_list_results(window);
 }
