@@ -171,6 +171,14 @@ SimpleTab::SimpleTab(const Glib::ustring &tab_name,
     btn_insert->set_icon_name("add");
     btn_insert->set_tooltip_text("Insert a new row");
 
+    btn_prev = Gtk::manage(new Gtk::ToolButton);
+    btn_prev->set_icon_name("previous");
+    btn_prev->set_tooltip_text("Previous page of results");
+
+    btn_next = Gtk::manage(new Gtk::ToolButton);
+    btn_next->set_icon_name("next");
+    btn_next->set_tooltip_text("Next page of results");
+
     entry_column_mask = Gtk::manage(new Gtk::Entry);
     entry_column_mask->set_tooltip_text("List of column names to show");
     entry_column_mask->set_placeholder_text("List of column names to show");
@@ -178,6 +186,8 @@ SimpleTab::SimpleTab(const Glib::ustring &tab_name,
     toolbar->append(*btn_refresh);
     toolbar->append(*btn_accept);
     toolbar->append(*btn_insert);
+    toolbar->append(*btn_prev);
+    toolbar->append(*btn_next);
     toolbar->append(*btn_primary_key_warning);
 
     tree_scrolled_window = Gtk::manage(new Gtk::ScrolledWindow);
@@ -211,11 +221,6 @@ SimpleTab::SimpleTab(const Glib::ustring &tab_name,
 
     box = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
 
-    btn_prev = Gtk::manage(new Gtk::Button);
-    btn_prev->set_label("<");
-    btn_next = Gtk::manage(new Gtk::Button);
-    btn_next->set_label(">");
-
     label_offset = Gtk::manage(new Gtk::Label);
     label_offset->set_text("From:");
 
@@ -225,9 +230,6 @@ SimpleTab::SimpleTab(const Glib::ustring &tab_name,
     number_offset = Gtk::manage(new sancho::ui::gtk::NumberEntry);
     number_limit = Gtk::manage(new sancho::ui::gtk::NumberEntry);
     browse_box = Gtk::manage(new Gtk::Box);
-
-    browse_box->pack_start(*btn_prev);
-    browse_box->pack_start(*btn_next);
 
     browse_box->pack_start(*label_offset);
     browse_box->pack_start(*number_offset);

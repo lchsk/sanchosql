@@ -80,10 +80,10 @@ class SimpleTab : public AbstractTab {
     Gtk::ToolButton *btn_refresh;
     Gtk::ToolButton *btn_primary_key_warning;
     Gtk::ToolButton *btn_insert;
+    Gtk::ToolButton *btn_prev;
+    Gtk::ToolButton *btn_next;
     Gtk::Entry *entry_column_mask;
 
-    Gtk::Button *btn_prev;
-    Gtk::Button *btn_next;
     Gtk::Label *label_offset;
     Gtk::Label *label_limit;
     sancho::ui::gtk::NumberEntry *number_offset;
