@@ -18,4 +18,12 @@ Master: [![Build Status](https://travis-ci.org/lchsk/sanchosql.svg?branch=master
 
 On Ubuntu: `sudo apt install libpqxx-dev libgtkmm-3.0-dev libgtksourceviewmm-3.0-dev libxml2-utils`
 
+```
+mkdir build
+cd build
+cmake ..
+make -j
+./sanchosql
+```
+
 
