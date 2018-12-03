@@ -273,13 +273,17 @@ void MainWindow::load_list_results(Gtk::ScrolledWindow *window) {
     sancho::ui::gtk::SimpleTab &tab = get_simple_tab(window);
     sancho::db::SimpleTabModel &model = get_simple_tab_model(window);
 
+    model.set_filter(tab.entry_filter->get_text());
+
     std::shared_ptr<sancho::QueryResult> result =
         pc.run_query(sancho::QueryType::NonTransaction, model.get_query(),
                      model.get_columns_query());
 
     sancho::ui::gtk::insert_log_message(tab.log_buffer, result->get_message());
 
-    if (!result->success) {
+    if (result->success) {
+        tab.data_scrolled_window->show();
+    } else {
         tab.data_scrolled_window->hide();
 
         return;
@@ -1170,7 +1174,7 @@ bool MainWindow::on_key_press_event(GdkEventKey *key_event) {
         if (type == sancho::ui::gtk::TabType::List) {
           sancho::ui::gtk::SimpleTab &tab = get_simple_tab(window);
 
-          if (tab.entry_column_mask->is_focus()) {
+          if (tab.entry_column_mask->is_focus() || tab.entry_filter->is_focus()) {
             on_reload_table_clicked(window);
             return true;
           }

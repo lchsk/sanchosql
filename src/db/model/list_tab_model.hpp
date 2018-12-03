@@ -21,6 +21,7 @@ class SimpleTabModel : public AbstractTabModel {
     void set_limit(const std::string &p_limit);
     void set_offset(const std::string &p_offset);
     void set_sort(const std::string &p_sort_column);
+    void set_filter(const std::string &p_filter);
 
     Gtk::SortType get_sort_type() const;
 
@@ -55,7 +56,7 @@ class SimpleTabModel : public AbstractTabModel {
 
     unsigned db_rows_cnt;
 
-    const std::string get_query() const;
+	const std::string get_query() const;
     const std::string get_columns_query() const;
 
     // PK currently being edited
@@ -85,6 +86,7 @@ class SimpleTabModel : public AbstractTabModel {
     const Glib::ustring table_name;
     const Glib::ustring schema_name;
     const std::vector<sancho::db::PrimaryKey> primary_key;
+    std::string query_filter;
 
     unsigned limit;
     unsigned offset;

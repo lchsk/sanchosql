@@ -44,6 +44,10 @@ void SimpleTabModel::set_offset(const std::string &p_offset) {
     }
 }
 
+void SimpleTabModel::set_filter(const std::string &p_filter) {
+    query_filter = p_filter;
+}
+
 Gtk::SortType SimpleTabModel::get_sort_type() const {
     if (sort_type == ColumnSortType::Asc)
         return Gtk::SortType::SORT_ASCENDING;
@@ -62,7 +66,13 @@ const std::string SimpleTabModel::get_query() const {
         query << schema_name << ".";
     }
 
-    query << table_name << get_order_by_query() << " offset "
+    query << table_name;
+
+    if (!query_filter.empty()) {
+        query << " where " << query_filter;
+    }
+
+    query << " " << get_order_by_query() << " offset "
           << std::to_string(offset) << " limit " << std::to_string(limit);
 
     return query.str();

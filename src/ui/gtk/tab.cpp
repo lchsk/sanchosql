@@ -183,6 +183,10 @@ SimpleTab::SimpleTab(const Glib::ustring &tab_name,
     entry_column_mask->set_tooltip_text("List of column names to show");
     entry_column_mask->set_placeholder_text("List of column names to show");
 
+    entry_filter = Gtk::manage(new Gtk::Entry);
+    entry_filter->set_tooltip_text("Apply SQL filtering to the results");
+    entry_filter->set_placeholder_text("Apply SQL filtering to the results");
+
     toolbar->append(*btn_refresh);
     toolbar->append(*btn_accept);
     toolbar->append(*btn_insert);
@@ -242,6 +246,7 @@ SimpleTab::SimpleTab(const Glib::ustring &tab_name,
 
     box->pack_start(*toolbar, Gtk::PACK_SHRINK);
     box->pack_start(*entry_column_mask, Gtk::PACK_SHRINK);
+    box->pack_start(*entry_filter, Gtk::PACK_SHRINK);
     box->pack_start(paned_main);
     box->pack_start(*browse_box, Gtk::PACK_SHRINK);
 
