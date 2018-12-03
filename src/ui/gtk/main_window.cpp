@@ -285,7 +285,6 @@ void MainWindow::load_list_results(Gtk::ScrolledWindow *window) {
         tab.data_scrolled_window->show();
     } else {
         tab.data_scrolled_window->hide();
-
         return;
     }
 
@@ -465,6 +464,7 @@ void MainWindow::load_list_results(Gtk::ScrolledWindow *window) {
             const std::string column_name = c.get_column_name();
 
             if (column_mask.find(column_name) == column_mask.end()) {
+                i++;
                 continue;
             }
 
