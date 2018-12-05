@@ -590,6 +590,16 @@ void MainWindow::on_next_results_page_clicked(Gtk::ScrolledWindow *window) {
     load_list_results(window);
 }
 
+void MainWindow::on_reset_filtering_clicked(sancho::ui::gtk::TabWindow* window)
+{
+    sancho::ui::gtk::SimpleTab &tab = get_simple_tab(window);
+
+    tab.entry_column_mask->set_text("");
+    tab.entry_filter->set_text("");
+
+    on_reload_table_clicked(window);
+}
+
 void MainWindow::on_reload_table_clicked(Gtk::ScrolledWindow *window) {
     sancho::ui::gtk::SimpleTab &tab = get_simple_tab(window);
     sancho::db::SimpleTabModel &tab_model = get_simple_tab_model(window);
@@ -796,6 +806,10 @@ void MainWindow::on_browser_row_activated(const Gtk::TreeModel::Path &path,
 
     tab->btn_next->signal_clicked().connect(sigc::bind<Gtk::ScrolledWindow *>(
         sigc::mem_fun(*this, &MainWindow::on_next_results_page_clicked),
+        window));
+
+    tab->btn_reset_filtering->signal_clicked().connect(sigc::bind<sancho::ui::gtk::TabWindow*>(
+        sigc::mem_fun(*this, &MainWindow::on_reset_filtering_clicked),
         window));
 
     load_list_results(window);

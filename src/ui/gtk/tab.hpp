@@ -82,6 +82,7 @@ class SimpleTab : public AbstractTab {
     Gtk::ToolButton *btn_insert;
     Gtk::ToolButton *btn_prev;
     Gtk::ToolButton *btn_next;
+    Gtk::ToolButton *btn_reset_filtering;
     Gtk::Entry *entry_column_mask;
     Gtk::Entry *entry_filter;
 

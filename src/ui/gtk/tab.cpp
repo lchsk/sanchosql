@@ -179,6 +179,10 @@ SimpleTab::SimpleTab(const Glib::ustring &tab_name,
     btn_next->set_icon_name("next");
     btn_next->set_tooltip_text("Next page of results");
 
+    btn_reset_filtering = Gtk::manage(new Gtk::ToolButton);
+    btn_reset_filtering->set_icon_name("edit-clear");
+    btn_reset_filtering->set_tooltip_text("Reset column mask and filtering");
+
     entry_column_mask = Gtk::manage(new Gtk::Entry);
     entry_column_mask->set_tooltip_text("List of column names to show");
     entry_column_mask->set_placeholder_text("List of column names to show");
@@ -192,6 +196,7 @@ SimpleTab::SimpleTab(const Glib::ustring &tab_name,
     toolbar->append(*btn_insert);
     toolbar->append(*btn_prev);
     toolbar->append(*btn_next);
+    toolbar->append(*btn_reset_filtering);
     toolbar->append(*btn_primary_key_warning);
 
     tree_scrolled_window = Gtk::manage(new Gtk::ScrolledWindow);

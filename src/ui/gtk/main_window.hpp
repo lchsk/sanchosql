@@ -248,6 +248,7 @@ class MainWindow : public Gtk::Window {
     bool on_tab_button_released(GdkEventButton *button_event,
                                 Gtk::ScrolledWindow *);
     void on_reload_table_clicked(Gtk::ScrolledWindow *);
+    void on_reset_filtering_clicked(sancho::ui::gtk::TabWindow*);
     void on_insert_row_clicked(Gtk::ScrolledWindow *);
     void on_prev_results_page_clicked(Gtk::ScrolledWindow *);
     void on_next_results_page_clicked(Gtk::ScrolledWindow *);
