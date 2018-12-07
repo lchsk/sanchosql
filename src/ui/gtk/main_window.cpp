@@ -105,6 +105,7 @@ MainWindow::MainWindow()
     try {
         res_builder->add_from_resource("/res/toolbar.glade");
         res_builder->add_from_resource("/res/window_new_connection.glade");
+        res_builder->add_from_resource("/res/window_table_info.glade");
         res_builder->add_from_resource("/res/dashboard.glade");
     } catch (const Glib::Error &e) {
         g_critical("Building menus and toolbar failed: %s", e.what().c_str());
@@ -189,6 +190,13 @@ MainWindow::MainWindow()
             sigc::mem_fun(*this, &MainWindow::on_win_connections_hide));
         win_connections->set_transient_for(*this);
         win_connections->set_modal();
+    }
+
+    res_builder->get_widget_derived("win_table_info", win_table_info);
+
+    if (win_table_info) {
+        win_table_info->set_transient_for(*this);
+        win_table_info->set_modal();
     }
 
     add_events(Gdk::KEY_PRESS_MASK);
@@ -600,6 +608,13 @@ void MainWindow::on_reset_filtering_clicked(sancho::ui::gtk::TabWindow* window)
     on_reload_table_clicked(window);
 }
 
+void MainWindow::on_table_info_clicked(sancho::ui::gtk::TabWindow* window)
+{
+    if (win_table_info) {
+        win_table_info->show();
+    }
+}
+
 void MainWindow::on_reload_table_clicked(Gtk::ScrolledWindow *window) {
     sancho::ui::gtk::SimpleTab &tab = get_simple_tab(window);
     sancho::db::SimpleTabModel &tab_model = get_simple_tab_model(window);
@@ -810,6 +825,10 @@ void MainWindow::on_browser_row_activated(const Gtk::TreeModel::Path &path,
 
     tab->btn_reset_filtering->signal_clicked().connect(sigc::bind<sancho::ui::gtk::TabWindow*>(
         sigc::mem_fun(*this, &MainWindow::on_reset_filtering_clicked),
+        window));
+
+    tab->btn_table_info->signal_clicked().connect(sigc::bind<sancho::ui::gtk::TabWindow*>(
+        sigc::mem_fun(*this, &MainWindow::on_table_info_clicked),
         window));
 
     load_list_results(window);

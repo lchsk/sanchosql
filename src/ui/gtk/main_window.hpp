@@ -10,6 +10,7 @@
 #include "../../db/pg/pg_conn.hpp"
 #include "tab.hpp"
 #include "win_new_connection.hpp"
+#include "win_table_info.hpp"
 #include "common_ui.hpp"
 
 namespace sancho {
@@ -184,6 +185,7 @@ class MainWindow : public Gtk::Window {
     BrowserModel browser_model;
     ConnectionsModel connections_model;
     sancho::ui::gtk::NewConnectionWindow *win_connections;
+    sancho::ui::gtk::TableInfoWindow *win_table_info;
 
     Glib::RefPtr<Gtk::AccelGroup> group;
     MainMenu main_menu;
@@ -249,6 +251,7 @@ class MainWindow : public Gtk::Window {
                                 Gtk::ScrolledWindow *);
     void on_reload_table_clicked(Gtk::ScrolledWindow *);
     void on_reset_filtering_clicked(sancho::ui::gtk::TabWindow*);
+    void on_table_info_clicked(sancho::ui::gtk::TabWindow*);
     void on_insert_row_clicked(Gtk::ScrolledWindow *);
     void on_prev_results_page_clicked(Gtk::ScrolledWindow *);
     void on_next_results_page_clicked(Gtk::ScrolledWindow *);
