@@ -130,6 +130,7 @@ add_executable(${EXECUTABLE_NAME}
     )
   add_library(sancho-db-pg
     src/db/pg/pg_conn.cpp
+    src/db/pg/pg_queries.cpp
     )
   add_library(sancho-ui-gtk
     src/ui/gtk/tab.cpp

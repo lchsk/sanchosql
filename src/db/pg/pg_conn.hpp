@@ -10,6 +10,7 @@
 #include "../core/connection_details.hpp"
 #include "../core/connections.hpp"
 #include "../core/query_result.hpp"
+#include "pg_queries.hpp"
 
 namespace sancho {
 namespace db {
@@ -45,6 +46,10 @@ class PostgresConnection {
     virtual const std::vector<PrimaryKey>
     get_primary_key(const std::string &table_name,
                     const std::string &schema_name) const noexcept;
+    const std::string get_columns_query(const std::string& schema_name,
+                                        const std::string& table_name) {
+      return sancho::db::get_columns_query(schema_name, table_name);
+    }
 
     std::unique_ptr<std::vector<Glib::ustring>> get_schemas();
 

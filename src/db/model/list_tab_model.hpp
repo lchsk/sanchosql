@@ -57,7 +57,12 @@ class SimpleTabModel : public AbstractTabModel {
     unsigned db_rows_cnt;
 
 	const std::string get_query() const;
-    const std::string get_columns_query() const;
+  const Glib::ustring& get_table_name() const {
+    return table_name;
+  }
+  const Glib::ustring& get_schema_name() const {
+    return schema_name;
+  }
 
     // PK currently being edited
     // Column name -> Current Value (before commiting to DB)

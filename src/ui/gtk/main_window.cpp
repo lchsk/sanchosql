@@ -285,7 +285,7 @@ void MainWindow::load_list_results(Gtk::ScrolledWindow *window) {
 
     std::shared_ptr<sancho::QueryResult> result =
         pc.run_query(sancho::QueryType::NonTransaction, model.get_query(),
-                     model.get_columns_query());
+                     pc.get_columns_query(model.get_schema_name(), model.get_table_name()));
 
     sancho::ui::gtk::insert_log_message(tab.log_buffer, result->get_message());
 
