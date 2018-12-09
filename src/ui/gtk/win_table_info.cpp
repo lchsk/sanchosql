@@ -8,6 +8,7 @@ TableInfoWindow::TableInfoWindow(
     : Gtk::Window(cobject), builder(builder) {
 
     builder->get_widget("box_columns", box_columns);
+    builder->get_widget("box_constraints", box_constraints);
     builder->get_widget("btn_close", btn_close);
 
     signal_show().connect(
@@ -17,6 +18,7 @@ TableInfoWindow::TableInfoWindow(
     btn_close->signal_clicked().connect(
         sigc::mem_fun(*this, &TableInfoWindow::on_btn_close_clicked));
 
+    // Set up schema tab
     scrolled_schema.add(tree_schema);
     scrolled_schema.set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
 
@@ -24,12 +26,26 @@ TableInfoWindow::TableInfoWindow(
 
     schema_model = Gtk::TreeStore::create(schema_columns);
     tree_schema.set_model(schema_model);
+    tree_schema.set_grid_lines(Gtk::TreeViewGridLines::TREE_VIEW_GRID_LINES_BOTH);
 
     tree_schema.append_column("Position", schema_columns.col_pos);
     tree_schema.append_column("Column name", schema_columns.col_name);
     tree_schema.append_column("Type", schema_columns.col_type);
     tree_schema.append_column("Nullable", schema_columns.col_is_nullable);
     tree_schema.append_column("Default value", schema_columns.col_default);
+
+    // Set up constraints tab
+    scrolled_constraints.add(tree_constraints);
+    scrolled_constraints.set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
+
+    box_constraints->pack_start(scrolled_constraints);
+
+    constraints_model = Gtk::TreeStore::create(constraints_columns);
+    tree_constraints.set_model(constraints_model);
+    tree_constraints.set_grid_lines(Gtk::TreeViewGridLines::TREE_VIEW_GRID_LINES_BOTH);
+
+    tree_constraints.append_column("Name", constraints_columns.col_name);
+    tree_constraints.append_column("Check", constraints_columns.col_check);
 
     show_all_children();
 }
@@ -39,7 +55,7 @@ void TableInfoWindow::init(sancho::db::PostgresConnection& conn,
 {
   set_title("Table Information for " + schema_name + "." + table_name + " - SanchoSQL");
   schema_model->clear();
-  tree_schema.set_grid_lines(Gtk::TreeViewGridLines::TREE_VIEW_GRID_LINES_BOTH);
+
 
     std::shared_ptr<sancho::QueryResult> result =
         conn.run_query(sancho::QueryType::NonTransaction,
