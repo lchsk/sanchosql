@@ -14,7 +14,7 @@ NewConnectionWindow::NewConnectionWindow(
     builder->get_widget("box_left", box_left);
     builder->get_widget("paned_new_connections", paned_new_connections);
     builder->get_widget("btn_save", btn_save);
-    builder->get_widget("btn_close", btn_close);
+    builder->get_widget("btn_close_win_connections", btn_close_win_connections);
     builder->get_widget("btn_test_connection", btn_test_connection);
     builder->get_widget("btn_add_connection", btn_add_connection);
     builder->get_widget("btn_del_connection", btn_del_connection);
@@ -41,7 +41,7 @@ NewConnectionWindow::NewConnectionWindow(
     btn_save->signal_clicked().connect(
         sigc::mem_fun(*this, &NewConnectionWindow::on_btn_save_clicked));
 
-    btn_close->signal_clicked().connect(
+    btn_close_win_connections->signal_clicked().connect(
         sigc::mem_fun(*this, &NewConnectionWindow::on_btn_close_clicked));
 
     btn_test_connection->signal_clicked().connect(sigc::mem_fun(

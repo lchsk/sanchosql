@@ -71,7 +71,7 @@ class NewConnectionWindow : public Gtk::Window {
 
     Gtk::Box *box_left;
     Gtk::Paned *paned_new_connections;
-    Gtk::Button *btn_close;
+    Gtk::Button *btn_close_win_connections;
     Gtk::Button *btn_save;
     Gtk::Button *btn_test_connection;
     Gtk::Button *btn_add_connection;
