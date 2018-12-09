@@ -611,7 +611,12 @@ void MainWindow::on_reset_filtering_clicked(sancho::ui::gtk::TabWindow* window)
 void MainWindow::on_table_info_clicked(sancho::ui::gtk::TabWindow* window)
 {
     if (win_table_info) {
-        win_table_info->show();
+	  sancho::db::SimpleTabModel &model = get_simple_tab_model(window);
+
+      auto &pc = model.conn();
+
+      win_table_info->show();
+      win_table_info->init(pc, model.get_schema_name(), model.get_table_name());
     }
 }
 

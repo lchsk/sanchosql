@@ -17,6 +17,8 @@ const std::string get_columns_query(const std::string& schema_name,
               << "'" << schema_name << "'";
     }
 
+    query << " order by ordinal_position asc";
+
     return query.str();
 }
 

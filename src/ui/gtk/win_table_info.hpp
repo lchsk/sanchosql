@@ -3,6 +3,8 @@
 
 #include <gtkmm.h>
 
+#include "../../db/pg/pg_conn.hpp"
+
 namespace sancho {
 namespace ui {
 namespace gtk {
@@ -11,6 +13,8 @@ class TableInfoWindow : public Gtk::Window {
     TableInfoWindow(BaseObjectType *cobject,
                     const Glib::RefPtr<Gtk::Builder> &builder);
     virtual ~TableInfoWindow(){};
+
+  void init(sancho::db::PostgresConnection& conn, const std::string& schema_name, const std::string& table_name);
 
   private:
     void on_win_show();
@@ -22,18 +26,18 @@ class TableInfoWindow : public Gtk::Window {
     class SchemaColumns : public Gtk::TreeModel::ColumnRecord {
       public:
         SchemaColumns() {
+          add(col_pos);
           add(col_name);
           add(col_type);
           add(col_is_nullable);
           add(col_default);
-          add(col_is_primary);
         }
 
+        Gtk::TreeModelColumn<Glib::ustring> col_pos;
         Gtk::TreeModelColumn<Glib::ustring> col_name;
         Gtk::TreeModelColumn<Glib::ustring> col_type;
         Gtk::TreeModelColumn<Glib::ustring> col_is_nullable;
         Gtk::TreeModelColumn<Glib::ustring> col_default;
-        Gtk::TreeModelColumn<Glib::ustring> col_is_primary;
     };
 
     SchemaColumns schema_columns;
