@@ -22,5 +22,27 @@ const std::string get_columns_query(const std::string& schema_name,
     return query.str();
 }
 
-};
+const std::string get_check_constraints_query(const std::string& schema_name,
+                                              const std::string& table_name)
+{
+    std::stringstream query;
+
+    query << R"(
+        select
+            pg_get_constraintdef(c.oid) as check_constraint,
+            c.conname as check_name
+        from
+            pg_constraint c
+        join
+            pg_namespace n on n.oid = c.connamespace
+        where
+
+        )";
+
+    query << "n.nspname = '" << schema_name << "'"
+          << "and conrelid::regclass::text = '" << table_name << "';";
+
+    return query.str();
+}
+}
 } // namespace sancho

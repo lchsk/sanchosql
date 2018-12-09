@@ -50,6 +50,10 @@ class PostgresConnection {
                                         const std::string& table_name) {
       return sancho::db::get_columns_query(schema_name, table_name);
     }
+    const std::string get_check_constraints_query(const std::string& schema_name,
+                                                  const std::string& table_name) {
+      return sancho::db::get_check_constraints_query(schema_name, table_name);
+    }
 
     std::unique_ptr<std::vector<Glib::ustring>> get_schemas();
 
