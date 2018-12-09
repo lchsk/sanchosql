@@ -141,7 +141,7 @@ void NewConnectionWindow::on_btn_test_connection_clicked() {
     conn->password = text_password->get_text();
     conn->dbname = text_db->get_text();
     conn->port = text_port->get_text();
-    ;
+    conn->sslmode = combo_sslmode->get_active_text();
 
     sancho::db::PostgresConnection pg_conn(conn);
 
