@@ -20,6 +20,10 @@ class TableInfoWindow : public Gtk::Window {
     void on_win_show();
     void on_win_hide();
     void on_btn_close_clicked();
+    void load_columns_data(sancho::db::PostgresConnection& conn,
+                           const std::string& schema_name, const std::string& table_name);
+    void load_constraints_data(sancho::db::PostgresConnection& conn,
+                               const std::string& schema_name, const std::string& table_name);
 
     Glib::RefPtr<Gtk::Builder> builder;
 

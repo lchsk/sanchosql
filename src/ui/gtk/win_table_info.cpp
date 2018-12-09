@@ -54,8 +54,15 @@ void TableInfoWindow::init(sancho::db::PostgresConnection& conn,
                            const std::string& schema_name, const std::string& table_name)
 {
   set_title("Table Information for " + schema_name + "." + table_name + " - SanchoSQL");
-  schema_model->clear();
 
+  load_columns_data(conn, schema_name, table_name);
+  load_constraints_data(conn, schema_name, table_name);
+
+}
+  void TableInfoWindow::load_columns_data(sancho::db::PostgresConnection& conn,
+                           const std::string& schema_name, const std::string& table_name)
+  {
+    schema_model->clear();
 
     std::shared_ptr<sancho::QueryResult> result =
         conn.run_query(sancho::QueryType::NonTransaction,
@@ -100,6 +107,38 @@ void TableInfoWindow::init(sancho::db::PostgresConnection& conn,
       row[schema_columns.col_type] = data_type;
     }
 }
+
+  void TableInfoWindow::load_constraints_data(sancho::db::PostgresConnection& conn,
+                                              const std::string& schema_name, const std::string& table_name)
+  {
+    constraints_model->clear();
+
+    std::shared_ptr<sancho::QueryResult> result =
+        conn.run_query(sancho::QueryType::NonTransaction,
+                       conn.get_check_constraints_query(schema_name, table_name),
+                       conn.get_columns_query(schema_name, table_name));
+
+    if (!result->success) {
+      return;
+    }
+
+    const auto& data = result->as_map();
+
+    for (const auto& row_data : data) {
+      Gtk::TreeModel::Row row = *(constraints_model->append());
+
+      for (const auto& pair : row_data) {
+        const std::string& key = pair.first;
+        const std::string& value = pair.second;
+
+        if (key == "check_name") {
+          row[constraints_columns.col_name] = value;
+        } else if (key == "check_constraint") {
+          row[constraints_columns.col_check] = value;
+        }
+      }
+    }
+  }
 
 void TableInfoWindow::on_win_show() {
 }
