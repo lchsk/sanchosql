@@ -40,9 +40,30 @@ const std::string get_check_constraints_query(const std::string& schema_name,
         )";
 
     query << "n.nspname = '" << schema_name << "'"
-          << "and conrelid::regclass::text = '" << table_name << "';";
+          << " and conrelid::regclass::text = '" << table_name << "';";
 
     return query.str();
 }
+
+  const std::string get_indexes_query(const std::string& schema_name,
+                                      const std::string& table_name)
+  {
+    std::stringstream query;
+
+    query << R"(
+        select
+            indexname as index_name,
+            indexdef as index_definition
+        from
+            pg_indexes
+        where
+    )";
+
+    query << "schemaname = '" << schema_name << "'"
+          << " and tablename = '" << table_name << "';";
+
+    return query.str();
+  }
+
 }
 } // namespace sancho

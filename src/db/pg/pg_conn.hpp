@@ -55,6 +55,12 @@ class PostgresConnection {
       return sancho::db::get_check_constraints_query(schema_name, table_name);
     }
 
+    const std::string get_indexes_query(const std::string& schema_name,
+										const std::string& table_name) {
+      return sancho::db::get_indexes_query(schema_name, table_name);
+	}
+
+
     std::unique_ptr<std::vector<Glib::ustring>> get_schemas();
 
     virtual void init_connection();
