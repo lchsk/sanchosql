@@ -24,6 +24,8 @@ class TableInfoWindow : public Gtk::Window {
                            const std::string& schema_name, const std::string& table_name);
     void load_constraints_data(sancho::db::PostgresConnection& conn,
                                const std::string& schema_name, const std::string& table_name);
+    void load_indexes_data(sancho::db::PostgresConnection& conn,
+                               const std::string& schema_name, const std::string& table_name);
 
     Glib::RefPtr<Gtk::Builder> builder;
 

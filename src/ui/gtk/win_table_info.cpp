@@ -71,7 +71,7 @@ void TableInfoWindow::init(sancho::db::PostgresConnection& conn,
 
   load_columns_data(conn, schema_name, table_name);
   load_constraints_data(conn, schema_name, table_name);
-
+  load_indexes_data(conn, schema_name, table_name);
 }
   void TableInfoWindow::load_columns_data(sancho::db::PostgresConnection& conn,
                            const std::string& schema_name, const std::string& table_name)
@@ -149,6 +149,37 @@ void TableInfoWindow::init(sancho::db::PostgresConnection& conn,
           row[constraints_columns.col_name] = value;
         } else if (key == "check_constraint") {
           row[constraints_columns.col_check] = value;
+        }
+      }
+    }
+  }
+  void TableInfoWindow::load_indexes_data(sancho::db::PostgresConnection& conn,
+                                              const std::string& schema_name, const std::string& table_name)
+  {
+    indexes_model->clear();
+
+    std::shared_ptr<sancho::QueryResult> result =
+        conn.run_query(sancho::QueryType::NonTransaction,
+                       conn.get_indexes_query(schema_name, table_name),
+                       conn.get_columns_query(schema_name, table_name));
+
+    if (!result->success) {
+      return;
+    }
+
+    const auto& data = result->as_map();
+
+    for (const auto& row_data : data) {
+      Gtk::TreeModel::Row row = *(indexes_model->append());
+
+      for (const auto& pair : row_data) {
+        const std::string& key = pair.first;
+        const std::string& value = pair.second;
+
+        if (key == "index_name") {
+          row[indexes_columns.col_name] = value;
+        } else if (key == "index_definition") {
+          row[indexes_columns.col_definition] = value;
         }
       }
     }
