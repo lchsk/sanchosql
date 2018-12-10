@@ -46,7 +46,7 @@ TableInfoWindow::TableInfoWindow(
     tree_constraints.set_grid_lines(Gtk::TreeViewGridLines::TREE_VIEW_GRID_LINES_BOTH);
 
     tree_constraints.append_column("Name", constraints_columns.col_name);
-    tree_constraints.append_column("Check", constraints_columns.col_check);
+    tree_constraints.append_column("Constraint", constraints_columns.col_check);
 
     // Set up indexes tab
     scrolled_indexes.add(tree_indexes);
