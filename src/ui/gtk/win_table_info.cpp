@@ -9,6 +9,7 @@ TableInfoWindow::TableInfoWindow(
 
     builder->get_widget("box_columns", box_columns);
     builder->get_widget("box_constraints", box_constraints);
+    builder->get_widget("box_indexes", box_indexes);
     builder->get_widget("btn_close", btn_close);
 
     signal_show().connect(
@@ -46,6 +47,19 @@ TableInfoWindow::TableInfoWindow(
 
     tree_constraints.append_column("Name", constraints_columns.col_name);
     tree_constraints.append_column("Check", constraints_columns.col_check);
+
+    // Set up indexes tab
+    scrolled_indexes.add(tree_indexes);
+    scrolled_indexes.set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
+
+    box_indexes->pack_start(scrolled_indexes);
+
+    indexes_model = Gtk::TreeStore::create(indexes_columns);
+    tree_indexes.set_model(indexes_model);
+    tree_indexes.set_grid_lines(Gtk::TreeViewGridLines::TREE_VIEW_GRID_LINES_BOTH);
+
+    tree_indexes.append_column("Name", indexes_columns.col_name);
+    tree_indexes.append_column("Definition", indexes_columns.col_definition);
 
     show_all_children();
 }

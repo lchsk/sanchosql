@@ -29,6 +29,7 @@ class TableInfoWindow : public Gtk::Window {
 
     Gtk::Box *box_columns;
     Gtk::Box *box_constraints;
+    Gtk::Box *box_indexes;
     Gtk::Button *btn_close;
 
   // Schema tab
@@ -55,7 +56,6 @@ class TableInfoWindow : public Gtk::Window {
     Glib::RefPtr<Gtk::TreeStore> schema_model;
 
   // Constraints tab
-
     class ConstraintsColumns : public Gtk::TreeModel::ColumnRecord {
       public:
         ConstraintsColumns() {
@@ -71,6 +71,23 @@ class TableInfoWindow : public Gtk::Window {
     Gtk::ScrolledWindow scrolled_constraints;
     Gtk::TreeView tree_constraints;
     Glib::RefPtr<Gtk::TreeStore> constraints_model;
+
+  // Indexes tab
+    class IndexesColumns : public Gtk::TreeModel::ColumnRecord {
+      public:
+        IndexesColumns() {
+          add(col_name);
+          add(col_definition);
+        }
+
+        Gtk::TreeModelColumn<Glib::ustring> col_name;
+        Gtk::TreeModelColumn<Glib::ustring> col_definition;
+    };
+
+    IndexesColumns indexes_columns;
+    Gtk::ScrolledWindow scrolled_indexes;
+    Gtk::TreeView tree_indexes;
+    Glib::RefPtr<Gtk::TreeStore> indexes_model;
 
 };
 } // namespace sancho
