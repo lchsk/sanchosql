@@ -65,5 +65,24 @@ const std::string get_check_constraints_query(const std::string& schema_name,
     return query.str();
   }
 
+  const std::string get_table_stats_query(const std::string& schema_name,
+                                          const std::string& table_name)
+  {
+    std::stringstream query;
+
+    query << R"(
+        select
+            *
+        from
+            pg_stat_user_tables
+        where
+    )";
+
+    query << "schemaname = '" << schema_name << "'"
+          << " and relname = '" << table_name << "';";
+
+      return query.str();
+  }
+
 }
 } // namespace sancho

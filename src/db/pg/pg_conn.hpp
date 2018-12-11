@@ -60,6 +60,10 @@ class PostgresConnection {
       return sancho::db::get_indexes_query(schema_name, table_name);
 	}
 
+    const std::string get_table_stats_query(const std::string& schema_name,
+											const std::string& table_name) {
+      return sancho::db::get_table_stats_query(schema_name, table_name);
+	}
 
     std::unique_ptr<std::vector<Glib::ustring>> get_schemas();
 

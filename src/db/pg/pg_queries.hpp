@@ -12,6 +12,8 @@ namespace db {
                                                 const std::string& table_name);
   const std::string get_indexes_query(const std::string& schema_name,
                                       const std::string& table_name);
+  const std::string get_table_stats_query(const std::string& schema_name,
+                                          const std::string& table_name);
 
 }
 } // namespace sancho
