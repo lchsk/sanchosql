@@ -29,6 +29,7 @@ class TableInfoWindow : public Gtk::Window {
 
     Glib::RefPtr<Gtk::Builder> builder;
 
+    Gtk::Notebook *notebook_tabs;
     Gtk::Box *box_columns;
     Gtk::Box *box_constraints;
     Gtk::Box *box_indexes;

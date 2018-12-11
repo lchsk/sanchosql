@@ -7,6 +7,7 @@ TableInfoWindow::TableInfoWindow(
     BaseObjectType *cobject, const Glib::RefPtr<Gtk::Builder> &builder)
     : Gtk::Window(cobject), builder(builder) {
 
+    builder->get_widget("notebook_tabs", notebook_tabs);
     builder->get_widget("box_columns", box_columns);
     builder->get_widget("box_constraints", box_constraints);
     builder->get_widget("box_indexes", box_indexes);
@@ -186,6 +187,7 @@ void TableInfoWindow::init(sancho::db::PostgresConnection& conn,
   }
 
 void TableInfoWindow::on_win_show() {
+  notebook_tabs->set_current_page(0);
 }
 
 void TableInfoWindow::on_win_hide() {
