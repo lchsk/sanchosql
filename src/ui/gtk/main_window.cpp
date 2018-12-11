@@ -43,6 +43,7 @@ MainWindow::MainWindow()
     browser_scrolled_window.set_policy(Gtk::POLICY_AUTOMATIC,
                                        Gtk::POLICY_AUTOMATIC);
 
+    // Setup popup menu - headers
     popup_item_refresh_browser =
         Gtk::manage(new Gtk::MenuItem("_Refresh", true));
     auto slot_browser_refresh =
@@ -52,6 +53,16 @@ MainWindow::MainWindow()
     popup_browser_header.append(*popup_item_refresh_browser);
     popup_browser_header.accelerate(*this);
     popup_browser_header.show_all();
+
+    // Setup popup menu - tables
+    popup_item_table_info = Gtk::manage(new Gtk::MenuItem("_Show table information", true));
+    auto slot_table_info = sigc::mem_fun(*this, &MainWindow::on_show_table_info_clicked);
+
+    popup_item_table_info->signal_activate().connect(slot_table_info);
+
+    popup_browser_table.append(*popup_item_table_info);
+    popup_browser_table.accelerate(*this);
+    popup_browser_table.show_all();
 
     auto slot_button_released =
         sigc::mem_fun(*this, &MainWindow::on_browser_button_released);
@@ -950,6 +961,8 @@ void MainWindow::on_connection_changed() {
 }
 
 void MainWindow::on_schema_changed() {
+  // TODO: This shouldn't directly depend on PostgresConnection
+
     auto pc = handle_connect();
 
     if (!pc)
@@ -1368,6 +1381,17 @@ void MainWindow::on_browser_refresh_clicked() {
     refresh_browser(pc);
 }
 
+void MainWindow::on_show_table_info_clicked() {
+  // TODO: This shouldn't directly depend on PostgresConnection
+    auto pc = handle_connect();
+
+    if (!pc)
+        return;
+
+    win_table_info->show();
+    win_table_info->init(*pc, combo_schemas.get_active_text(), selected_table_name);
+}
+
 std::shared_ptr<sancho::db::ConnectionDetails> &
 MainWindow::find_current_connection() {
     const Glib::ustring connection_name = combo_connections.get_active_text();
@@ -1433,6 +1457,10 @@ bool MainWindow::on_browser_button_released(GdkEventButton *button_event) {
                                        button_event->time);
 
             return true;
+        } else if (current_row[browser_model.type] == BrowserItemType::Table) {
+          selected_table_name = current_row[browser_model.table];
+
+          popup_browser_table.popup(button_event->button, button_event->time);
         }
     }
 

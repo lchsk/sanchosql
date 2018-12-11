@@ -276,6 +276,7 @@ class MainWindow : public Gtk::Window {
 
     void refresh_connections_list();
     void refresh_browser(const std::shared_ptr<sancho::db::PostgresConnection> &);
+    void on_show_table_info_clicked();
     void refresh_tree_connections();
     void reset_browser();
 
@@ -285,6 +286,9 @@ class MainWindow : public Gtk::Window {
     Gtk::Box main_box;
     Gtk::TreeView browser;
     Gtk::Menu popup_browser_header;
+    Gtk::MenuItem *popup_item_table_info;
+    Glib::ustring selected_table_name;
+    Gtk::Menu popup_browser_table;
     Gtk::MenuItem *popup_item_refresh_browser;
 
     Gtk::Box box_main_pane;
