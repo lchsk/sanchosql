@@ -54,6 +54,10 @@ class QueryTab : public AbstractTab {
     QueryTab(const Glib::ustring &tab_name);
 
     void on_buffer_changed();
+    void on_btn_open_file_clicked(QueryTab* tab);
+    void on_btn_save_file_clicked(QueryTab* tab);
+    void on_btn_save_file_as_clicked(QueryTab* tab);
+    void on_btn_execute_all_editor_queries_clicked(QueryTab* tab);
 
     Gtk::VPaned paned_source;
     Gtk::VPaned paned_results;
@@ -72,6 +76,10 @@ class QueryTab : public AbstractTab {
     Gtk::TreeView *tree;
     Gtk::ScrolledWindow *data_scrolled_window;
     Gtk::ToolButton *btn_execute_editor_query;
+    Gtk::ToolButton *btn_execute_all_editor_queries;
+    Gtk::ToolButton *btn_open_file;
+    Gtk::ToolButton *btn_save_file;
+    Gtk::ToolButton *btn_save_file_as;
 };
 
 class SimpleTab : public AbstractTab {

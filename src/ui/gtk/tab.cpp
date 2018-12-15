@@ -54,11 +54,45 @@ QueryTab::QueryTab(const Glib::ustring &tab_name)
     tv = Gtk::manage(new Gtk::TextView);
 
     toolbar = Gtk::manage(new Gtk::Toolbar);
+
     btn_execute_editor_query = Gtk::manage(new Gtk::ToolButton);
     btn_execute_editor_query->set_icon_name("media-playback-start");
-    btn_execute_editor_query->set_tooltip_text("Execute code in editor");
+    btn_execute_editor_query->set_tooltip_text("Execute current query");
+
+    btn_execute_all_editor_queries = Gtk::manage(new Gtk::ToolButton);
+    btn_execute_all_editor_queries->set_icon_name("media-seek-forward");
+    btn_execute_all_editor_queries->set_tooltip_text("Execute all code in editor");
+
+    btn_open_file = Gtk::manage(new Gtk::ToolButton);
+    btn_open_file->set_icon_name("document-open");
+    btn_open_file->set_tooltip_text("Open new file");
+
+    btn_save_file = Gtk::manage(new Gtk::ToolButton);
+    btn_save_file->set_icon_name("document-save");
+    btn_save_file->set_tooltip_text("Save file");
+
+    btn_save_file_as = Gtk::manage(new Gtk::ToolButton);
+    btn_save_file_as->set_icon_name("document-save-as");
+    btn_save_file_as->set_tooltip_text("Save file as...");
 
     toolbar->append(*btn_execute_editor_query);
+    toolbar->append(*btn_execute_all_editor_queries);
+    toolbar->append(*btn_open_file);
+    toolbar->append(*btn_save_file);
+    toolbar->append(*btn_save_file_as);
+
+    btn_open_file->signal_clicked().connect(sigc::bind<QueryTab *>(
+        sigc::mem_fun(*this, &QueryTab::on_btn_open_file_clicked),
+        this));
+    btn_save_file->signal_clicked().connect(sigc::bind<QueryTab *>(
+        sigc::mem_fun(*this, &QueryTab::on_btn_save_file_clicked),
+        this));
+    btn_save_file->signal_clicked().connect(sigc::bind<QueryTab *>(
+                                                                   sigc::mem_fun(*this, &QueryTab::on_btn_save_file_as_clicked),
+        this));
+    btn_execute_all_editor_queries->signal_clicked().connect(sigc::bind<QueryTab *>(
+        sigc::mem_fun(*this, &QueryTab::on_btn_execute_all_editor_queries_clicked),
+        this));
 
     tree = Gtk::manage(new Gtk::TreeView);
 
@@ -175,6 +209,23 @@ void QueryTab::on_buffer_changed()
 
     label_cursor_position->set_text(pos);
 }
+
+  void QueryTab::on_btn_open_file_clicked(QueryTab* tab)
+  {
+  }
+
+  void QueryTab::on_btn_save_file_clicked(QueryTab* tab)
+  {
+  }
+
+  void QueryTab::on_btn_save_file_as_clicked(QueryTab* tab)
+  {
+
+  }
+  void QueryTab::on_btn_execute_all_editor_queries_clicked(QueryTab* tab)
+  {
+
+  }
 
 SimpleTab::SimpleTab(const Glib::ustring &tab_name,
                      std::shared_ptr<sancho::db::SimpleTabModel> &model)
