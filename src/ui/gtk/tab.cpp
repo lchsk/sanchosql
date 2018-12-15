@@ -67,13 +67,23 @@ QueryTab::QueryTab(const Glib::ustring &tab_name)
     log_scrolled_window = Gtk::manage(new Gtk::ScrolledWindow);
     data_scrolled_window = Gtk::manage(new Gtk::ScrolledWindow);
 
+	box_editor = Gtk::manage(new Gtk::Box);
+    box_editor->set_halign(Gtk::ALIGN_START);
+	label_cursor_position = Gtk::manage(new Gtk::Label);
+
+    box_editor->pack_start(*label_cursor_position);
+
     // Set up code source view
     source_view = Gtk::manage(new Gsv::View);
     buffer = source_view->get_source_buffer();
 
     if (!buffer) {
         g_warning("Gsv::View::get_source_buffer() failed for source_view");
+        return;
     }
+
+    auto slot = sigc::mem_fun(*this, &QueryTab::on_buffer_changed);
+    buffer->connect_property_changed("cursor-position", slot);
 
     source_view->set_show_line_numbers();
     source_view->set_highlight_current_line();
@@ -112,19 +122,29 @@ QueryTab::QueryTab(const Glib::ustring &tab_name)
     log->property_editable() = false;
     log_buffer->set_style_scheme(style);
 
+    // Structure of
+    // paned_source:
+    //     box_source
+    //         source_scrolled_window
+    //             source_view
+    //         box_editor
+    //     paned_results
+    //         data_scrolled_window
+    //             tree
+    //         log_scrolled_window
+    //             log
+
+    box_source = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
+    box_source->pack_start(*source_scrolled_window, true, true);
+    box_source->pack_start(*box_editor, false, false);
+
+    buffer->set_style_scheme(style);
+
     source_scrolled_window->add(*source_view);
-    source_scrolled_window->set_policy(Gtk::POLICY_AUTOMATIC,
-                                       Gtk::POLICY_AUTOMATIC);
-
     log_scrolled_window->add(*log);
-    log_scrolled_window->set_policy(Gtk::POLICY_AUTOMATIC,
-                                    Gtk::POLICY_AUTOMATIC);
-
     data_scrolled_window->add(*tree);
-    data_scrolled_window->set_policy(Gtk::POLICY_AUTOMATIC,
-                                     Gtk::POLICY_AUTOMATIC);
 
-    paned_source.pack1(*source_scrolled_window);
+    paned_source.pack1(*box_source);
     paned_source.pack2(paned_results);
 
     source_scrolled_window->set_valign(Gtk::Align::ALIGN_FILL);
@@ -138,12 +158,22 @@ QueryTab::QueryTab(const Glib::ustring &tab_name)
 
     box = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
     box->pack_start(*toolbar, Gtk::PACK_SHRINK);
-
     box->pack_start(paned_source);
 
     tree_scrolled_window->add(*box);
-    tree_scrolled_window->set_policy(Gtk::POLICY_AUTOMATIC,
-                                     Gtk::POLICY_AUTOMATIC);
+}
+
+void QueryTab::on_buffer_changed()
+{
+    const auto mark = buffer->get_insert();
+    const auto iter = buffer->get_iter_at_mark(mark);
+
+    const int line = iter.get_line() + 1;
+    const int col = source_view->get_visual_column(iter) + 1;
+
+    const std::string pos = std::to_string(line) + ":" + std::to_string(col);
+
+    label_cursor_position->set_text(pos);
 }
 
 SimpleTab::SimpleTab(const Glib::ustring &tab_name,

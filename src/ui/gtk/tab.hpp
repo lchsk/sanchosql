@@ -53,16 +53,21 @@ class QueryTab : public AbstractTab {
   public:
     QueryTab(const Glib::ustring &tab_name);
 
+    void on_buffer_changed();
+
     Gtk::VPaned paned_source;
     Gtk::VPaned paned_results;
 
     Glib::RefPtr<Gsv::Buffer> buffer;
     Gsv::View *source_view;
+    Gtk::Box* box_source;
     Gtk::ScrolledWindow *source_scrolled_window;
 
     Glib::RefPtr<Gsv::Buffer> log_buffer;
     Gsv::View *log;
     Gtk::ScrolledWindow *log_scrolled_window;
+    Gtk::Box* box_editor;
+    Gtk::Label* label_cursor_position;
 
     Gtk::TreeView *tree;
     Gtk::ScrolledWindow *data_scrolled_window;
