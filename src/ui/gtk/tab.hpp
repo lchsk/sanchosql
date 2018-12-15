@@ -18,6 +18,16 @@ void insert_log_message(Glib::RefPtr<Gsv::Buffer> &log_buffer,
 
 enum class TabType { List, Query, Invalid };
 
+  struct SQLFileStatus {
+    std::string path;
+    bool modified;
+    bool file_loaded;
+
+    SQLFileStatus(const std::string& path, bool modified, bool file_loaded)
+      : path(path), modified(modified), file_loaded(file_loaded) {
+    }
+  };
+
 class AbstractTab {
   public:
     AbstractTab(const Glib::ustring &tab_name, TabType type);
@@ -51,7 +61,7 @@ class AbstractTab {
 
 class QueryTab : public AbstractTab {
   public:
-    QueryTab(const Glib::ustring &tab_name);
+  QueryTab(const Glib::ustring &tab_name, Gtk::Window* window);
 
     void on_buffer_changed();
     void on_btn_open_file_clicked(QueryTab* tab);
@@ -80,6 +90,10 @@ class QueryTab : public AbstractTab {
     Gtk::ToolButton *btn_open_file;
     Gtk::ToolButton *btn_save_file;
     Gtk::ToolButton *btn_save_file_as;
+private:
+  const std::string read_file(const std::string& path);
+    Gtk::Window* parent_window;
+    SQLFileStatus file_status;
 };
 
 class SimpleTab : public AbstractTab {

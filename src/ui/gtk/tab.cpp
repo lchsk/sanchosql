@@ -1,3 +1,5 @@
+#include <fstream>
+
 #include "tab.hpp"
 #include "../../string.hpp"
 
@@ -48,9 +50,10 @@ void AbstractTab::show() const {
     hb->show_all_children();
 }
 
-QueryTab::QueryTab(const Glib::ustring &tab_name)
-    : AbstractTab(tab_name, TabType::Query) {
-
+  QueryTab::QueryTab(const Glib::ustring &tab_name, Gtk::Window* window)
+    : AbstractTab(tab_name, TabType::Query), parent_window(window),
+      file_status("", false, false)
+  {
     tv = Gtk::manage(new Gtk::TextView);
 
     toolbar = Gtk::manage(new Gtk::Toolbar);
@@ -212,6 +215,72 @@ void QueryTab::on_buffer_changed()
 
   void QueryTab::on_btn_open_file_clicked(QueryTab* tab)
   {
+    Gtk::FileChooserDialog dialog("Please choose a file", Gtk::FILE_CHOOSER_ACTION_OPEN);
+    dialog.set_transient_for(*parent_window);
+
+  dialog.add_button("_Cancel", Gtk::RESPONSE_CANCEL);
+  dialog.add_button("_Open", Gtk::RESPONSE_OK);
+
+  auto filter_sql = Gtk::FileFilter::create();
+  filter_sql->set_name("SQL files");
+  filter_sql->add_pattern("*.sql");
+  dialog.add_filter(filter_sql);
+
+  auto filter_any = Gtk::FileFilter::create();
+  filter_any->set_name("Any files");
+  filter_any->add_pattern("*");
+  dialog.add_filter(filter_any);
+
+  int result = dialog.run();
+
+  switch (result)
+  {
+    case Gtk::RESPONSE_OK:
+    {
+      const std::string path = dialog.get_filename();
+      std::string contents;
+
+      try {
+        contents = read_file(path);
+
+      } catch (const std::invalid_argument &e) {
+        insert_log_message(log_buffer, Glib::ustring::compose("Unable to open '%1'\n", path));
+      }
+
+      file_status.modified = false;
+      file_status.file_loaded = true;
+      file_status.path = path;
+
+      buffer->set_text(contents);
+
+      insert_log_message(log_buffer, Glib::ustring::compose("File '%1' was opened\n", path));
+
+      break;
+    }
+  }
+  }
+
+  const std::string QueryTab::read_file(const std::string& path)
+  {
+    std::ifstream sql_file(path);
+
+    if (!sql_file.is_open()) {
+      throw std::invalid_argument("unable to open file");
+    }
+
+    std::stringstream contents;
+    std::string line;
+
+    while (std::getline(sql_file, line))
+      {
+        std::istringstream iss(line);
+
+        contents << line << "\n";
+      }
+
+    sql_file.close();
+
+      return contents.str();
   }
 
   void QueryTab::on_btn_save_file_clicked(QueryTab* tab)

@@ -711,7 +711,7 @@ void MainWindow::on_open_sql_editor_clicked() {
 
     const Glib::ustring tab_name = current_connection->name + " (editor)";
 
-    auto tab = std::make_shared<sancho::ui::gtk::QueryTab>(tab_name);
+    auto tab = std::make_shared<sancho::ui::gtk::QueryTab>(tab_name, this);
 
     Gtk::ScrolledWindow *window = tab->tree_scrolled_window;
 
