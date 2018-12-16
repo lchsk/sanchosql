@@ -671,13 +671,11 @@ void MainWindow::on_tab_close_button_clicked(Gtk::ScrolledWindow *tree) {
     sancho::ui::gtk::QueryTab &tab = get_query_tab(tree);
 
     if (tab.was_modified()) {
-      Gtk::MessageDialog dialog(*this, "Are you sure you want to close this tab?",
-          false /* use_markup */, Gtk::MESSAGE_QUESTION,
-          Gtk::BUTTONS_YES_NO);
-      dialog.set_secondary_text(
-          "Editor code was modified and will not be saved!");
-
-      const int result = dialog.run();
+	  const auto result = sancho::ui::gtk::run_yes_no_question(
+                                                               this,
+                                                               "Are you sure you want to close this tab?",
+                                                               "Editor code was modified and will not be saved!"
+                                                               );
 
       if (result == Gtk::RESPONSE_NO) {
         return;

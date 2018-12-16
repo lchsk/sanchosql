@@ -18,6 +18,8 @@ void insert_log_message(Glib::RefPtr<Gsv::Buffer> &log_buffer,
 
 enum class TabType { List, Query, Invalid };
 
+  int run_yes_no_question(Gtk::Window* window, const std::string&, const std::string&);
+
   struct SQLFileStatus {
     std::string path;
     bool modified;

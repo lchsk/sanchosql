@@ -23,6 +23,16 @@ void insert_log_message(Glib::RefPtr<Gsv::Buffer> &log_buffer,
     log_buffer->insert(log_buffer->begin(), dated_message);
 }
 
+  int run_yes_no_question(Gtk::Window* window, const std::string& question, const std::string& secondary)
+{
+      Gtk::MessageDialog dialog(*window, question,
+          false /* use_markup */, Gtk::MESSAGE_QUESTION,
+          Gtk::BUTTONS_YES_NO);
+      dialog.set_secondary_text(secondary);
+
+      return dialog.run();
+}
+
 AbstractTab::AbstractTab(const Glib::ustring &tab_name, TabType type)
     : tab_name(tab_name), type(type) {
     hb = Gtk::manage(new Gtk::HBox);
@@ -243,6 +253,17 @@ void QueryTab::on_cursor_position_changed()
 
   void QueryTab::on_btn_open_file_clicked(QueryTab* tab)
   {
+    if (file_status.modified) {
+      const auto confirmation = sancho::ui::gtk::run_yes_no_question(
+                                                                   parent_window,
+                                                                   "Are you sure?",
+                                                                   "Changes to this file will be lost"
+                                                                   );
+      if (confirmation == Gtk::RESPONSE_NO) {
+        return;
+      }
+    }
+
     Gtk::FileChooserDialog dialog("Please choose a file", Gtk::FILE_CHOOSER_ACTION_OPEN);
     dialog.set_transient_for(*parent_window);
 
