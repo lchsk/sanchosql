@@ -221,6 +221,14 @@ void QueryTab::on_cursor_position_changed()
     label_cursor_position->set_text(pos);
 }
 
+  bool QueryTab::was_modified() const {
+    return file_status.modified;
+  }
+
+  bool SimpleTab::was_modified() const {
+    return false;
+  }
+
   void QueryTab::on_buffer_changed()
 {
   file_status.modified = true;

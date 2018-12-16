@@ -33,6 +33,7 @@ class AbstractTab {
     AbstractTab(const Glib::ustring &tab_name, TabType type);
 
     void show() const;
+    virtual bool was_modified() const = 0;
 
     Gtk::HBox *hb;
     Gtk::Button *b;
@@ -67,6 +68,7 @@ class QueryTab : public AbstractTab {
     void on_btn_save_file_clicked(QueryTab* tab);
     void on_btn_save_file_as_clicked(QueryTab* tab);
     void on_btn_execute_all_editor_queries_clicked(QueryTab* tab);
+  bool was_modified() const;
 
     Gtk::VPaned paned_source;
     Gtk::VPaned paned_results;
@@ -104,6 +106,8 @@ class SimpleTab : public AbstractTab {
   public:
     SimpleTab(const Glib::ustring &tab_name,
               std::shared_ptr<sancho::db::SimpleTabModel> &model);
+  bool was_modified() const;
+
     // Browse box
     Gtk::Box *browse_box;
     // Accept DB changes

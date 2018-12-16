@@ -665,6 +665,26 @@ bool MainWindow::on_tab_button_released(GdkEventButton *button_event,
 }
 
 void MainWindow::on_tab_close_button_clicked(Gtk::ScrolledWindow *tree) {
+  const sancho::ui::gtk::TabType type = get_tab_type(tree);
+
+  if (type == sancho::ui::gtk::TabType::Query) {
+    sancho::ui::gtk::QueryTab &tab = get_query_tab(tree);
+
+    if (tab.was_modified()) {
+      Gtk::MessageDialog dialog(*this, "Are you sure you want to close this tab?",
+          false /* use_markup */, Gtk::MESSAGE_QUESTION,
+          Gtk::BUTTONS_YES_NO);
+      dialog.set_secondary_text(
+          "Editor code was modified and will not be saved!");
+
+      const int result = dialog.run();
+
+      if (result == Gtk::RESPONSE_NO) {
+        return;
+      }
+    }
+  }
+
     if (tab_models.find(tree) == tab_models.end()) {
         std::cerr << "Could not find connection when closing a tab model"
                   << std::endl;
