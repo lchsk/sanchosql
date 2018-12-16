@@ -63,7 +63,6 @@ class QueryTab : public AbstractTab {
   public:
   QueryTab(const Glib::ustring &tab_name, Gtk::Window* window);
 
-    void on_buffer_changed();
     void on_btn_open_file_clicked(QueryTab* tab);
     void on_btn_save_file_clicked(QueryTab* tab);
     void on_btn_save_file_as_clicked(QueryTab* tab);
@@ -95,6 +94,8 @@ private:
   const std::string read_file(const std::string& path);
   void save_file(const std::string& path);
   void update_file_buttons();
+  void on_buffer_changed();
+  void on_cursor_position_changed();
     Gtk::Window* parent_window;
     SQLFileStatus file_status;
 };

@@ -122,7 +122,7 @@ void AbstractTab::show() const {
         return;
     }
 
-    auto slot = sigc::mem_fun(*this, &QueryTab::on_buffer_changed);
+    auto slot = sigc::mem_fun(*this, &QueryTab::on_cursor_position_changed);
     buffer->connect_property_changed("cursor-position", slot);
 
     source_view->set_show_line_numbers();
@@ -144,6 +144,9 @@ void AbstractTab::show() const {
         sancho::date::get_current_datetime(), sancho::user::get_user_name());
 
     buffer->set_text(default_text);
+    auto slot_buffer_changed = sigc::mem_fun(*this, &QueryTab::on_buffer_changed);
+    buffer->signal_changed().connect(slot_buffer_changed);
+
     source_view->set_monospace();
 
     // Set up log source view
@@ -205,7 +208,7 @@ void AbstractTab::show() const {
     update_file_buttons();
 }
 
-void QueryTab::on_buffer_changed()
+void QueryTab::on_cursor_position_changed()
 {
     const auto mark = buffer->get_insert();
     const auto iter = buffer->get_iter_at_mark(mark);
@@ -216,6 +219,12 @@ void QueryTab::on_buffer_changed()
     const std::string pos = std::to_string(line) + ":" + std::to_string(col);
 
     label_cursor_position->set_text(pos);
+}
+
+  void QueryTab::on_buffer_changed()
+{
+  file_status.modified = true;
+  update_file_buttons();
 }
 
   void QueryTab::update_file_buttons()
@@ -259,13 +268,13 @@ void QueryTab::on_buffer_changed()
         return;
       }
 
-      file_status.modified = false;
-      file_status.file_loaded = true;
-      file_status.path = path;
-
       buffer->set_text(contents);
 
       insert_log_message(log_buffer, Glib::ustring::compose("File '%1' was opened\n", path));
+
+      file_status.modified = false;
+      file_status.file_loaded = true;
+      file_status.path = path;
 
       update_file_buttons();
 
@@ -312,6 +321,23 @@ void QueryTab::on_buffer_changed()
 
   void QueryTab::on_btn_save_file_clicked(QueryTab* tab)
   {
+    if (!file_status.modified) {
+      return;
+    }
+
+    if (file_status.file_loaded) {
+      try {
+        save_file(file_status.path);
+      } catch (std::runtime_error &e) {
+        insert_log_message(log_buffer, Glib::ustring::compose("File '%1' could not be saved\n", file_status.path));
+        return;
+      }
+    } else {
+      on_btn_save_file_as_clicked(this);
+    }
+
+    file_status.modified = false;
+    update_file_buttons();
   }
 
   void QueryTab::on_btn_save_file_as_clicked(QueryTab* tab)
