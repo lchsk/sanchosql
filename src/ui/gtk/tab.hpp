@@ -82,6 +82,7 @@ class QueryTab : public AbstractTab {
     Gtk::ScrolledWindow *log_scrolled_window;
     Gtk::Box* box_editor;
     Gtk::Label* label_cursor_position;
+    Gtk::Label* label_filename;
 
     Gtk::TreeView *tree;
     Gtk::ScrolledWindow *data_scrolled_window;
@@ -92,6 +93,8 @@ class QueryTab : public AbstractTab {
     Gtk::ToolButton *btn_save_file_as;
 private:
   const std::string read_file(const std::string& path);
+  void save_file(const std::string& path);
+  void update_file_buttons();
     Gtk::Window* parent_window;
     SQLFileStatus file_status;
 };

@@ -40,8 +40,6 @@ MainWindow::MainWindow()
     Gsv::init();
 
     browser_scrolled_window.add(browser);
-    browser_scrolled_window.set_policy(Gtk::POLICY_AUTOMATIC,
-                                       Gtk::POLICY_AUTOMATIC);
 
     // Setup popup menu - headers
     popup_item_refresh_browser =
