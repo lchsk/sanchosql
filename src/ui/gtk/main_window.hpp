@@ -260,6 +260,8 @@ class MainWindow : public Gtk::Window {
     void on_open_sql_editor_clicked();
     void on_submit_query_clicked(Gtk::ScrolledWindow *,
                                  Glib::RefPtr<Gsv::Buffer> &);
+    void on_submit_query_all_clicked(Gtk::ScrolledWindow *,
+                                     Glib::RefPtr<Gsv::Buffer> &);
 
     void on_btn_accept_changes_clicked(sancho::ui::gtk::SimpleTab *tab,
                                        sancho::db::SimpleTabModel *model);

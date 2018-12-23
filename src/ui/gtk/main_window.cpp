@@ -743,6 +743,10 @@ void MainWindow::on_open_sql_editor_clicked() {
         sigc::bind<Gtk::ScrolledWindow *, Glib::RefPtr<Gsv::Buffer>>(
             sigc::mem_fun(*this, &MainWindow::on_submit_query_clicked), window,
             tab->buffer));
+    tab->btn_execute_all_editor_queries->signal_clicked().connect(
+        sigc::bind<Gtk::ScrolledWindow *, Glib::RefPtr<Gsv::Buffer>>(
+            sigc::mem_fun(*this, &MainWindow::on_submit_query_all_clicked), window,
+            tab->buffer));
 
     tabs[window] = tab;
 
@@ -884,6 +888,17 @@ void MainWindow::on_browser_row_activated(const Gtk::TreeModel::Path &path,
                               &MainWindow::on_primary_key_warning_clicked),
                 table_name));
     }
+}
+
+void MainWindow::on_submit_query_all_clicked(Gtk::ScrolledWindow * tree_scrolled_window,
+                                             Glib::RefPtr<Gsv::Buffer> &buffer)
+{
+  const auto query = buffer->get_text();
+
+  auto &model = get_query_tab_model(tree_scrolled_window);
+  model.query = query;
+
+  load_query_results(tree_scrolled_window);
 }
 
 void MainWindow::on_submit_query_clicked(

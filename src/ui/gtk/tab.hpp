@@ -69,7 +69,6 @@ class QueryTab : public AbstractTab {
     void on_btn_open_file_clicked(QueryTab* tab);
     void on_btn_save_file_clicked(QueryTab* tab);
     void on_btn_save_file_as_clicked(QueryTab* tab);
-    void on_btn_execute_all_editor_queries_clicked(QueryTab* tab);
   bool was_modified() const;
 
     Gtk::VPaned paned_source;

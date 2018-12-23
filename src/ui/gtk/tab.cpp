@@ -103,9 +103,6 @@ void AbstractTab::show() const {
     btn_save_file_as->signal_clicked().connect(sigc::bind<QueryTab *>(
                                                                    sigc::mem_fun(*this, &QueryTab::on_btn_save_file_as_clicked),
         this));
-    btn_execute_all_editor_queries->signal_clicked().connect(sigc::bind<QueryTab *>(
-        sigc::mem_fun(*this, &QueryTab::on_btn_execute_all_editor_queries_clicked),
-        this));
 
     tree = Gtk::manage(new Gtk::TreeView);
 
@@ -414,10 +411,6 @@ void QueryTab::on_cursor_position_changed()
       break;
         }
       }
-  }
-  void QueryTab::on_btn_execute_all_editor_queries_clicked(QueryTab* tab)
-  {
-
   }
 
 SimpleTab::SimpleTab(const Glib::ustring &tab_name,
