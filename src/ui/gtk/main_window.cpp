@@ -770,18 +770,6 @@ void MainWindow::on_open_sql_editor_clicked() {
 
 void MainWindow::on_browser_row_activated(const Gtk::TreeModel::Path &path,
                                           Gtk::TreeViewColumn *) {
-    Gtk::TreeModel::iterator iter = browser_store->get_iter(path);
-
-    if (!iter)
-        return;
-
-    Gtk::TreeModel::Row current_row = *iter;
-
-    if (current_row[browser_model.type] == BrowserItemType::Header) {
-        return;
-    }
-
-    Glib::ustring table_name = current_row[browser_model.object_name];
 
     const auto current_connection =
         sancho::db::Connections::instance()->current_connection;
@@ -789,40 +777,37 @@ void MainWindow::on_browser_row_activated(const Gtk::TreeModel::Path &path,
     if (!current_connection)
         return;
 
+    Gtk::TreeModel::iterator iter = browser_store->get_iter(path);
+
+    if (!iter)
+        return;
+
+    Gtk::TreeModel::Row current_row = *iter;
+    const Glib::ustring object_name = current_row[browser_model.object_name];
+
+    sancho::ui::gtk::ListViewType list_view_type;
+
+    switch (current_row[browser_model.type]) {
+    case BrowserItemType::Header:
+      return;
+    case BrowserItemType::Table:
+      list_view_type = sancho::ui::gtk::ListViewType::Table;
+      break;
+    case BrowserItemType::View:
+      list_view_type = sancho::ui::gtk::ListViewType::View;
+      break;
+    }
+
     const std::string &schema_name = combo_schemas.get_active_text();
 
     auto shared_tab_model = std::make_shared<sancho::db::SimpleTabModel>(
-        current_connection, table_name, schema_name);
+        current_connection, object_name, schema_name);
 
-    auto tab = std::make_shared<sancho::ui::gtk::SimpleTab>(table_name,
-                                                            shared_tab_model);
+    auto tab = std::make_shared<sancho::ui::gtk::SimpleTab>(object_name,
+                                                            shared_tab_model,
+                                                            list_view_type);
+
     Gtk::ScrolledWindow *window = tab->tree_scrolled_window;
-
-    tab->tree->get_selection()->set_mode(Gtk::SELECTION_MULTIPLE);
-
-    tab->popup_item_delete_rows =
-        Gtk::manage(new Gtk::MenuItem("_Delete selected row(s)", true));
-
-    tab->popup_item_delete_rows->set_sensitive(
-        shared_tab_model->has_primary_key());
-
-    auto slot_delete =
-        sigc::bind<Gtk::ScrolledWindow *, sancho::ui::gtk::SimpleTab *,
-                   sancho::db::SimpleTabModel *>(
-            sigc::mem_fun(*this, &MainWindow::on_menu_file_popup_generic),
-            window, tab.get(), shared_tab_model.get());
-    tab->popup_item_delete_rows->signal_activate().connect(slot_delete);
-    tab->popup.append(*tab->popup_item_delete_rows);
-
-    tab->popup.accelerate(*this);
-    tab->popup.show_all();
-
-    auto slot_popup =
-        sigc::bind<sancho::ui::gtk::SimpleTab *, sancho::db::SimpleTabModel *>(
-            sigc::mem_fun(*this, &MainWindow::on_list_press), tab.get(),
-            shared_tab_model.get());
-
-    tab->tree->signal_button_release_event().connect(slot_popup);
 
     tabs[window] = tab;
     tab_models[window] = shared_tab_model;
@@ -830,14 +815,9 @@ void MainWindow::on_browser_row_activated(const Gtk::TreeModel::Path &path,
     sancho::ui::gtk::SimpleTab *simple_tab = tab.get();
     sancho::db::SimpleTabModel *simple_tab_model = shared_tab_model.get();
 
-    tab->btn_accept->signal_clicked().connect(
-        sigc::bind<sancho::ui::gtk::SimpleTab *, sancho::db::SimpleTabModel *>(
-            sigc::mem_fun(*this, &MainWindow::on_btn_accept_changes_clicked),
-            simple_tab, simple_tab_model));
+    // TODO: Refactor this
 
-    tab->event_box.signal_button_release_event().connect(
-        sigc::bind<Gtk::ScrolledWindow *>(
-            sigc::mem_fun(*this, &MainWindow::on_tab_button_released), window));
+    // Both Table and View
 
     tab->b->signal_clicked().connect(sigc::bind<Gtk::ScrolledWindow *>(
         sigc::mem_fun(*this, &MainWindow::on_tab_close_button_clicked),
@@ -847,9 +827,6 @@ void MainWindow::on_browser_row_activated(const Gtk::TreeModel::Path &path,
         sigc::bind<Gtk::ScrolledWindow *>(
             sigc::mem_fun(*this, &MainWindow::on_reload_table_clicked),
             window));
-
-    tab->btn_insert->signal_clicked().connect(sigc::bind<Gtk::ScrolledWindow *>(
-        sigc::mem_fun(*this, &MainWindow::on_insert_row_clicked), window));
 
     tab->btn_prev->signal_clicked().connect(sigc::bind<Gtk::ScrolledWindow *>(
         sigc::mem_fun(*this, &MainWindow::on_prev_results_page_clicked),
@@ -867,12 +844,55 @@ void MainWindow::on_browser_row_activated(const Gtk::TreeModel::Path &path,
         sigc::mem_fun(*this, &MainWindow::on_table_info_clicked),
         window));
 
+    // Just Table
+
+    if (list_view_type == sancho::ui::gtk::ListViewType::Table) {
+      tab->tree->get_selection()->set_mode(Gtk::SELECTION_MULTIPLE);
+
+      tab->popup_item_delete_rows =
+        Gtk::manage(new Gtk::MenuItem("_Delete selected row(s)", true));
+
+      tab->popup_item_delete_rows->set_sensitive(
+        shared_tab_model->has_primary_key());
+
+      auto slot_delete =
+        sigc::bind<Gtk::ScrolledWindow *, sancho::ui::gtk::SimpleTab *,
+                   sancho::db::SimpleTabModel *>(
+            sigc::mem_fun(*this, &MainWindow::on_menu_file_popup_generic),
+            window, tab.get(), shared_tab_model.get());
+      tab->popup_item_delete_rows->signal_activate().connect(slot_delete);
+      tab->popup.append(*tab->popup_item_delete_rows);
+
+      tab->popup.accelerate(*this);
+      tab->popup.show_all();
+
+      auto slot_popup =
+        sigc::bind<sancho::ui::gtk::SimpleTab *, sancho::db::SimpleTabModel *>(
+            sigc::mem_fun(*this, &MainWindow::on_list_press), tab.get(),
+            shared_tab_model.get());
+
+      tab->tree->signal_button_release_event().connect(slot_popup);
+
+      tab->btn_accept->signal_clicked().connect(
+        sigc::bind<sancho::ui::gtk::SimpleTab *, sancho::db::SimpleTabModel *>(
+            sigc::mem_fun(*this, &MainWindow::on_btn_accept_changes_clicked),
+            simple_tab, simple_tab_model));
+
+      tab->event_box.signal_button_release_event().connect(
+        sigc::bind<Gtk::ScrolledWindow *>(
+            sigc::mem_fun(*this, &MainWindow::on_tab_button_released), window));
+
+      tab->btn_insert->signal_clicked().connect(sigc::bind<Gtk::ScrolledWindow *>(
+        sigc::mem_fun(*this, &MainWindow::on_insert_row_clicked), window));
+    }
+
+    // End table setup
+
     load_list_results(window);
 
     tab->show();
 
     notebook.append_page(*window, *(tab->hb));
-    notebook.set_menu_label_text(*window, table_name);
     notebook.set_current_page(notebook.get_n_pages() - 1);
     box_dashboard->hide();
     notebook_scrolled_window.show();
@@ -886,7 +906,7 @@ void MainWindow::on_browser_row_activated(const Gtk::TreeModel::Path &path,
             sigc::bind<const Glib::ustring>(
                 sigc::mem_fun(*this,
                               &MainWindow::on_primary_key_warning_clicked),
-                table_name));
+                object_name));
     }
 }
 

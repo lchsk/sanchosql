@@ -37,11 +37,11 @@ AbstractTab::AbstractTab(const Glib::ustring &tab_name, TabType type)
     : tab_name(tab_name), type(type) {
     hb = Gtk::manage(new Gtk::HBox);
     b = Gtk::manage(new Gtk::Button);
-    l = Gtk::manage(new Gtk::Label(tab_name));
+    l = Gtk::manage(new Gtk::Label);
 
     event_box.add(*l);
     event_box.set_events(Gdk::BUTTON_RELEASE_MASK);
-    event_box.set_tooltip_text("Middle button click to close");
+    event_box.set_tooltip_text("Middle button click / Control-W to close");
     // l->set_size_request(110, 20);
     // l->set_ellipsize(Pango::ELLIPSIZE_END);
 
@@ -52,6 +52,13 @@ AbstractTab::AbstractTab(const Glib::ustring &tab_name, TabType type)
     b->add(*i);
     hb->pack_start(event_box, Gtk::PACK_SHRINK);
     hb->pack_start(*b, Gtk::PACK_SHRINK);
+
+    set_header_label_text(tab_name);
+}
+
+void AbstractTab::set_header_label_text(const Glib::ustring& label)
+{
+  l->set_text(label);
 }
 
 void AbstractTab::show() const {
@@ -414,7 +421,8 @@ void QueryTab::on_cursor_position_changed()
   }
 
 SimpleTab::SimpleTab(const Glib::ustring &tab_name,
-                     std::shared_ptr<sancho::db::SimpleTabModel> &model)
+                     std::shared_ptr<sancho::db::SimpleTabModel> &model,
+                     sancho::ui::gtk::ListViewType list_view_type)
     : AbstractTab(tab_name, TabType::List),
       tree(Gtk::manage(new Gtk::TreeView)), model(model) {
     tv = Gtk::manage(new Gtk::TextView);
@@ -452,7 +460,7 @@ SimpleTab::SimpleTab(const Glib::ustring &tab_name,
 
     btn_table_info = Gtk::manage(new Gtk::ToolButton);
     btn_table_info->set_icon_name("document-properties");
-    btn_table_info->set_tooltip_text("Show table information");
+    btn_table_info->set_tooltip_text("Show details");
 
     entry_column_mask = Gtk::manage(new Gtk::Entry);
     entry_column_mask->set_tooltip_text("List of column names to show");
@@ -462,14 +470,26 @@ SimpleTab::SimpleTab(const Glib::ustring &tab_name,
     entry_filter->set_tooltip_text("Apply SQL filtering to the results");
     entry_filter->set_placeholder_text("Apply SQL filtering to the results");
 
-    toolbar->append(*btn_refresh);
-    toolbar->append(*btn_accept);
-    toolbar->append(*btn_insert);
-    toolbar->append(*btn_prev);
-    toolbar->append(*btn_next);
-    toolbar->append(*btn_reset_filtering);
-    toolbar->append(*btn_table_info);
-    toolbar->append(*btn_primary_key_warning);
+    if (list_view_type == sancho::ui::gtk::ListViewType::Table) {
+        toolbar->append(*btn_refresh);
+        toolbar->append(*btn_accept);
+        toolbar->append(*btn_insert);
+        toolbar->append(*btn_prev);
+        toolbar->append(*btn_next);
+        toolbar->append(*btn_reset_filtering);
+        toolbar->append(*btn_table_info);
+        toolbar->append(*btn_primary_key_warning);
+
+        set_header_label_text(Glib::ustring::compose("%1 (table)", tab_name));
+    } if (list_view_type == sancho::ui::gtk::ListViewType::View) {
+        toolbar->append(*btn_refresh);
+        toolbar->append(*btn_prev);
+        toolbar->append(*btn_next);
+        toolbar->append(*btn_reset_filtering);
+        toolbar->append(*btn_table_info);
+
+        set_header_label_text(Glib::ustring::compose("%1 (view)", tab_name));
+    }
 
     tree_scrolled_window = Gtk::manage(new Gtk::ScrolledWindow);
     log_scrolled_window = Gtk::manage(new Gtk::ScrolledWindow);
@@ -493,12 +513,7 @@ SimpleTab::SimpleTab(const Glib::ustring &tab_name,
     log_buffer->set_style_scheme(style);
 
     log_scrolled_window->add(*log);
-    log_scrolled_window->set_policy(Gtk::POLICY_AUTOMATIC,
-                                    Gtk::POLICY_AUTOMATIC);
-
     data_scrolled_window->add(*tree);
-    data_scrolled_window->set_policy(Gtk::POLICY_AUTOMATIC,
-                                     Gtk::POLICY_AUTOMATIC);
 
     box = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
 
@@ -528,8 +543,6 @@ SimpleTab::SimpleTab(const Glib::ustring &tab_name,
     box->pack_start(*browse_box, Gtk::PACK_SHRINK);
 
     tree_scrolled_window->add(*box);
-    tree_scrolled_window->set_policy(Gtk::POLICY_AUTOMATIC,
-                                     Gtk::POLICY_AUTOMATIC);
 }
 } // namespace sancho
 }

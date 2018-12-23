@@ -18,6 +18,8 @@ void insert_log_message(Glib::RefPtr<Gsv::Buffer> &log_buffer,
 
 enum class TabType { List, Query, Invalid };
 
+  enum class ListViewType { Table, View };
+
   int run_yes_no_question(Gtk::Window* window, const std::string&, const std::string&);
 
   struct SQLFileStatus {
@@ -36,6 +38,7 @@ class AbstractTab {
 
     void show() const;
     virtual bool was_modified() const = 0;
+    void set_header_label_text(const Glib::ustring& label);
 
     Gtk::HBox *hb;
     Gtk::Button *b;
@@ -106,7 +109,8 @@ private:
 class SimpleTab : public AbstractTab {
   public:
     SimpleTab(const Glib::ustring &tab_name,
-              std::shared_ptr<sancho::db::SimpleTabModel> &model);
+              std::shared_ptr<sancho::db::SimpleTabModel> &model,
+              sancho::ui::gtk::ListViewType list_view_type);
   bool was_modified() const;
 
     // Browse box
