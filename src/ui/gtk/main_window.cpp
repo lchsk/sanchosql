@@ -1024,15 +1024,29 @@ void MainWindow::refresh_browser(
 
     const std::vector<std::string> &tables = pc->get_db_tables(schema_name);
 
-    Gtk::TreeModel::Row row = *(browser_store->append());
-    row[browser_model.table] = "Tables";
-    row[browser_model.type] = BrowserItemType::Header;
+    Gtk::TreeModel::Row row_tables = *(browser_store->append());
+    row_tables[browser_model.table] = "Tables";
+    row_tables[browser_model.type] = BrowserItemType::Header;
 
     for (const std::string &table_name : tables) {
         Gtk::TreeModel::Row table_row =
-            *(browser_store->append(row.children()));
+            *(browser_store->append(row_tables.children()));
         table_row[browser_model.table] = table_name;
         table_row[browser_model.type] = BrowserItemType::Table;
+    }
+
+    // Load views
+
+    const std::vector<std::string> &views = pc->get_db_views(schema_name);
+
+    Gtk::TreeModel::Row row_views = *(browser_store->append());
+    row_views[browser_model.table] = "Views";
+    row_views[browser_model.type] = BrowserItemType::Header;
+
+    for (const std::string &view_name : views) {
+        Gtk::TreeModel::Row view_row = *(browser_store->append(row_views.children()));
+        view_row[browser_model.table] = view_name;
+        view_row[browser_model.type] = BrowserItemType::View;
     }
 
     browser.expand_all();

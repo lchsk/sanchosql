@@ -56,6 +56,7 @@ PostgresConnection::get_db_tables(const Glib::ustring &schema_name) const
                 information_schema.tables
             WHERE
                 table_schema = $1
+                AND table_type = 'BASE TABLE'
             ORDER BY
                 table_name ASC
             )";
@@ -72,6 +73,37 @@ PostgresConnection::get_db_tables(const Glib::ustring &schema_name) const
 
     return tables;
 }
+
+std::vector<std::string>
+PostgresConnection::get_db_views(const Glib::ustring &schema_name) noexcept
+{
+    std::vector<std::string> views;
+
+    const std::string sql_template = R"(
+            SELECT
+                table_name
+            FROM
+                information_schema.views
+            WHERE
+                table_schema = '%1'
+            ORDER BY
+                table_name ASC
+            )";
+
+    const auto sql = Glib::ustring::compose(sql_template, schema_name);
+
+    const std::shared_ptr<sancho::QueryResult> result = run_query(sancho::QueryType::NonTransaction, sql);
+
+    if (!result->success)
+        return views;
+
+    for (auto &row : result->as_map()) {
+        views.push_back(row["table_name"]);
+    }
+
+    return views;
+}
+
 
 std::unique_ptr<std::vector<Glib::ustring>> PostgresConnection::get_schemas() {
     std::unique_ptr<std::vector<Glib::ustring>> schemas =
