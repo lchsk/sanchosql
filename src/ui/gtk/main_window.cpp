@@ -94,7 +94,7 @@ MainWindow::MainWindow()
     browser.set_model(browser_store);
     browser.set_headers_visible(false);
 
-    browser.append_column("Table", browser_model.table);
+    browser.append_column("Table", browser_model.object_name);
 
     browser.signal_row_activated().connect(
         sigc::mem_fun(*this, &MainWindow::on_browser_row_activated));
@@ -781,7 +781,7 @@ void MainWindow::on_browser_row_activated(const Gtk::TreeModel::Path &path,
         return;
     }
 
-    Glib::ustring table_name = current_row[browser_model.table];
+    Glib::ustring table_name = current_row[browser_model.object_name];
 
     const auto current_connection =
         sancho::db::Connections::instance()->current_connection;
@@ -1025,13 +1025,13 @@ void MainWindow::refresh_browser(
     const std::vector<std::string> &tables = pc->get_db_tables(schema_name);
 
     Gtk::TreeModel::Row row_tables = *(browser_store->append());
-    row_tables[browser_model.table] = "Tables";
+    row_tables[browser_model.object_name] = "Tables";
     row_tables[browser_model.type] = BrowserItemType::Header;
 
     for (const std::string &table_name : tables) {
         Gtk::TreeModel::Row table_row =
             *(browser_store->append(row_tables.children()));
-        table_row[browser_model.table] = table_name;
+        table_row[browser_model.object_name] = table_name;
         table_row[browser_model.type] = BrowserItemType::Table;
     }
 
@@ -1040,12 +1040,12 @@ void MainWindow::refresh_browser(
     const std::vector<std::string> &views = pc->get_db_views(schema_name);
 
     Gtk::TreeModel::Row row_views = *(browser_store->append());
-    row_views[browser_model.table] = "Views";
+    row_views[browser_model.object_name] = "Views";
     row_views[browser_model.type] = BrowserItemType::Header;
 
     for (const std::string &view_name : views) {
         Gtk::TreeModel::Row view_row = *(browser_store->append(row_views.children()));
-        view_row[browser_model.table] = view_name;
+        view_row[browser_model.object_name] = view_name;
         view_row[browser_model.type] = BrowserItemType::View;
     }
 
@@ -1505,7 +1505,7 @@ bool MainWindow::on_browser_button_released(GdkEventButton *button_event) {
 
             return true;
         } else if (current_row[browser_model.type] == BrowserItemType::Table) {
-          selected_table_name = current_row[browser_model.table];
+          selected_table_name = current_row[browser_model.object_name];
 
           popup_browser_table.popup(button_event->button, button_event->time);
         }

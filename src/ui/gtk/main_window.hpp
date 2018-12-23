@@ -158,11 +158,11 @@ class MainWindow : public Gtk::Window {
     class BrowserModel : public Gtk::TreeModel::ColumnRecord {
       public:
         BrowserModel() {
-            add(table);
+            add(object_name);
             add(type);
         }
 
-        Gtk::TreeModelColumn<Glib::ustring> table;
+        Gtk::TreeModelColumn<Glib::ustring> object_name;
         Gtk::TreeModelColumn<BrowserItemType> type;
     };
 
