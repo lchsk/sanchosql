@@ -1246,7 +1246,9 @@ bool MainWindow::on_key_press_event(GdkEventKey *key_event) {
             sancho::ui::gtk::QueryTab &tab = get_query_tab(window);
 
             on_submit_query_clicked(window, tab.buffer);
-        }
+        } else if (type == sancho::ui::gtk::TabType::List) {
+            on_reload_table_clicked(window);
+		}
 
         return true;
     } else if (key_event->keyval == GDK_KEY_Return) {
