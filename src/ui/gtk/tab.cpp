@@ -486,7 +486,6 @@ SimpleTab::SimpleTab(const Glib::ustring &tab_name,
         toolbar->append(*btn_prev);
         toolbar->append(*btn_next);
         toolbar->append(*btn_reset_filtering);
-        toolbar->append(*btn_table_info);
 
         set_header_label_text(Glib::ustring::compose("%1 (view)", tab_name));
     }

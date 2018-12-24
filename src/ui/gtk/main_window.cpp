@@ -53,7 +53,7 @@ MainWindow::MainWindow()
     popup_browser_header.show_all();
 
     // Setup popup menu - tables
-    popup_item_table_info = Gtk::manage(new Gtk::MenuItem("_Show table information", true));
+    popup_item_table_info = Gtk::manage(new Gtk::MenuItem("_Show details", true));
     auto slot_table_info = sigc::mem_fun(*this, &MainWindow::on_show_table_info_clicked);
 
     popup_item_table_info->signal_activate().connect(slot_table_info);
