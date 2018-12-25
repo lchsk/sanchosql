@@ -301,5 +301,35 @@ CREATE OR REPLACE FUNCTION insert_city_audit() RETURNS TRIGGER AS $$
 $$ LANGUAGE plpgsql;
 
 
+CREATE OR REPLACE FUNCTION count_cities() RETURNS int AS $$
+   DECLARE
+        cities_cnt int;
+   BEGIN
+        select count(id) into cities_cnt from city;
+        return citites_cnt;
+   END;
+$$ LANGUAGE plpgsql;
+
+
+CREATE OR REPLACE FUNCTION add_city(country_code varchar(2), city_name varchar(100)) RETURNS void AS $$
+   BEGIN
+        INSERT INTO city VALUES (nextval('city_seq'), country_code, city_name);
+   END;
+$$ LANGUAGE plpgsql;
+
+
+CREATE OR REPLACE FUNCTION hi_lo(
+       a NUMERIC,
+       b NUMERIC,
+       c NUMERIC,
+       OUT hi NUMERIC,
+       OUT lo NUMERIC) AS $$
+    BEGIN
+       hi := GREATEST(a,b,c);
+       lo := LEAST(a,b,c);
+    END;
+$$ LANGUAGE plpgsql;
+
+
 CREATE TRIGGER city_trigger AFTER INSERT ON city
 FOR EACH ROW EXECUTE PROCEDURE insert_city_audit();
