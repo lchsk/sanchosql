@@ -1123,6 +1123,20 @@ void MainWindow::refresh_browser(
         function_row[browser_model.type] = BrowserItemType::Function;
     }
 
+	// Load sequences
+
+    const std::vector<std::string> &sequences = pc->get_db_sequences(schema_name);
+
+    Gtk::TreeModel::Row row_sequences = *(browser_store->append());
+    row_sequences[browser_model.object_name] = "Sequences";
+    row_sequences[browser_model.type] = BrowserItemType::Header;
+
+    for (const std::string &sequence_name : sequences) {
+        Gtk::TreeModel::Row sequence_row = *(browser_store->append(row_sequences.children()));
+        sequence_row[browser_model.object_name] = sequence_name;
+        sequence_row[browser_model.type] = BrowserItemType::Sequence;
+    }
+
     browser.expand_all();
 }
 

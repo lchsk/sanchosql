@@ -193,6 +193,36 @@ PostgresConnection::get_db_views(const Glib::ustring &schema_name) noexcept
     return functions;
     }
 
+    std::vector<std::string>
+    PostgresConnection::get_db_sequences(const Glib::ustring &schema_name) noexcept
+    {
+    std::vector<std::string> sequences;
+
+    const std::string sql_template = R"(
+            SELECT
+                sequence_name
+            FROM
+                information_schema.sequences
+            WHERE
+                sequence_schema = '%1'
+            ORDER BY
+                sequence_name ASC
+            )";
+
+    const auto sql = Glib::ustring::compose(sql_template, schema_name);
+
+    const std::shared_ptr<sancho::QueryResult> result = run_query(sancho::QueryType::NonTransaction, sql);
+
+    if (!result->success)
+        return sequences;
+
+    for (auto &row : result->as_map()) {
+        sequences.push_back(row["sequence_name"]);
+    }
+
+    return sequences;
+    }
+
 std::unique_ptr<std::vector<Glib::ustring>> PostgresConnection::get_schemas() {
     std::unique_ptr<std::vector<Glib::ustring>> schemas =
         std::make_unique<std::vector<Glib::ustring>>();
