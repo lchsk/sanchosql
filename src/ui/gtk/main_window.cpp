@@ -1109,6 +1109,20 @@ void MainWindow::refresh_browser(
         trigger_row[browser_model.type] = BrowserItemType::Trigger;
     }
 
+	// Load functions
+
+    const std::vector<std::string> &functions = pc->get_db_functions(schema_name);
+
+    Gtk::TreeModel::Row row_functions = *(browser_store->append());
+    row_functions[browser_model.object_name] = "Functions";
+    row_functions[browser_model.type] = BrowserItemType::Header;
+
+    for (const std::string &function_name : functions) {
+        Gtk::TreeModel::Row function_row = *(browser_store->append(row_functions.children()));
+        function_row[browser_model.object_name] = function_name;
+        function_row[browser_model.type] = BrowserItemType::Function;
+    }
+
     browser.expand_all();
 }
 
