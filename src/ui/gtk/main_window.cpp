@@ -716,6 +716,22 @@ void MainWindow::on_tab_close_button_clicked(Gtk::ScrolledWindow *tree) {
     }
 }
 
+void MainWindow::on_show_view_query_clicked(sancho::ui::gtk::SimpleTab* view_tab)
+{
+  on_open_sql_editor_clicked();
+
+  const auto pages_sz = notebook.get_n_pages();
+  const auto page = static_cast<Gtk::ScrolledWindow *>(notebook.get_nth_page(pages_sz - 1));
+
+  if (get_tab_type(page) == sancho::ui::gtk::TabType::Query) {
+    auto &tab = get_query_tab(page);
+    auto& conn = view_tab->model->conn();
+
+    // NB. table_name is the name of the view in this case!
+    tab.buffer->set_text(conn.get_db_view_query(view_tab->model->get_schema_name(), view_tab->model->get_table_name()));
+  }
+}
+
 void MainWindow::on_open_sql_editor_clicked() {
     const auto current_connection =
         sancho::db::Connections::instance()->current_connection;
@@ -884,6 +900,12 @@ void MainWindow::on_browser_row_activated(const Gtk::TreeModel::Path &path,
 
       tab->btn_insert->signal_clicked().connect(sigc::bind<Gtk::ScrolledWindow *>(
         sigc::mem_fun(*this, &MainWindow::on_insert_row_clicked), window));
+    } else if (list_view_type == sancho::ui::gtk::ListViewType::View) {
+      tab->btn_show_view_query->signal_clicked().connect(
+                                                         sigc::bind<sancho::ui::gtk::SimpleTab*>(
+                                                                                          sigc::mem_fun(*this, &MainWindow::on_show_view_query_clicked),
+                                                                                          tab.get()
+                                                                                          ));
     }
 
     // End table setup

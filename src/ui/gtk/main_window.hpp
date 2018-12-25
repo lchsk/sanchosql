@@ -258,6 +258,7 @@ class MainWindow : public Gtk::Window {
     void on_browser_row_activated(const Gtk::TreeModel::Path &path,
                                   Gtk::TreeViewColumn *column);
     void on_open_sql_editor_clicked();
+    void on_show_view_query_clicked(sancho::ui::gtk::SimpleTab*);
     void on_submit_query_clicked(Gtk::ScrolledWindow *,
                                  Glib::RefPtr<Gsv::Buffer> &);
     void on_submit_query_all_clicked(Gtk::ScrolledWindow *,

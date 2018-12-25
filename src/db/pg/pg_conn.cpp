@@ -104,6 +104,35 @@ PostgresConnection::get_db_views(const Glib::ustring &schema_name) noexcept
     return views;
 }
 
+  const std::string
+  PostgresConnection::get_db_view_query(const Glib::ustring &schema_name, const Glib::ustring &table_name) noexcept
+  {
+    const std::string sql_template = R"(
+            SELECT
+                view_definition
+            FROM
+                information_schema.views
+            WHERE
+                table_schema = '%1'
+                AND table_name = '%2'
+            )";
+
+    const auto sql = Glib::ustring::compose(sql_template, schema_name, table_name);
+
+    const std::shared_ptr<sancho::QueryResult> result = run_query(sancho::QueryType::NonTransaction, sql);
+
+    if (!result->success)
+        return "";
+
+    if (result->size != 1) {
+      return "";
+    }
+
+    const auto data = result->as_map();
+
+    return data[0].at("view_definition");
+  }
+
 
 std::unique_ptr<std::vector<Glib::ustring>> PostgresConnection::get_schemas() {
     std::unique_ptr<std::vector<Glib::ustring>> schemas =

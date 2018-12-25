@@ -470,6 +470,8 @@ SimpleTab::SimpleTab(const Glib::ustring &tab_name,
     entry_filter->set_tooltip_text("Apply SQL filtering to the results");
     entry_filter->set_placeholder_text("Apply SQL filtering to the results");
 
+	// TODO: Split it up for table and view separately
+
     if (list_view_type == sancho::ui::gtk::ListViewType::Table) {
         toolbar->append(*btn_refresh);
         toolbar->append(*btn_accept);
@@ -482,10 +484,15 @@ SimpleTab::SimpleTab(const Glib::ustring &tab_name,
 
         set_header_label_text(Glib::ustring::compose("%1 (table)", tab_name));
     } if (list_view_type == sancho::ui::gtk::ListViewType::View) {
+        btn_show_view_query = Gtk::manage(new Gtk::ToolButton);
+        btn_show_view_query->set_icon_name("edit-copy");
+        btn_show_view_query->set_tooltip_text("Show view query");
+
         toolbar->append(*btn_refresh);
         toolbar->append(*btn_prev);
         toolbar->append(*btn_next);
         toolbar->append(*btn_reset_filtering);
+        toolbar->append(*btn_show_view_query);
 
         set_header_label_text(Glib::ustring::compose("%1 (view)", tab_name));
     }
