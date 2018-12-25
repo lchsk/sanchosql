@@ -133,6 +133,35 @@ PostgresConnection::get_db_views(const Glib::ustring &schema_name) noexcept
     return data[0].at("view_definition");
   }
 
+    std::vector<std::string>
+    PostgresConnection::get_db_triggers(const Glib::ustring &schema_name) noexcept
+    {
+    std::vector<std::string> triggers;
+
+    const std::string sql_template = R"(
+            SELECT
+                trigger_name
+            FROM
+                information_schema.triggers
+            WHERE
+                trigger_schema = '%1'
+            ORDER BY
+                trigger_name ASC
+            )";
+
+    const auto sql = Glib::ustring::compose(sql_template, schema_name);
+
+    const std::shared_ptr<sancho::QueryResult> result = run_query(sancho::QueryType::NonTransaction, sql);
+
+    if (!result->success)
+        return triggers;
+
+    for (auto &row : result->as_map()) {
+        triggers.push_back(row["trigger_name"]);
+    }
+
+    return triggers;
+    }
 
 std::unique_ptr<std::vector<Glib::ustring>> PostgresConnection::get_schemas() {
     std::unique_ptr<std::vector<Glib::ustring>> schemas =

@@ -812,6 +812,10 @@ void MainWindow::on_browser_row_activated(const Gtk::TreeModel::Path &path,
     case BrowserItemType::View:
       list_view_type = sancho::ui::gtk::ListViewType::View;
       break;
+    case BrowserItemType::Trigger:
+      return;
+    default:
+      return;
     }
 
     const std::string &schema_name = combo_schemas.get_active_text();
@@ -1089,6 +1093,20 @@ void MainWindow::refresh_browser(
         Gtk::TreeModel::Row view_row = *(browser_store->append(row_views.children()));
         view_row[browser_model.object_name] = view_name;
         view_row[browser_model.type] = BrowserItemType::View;
+    }
+
+    // Load triggers
+
+    const std::vector<std::string> &triggers = pc->get_db_triggers(schema_name);
+
+    Gtk::TreeModel::Row row_triggers = *(browser_store->append());
+    row_triggers[browser_model.object_name] = "Triggers";
+    row_triggers[browser_model.type] = BrowserItemType::Header;
+
+    for (const std::string &trigger_name : triggers) {
+        Gtk::TreeModel::Row trigger_row = *(browser_store->append(row_triggers.children()));
+        trigger_row[browser_model.object_name] = trigger_name;
+        trigger_row[browser_model.type] = BrowserItemType::Trigger;
     }
 
     browser.expand_all();

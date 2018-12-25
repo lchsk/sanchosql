@@ -16,7 +16,7 @@
 namespace sancho {
 namespace ui {
 namespace gtk {
-  enum class BrowserItemType { Header, Table, View };
+  enum class BrowserItemType { Header, Table, View, Trigger };
 
 class MainMenu {
     class ImageMenuItem {
