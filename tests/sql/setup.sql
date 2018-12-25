@@ -14,6 +14,11 @@ CREATE TABLE city (
 	   city_name varchar(100) NOT NULL
 );
 
+CREATE TABLE city_audit (
+       city_name varchar(100) NOT NULL,
+       entry_date timestamp NOT NULL
+);
+
 DROP SEQUENCE IF EXISTS country_seq;
 DROP SEQUENCE IF EXISTS city_seq;
 
@@ -286,3 +291,15 @@ CREATE VIEW cities_and_countries AS
        JOIN
             country on country.country_code = city.country_code
        ORDER BY country.country_name;
+
+
+CREATE OR REPLACE FUNCTION insert_city_audit() RETURNS TRIGGER AS $$
+   BEGIN
+      INSERT INTO city_audit(city_name, entry_date) VALUES (new.city_name, timezone('utc', now()));
+      RETURN NEW;
+   END;
+$$ LANGUAGE plpgsql;
+
+
+CREATE TRIGGER city_trigger AFTER INSERT ON city
+FOR EACH ROW EXECUTE PROCEDURE insert_city_audit();
