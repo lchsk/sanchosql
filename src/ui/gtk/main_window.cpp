@@ -699,6 +699,8 @@ bool MainWindow::on_tab_button_released(GdkEventButton *button_event,
 void MainWindow::on_tab_close_button_clicked(Gtk::ScrolledWindow *tree) {
   const sancho::ui::gtk::TabType type = get_tab_type(tree);
 
+  bool remove_tab = false;
+
   if (type == sancho::ui::gtk::TabType::Query) {
     sancho::ui::gtk::QueryTab &tab = get_query_tab(tree);
 
@@ -709,11 +711,20 @@ void MainWindow::on_tab_close_button_clicked(Gtk::ScrolledWindow *tree) {
                                                                "Editor code was modified and will not be saved!"
                                                                );
 
-      if (result == Gtk::RESPONSE_NO) {
-        return;
+      // Need to check for specific 'yes' response, 'no' won't work because
+      // a negative response can also be triggered by ESC
+      if (result == Gtk::RESPONSE_YES) {
+        remove_tab = true;
       }
+    } else {
+      remove_tab = true;
     }
+  } else {
+    // Always remove List tabs
+    remove_tab = true;
   }
+
+  if (!remove_tab) return;
 
     if (tab_models.find(tree) == tab_models.end()) {
         std::cerr << "Could not find connection when closing a tab model"
