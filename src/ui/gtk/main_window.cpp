@@ -41,6 +41,15 @@ MainWindow::MainWindow()
 
     browser_scrolled_window.add(browser);
 
+	// Setup popup menu - functions
+    popup_item_show_function_definition = Gtk::manage(new Gtk::MenuItem("_Show definition", true));
+    auto slot_show_function_definition = sigc::mem_fun(*this, &MainWindow::on_show_function_definition_clicked);
+    popup_item_show_function_definition->signal_activate().connect(slot_show_function_definition);
+
+    popup_function.append(*popup_item_show_function_definition);
+    popup_function.accelerate(*this);
+    popup_function.show_all();
+
     // Setup popup menu - headers
     popup_item_refresh_browser =
         Gtk::manage(new Gtk::MenuItem("_Refresh", true));
@@ -627,6 +636,29 @@ void MainWindow::on_table_info_clicked(sancho::ui::gtk::TabWindow* window)
       win_table_info->show();
       win_table_info->init(pc, model.get_schema_name(), model.get_table_name());
     }
+}
+
+void MainWindow::on_show_function_definition_clicked()
+{
+  on_open_sql_editor_clicked();
+
+  const auto pages_sz = notebook.get_n_pages();
+  const auto page = static_cast<Gtk::ScrolledWindow *>(notebook.get_nth_page(pages_sz - 1));
+
+  if (get_tab_type(page) == sancho::ui::gtk::TabType::Query) {
+    auto conn = handle_connect();
+
+    if (!conn) {
+        return;
+    };
+
+    auto &tab = get_query_tab(page);
+
+    const auto &schema_name = combo_schemas.get_active_text();
+    const auto definition = conn->get_db_function_definition(schema_name, selected_table_name);
+
+    tab.buffer->set_text(definition);
+  }
 }
 
 void MainWindow::on_reload_table_clicked(Gtk::ScrolledWindow *window) {
@@ -1596,6 +1628,10 @@ bool MainWindow::on_browser_button_released(GdkEventButton *button_event) {
           selected_table_name = current_row[browser_model.object_name];
 
           popup_browser_table.popup(button_event->button, button_event->time);
+        } else if (current_row[browser_model.type] == BrowserItemType::Function) {
+          selected_table_name = current_row[browser_model.object_name];
+
+          popup_function.popup(button_event->button, button_event->time);
         }
     }
 

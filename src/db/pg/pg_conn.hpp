@@ -53,6 +53,8 @@ class PostgresConnection {
     get_db_functions(const Glib::ustring &schema_name) noexcept;
     std::vector<std::string>
     get_db_sequences(const Glib::ustring &schema_name) noexcept;
+    const std::string
+    get_db_function_definition(const Glib::ustring &schema_name, const Glib::ustring &routine_name) noexcept;
 
     virtual const std::vector<PrimaryKey>
     get_primary_key(const std::string &table_name,

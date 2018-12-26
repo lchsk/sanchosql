@@ -223,6 +223,35 @@ PostgresConnection::get_db_views(const Glib::ustring &schema_name) noexcept
     return sequences;
     }
 
+    const std::string
+    PostgresConnection::get_db_function_definition(const Glib::ustring &schema_name, const Glib::ustring &routine_name) noexcept
+    {
+    const std::string sql_template = R"(
+            SELECT
+                routine_definition
+            FROM
+                information_schema.routines
+            WHERE
+                routine_schema = '%1'
+                AND routine_name = '%2'
+            )";
+
+    const auto sql = Glib::ustring::compose(sql_template, schema_name, routine_name);
+
+    const std::shared_ptr<sancho::QueryResult> result = run_query(sancho::QueryType::NonTransaction, sql);
+
+    if (!result->success)
+        return "";
+
+    if (result->size != 1) {
+      return "";
+    }
+
+    const auto data = result->as_map();
+
+    return data[0].at("routine_definition");
+    }
+
 std::unique_ptr<std::vector<Glib::ustring>> PostgresConnection::get_schemas() {
     std::unique_ptr<std::vector<Glib::ustring>> schemas =
         std::make_unique<std::vector<Glib::ustring>>();
