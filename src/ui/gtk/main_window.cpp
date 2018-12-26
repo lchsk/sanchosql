@@ -655,7 +655,7 @@ void MainWindow::on_show_function_definition_clicked()
     auto &tab = get_query_tab(page);
 
     const auto &schema_name = combo_schemas.get_active_text();
-    const auto definition = conn->get_db_function_definition(schema_name, selected_table_name);
+    const auto definition = conn->get_db_function_definition(schema_name, selected_object_name);
 
     tab.buffer->set_text(definition);
   }
@@ -1556,7 +1556,7 @@ void MainWindow::on_show_table_info_clicked() {
         return;
 
     win_table_info->show();
-    win_table_info->init(*pc, combo_schemas.get_active_text(), selected_table_name);
+    win_table_info->init(*pc, combo_schemas.get_active_text(), selected_object_name);
 }
 
 std::shared_ptr<sancho::db::ConnectionDetails> &
@@ -1625,11 +1625,11 @@ bool MainWindow::on_browser_button_released(GdkEventButton *button_event) {
 
             return true;
         } else if (current_row[browser_model.type] == BrowserItemType::Table) {
-          selected_table_name = current_row[browser_model.object_name];
+          selected_object_name = current_row[browser_model.object_name];
 
           popup_browser_table.popup(button_event->button, button_event->time);
         } else if (current_row[browser_model.type] == BrowserItemType::Function) {
-          selected_table_name = current_row[browser_model.object_name];
+          selected_object_name = current_row[browser_model.object_name];
 
           popup_function.popup(button_event->button, button_event->time);
         }

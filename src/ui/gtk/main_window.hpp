@@ -293,7 +293,7 @@ class MainWindow : public Gtk::Window {
   // Browser - header popup
     Gtk::Menu popup_browser_header;
     Gtk::MenuItem *popup_item_table_info;
-    Glib::ustring selected_table_name;
+    Glib::ustring selected_object_name;
 
   // Browser - functions
     Gtk::Menu popup_function;
