@@ -3,7 +3,6 @@
   <gresource prefix="/">
     <file alias="res/toolbar.glade" preprocess="xml-stripblanks">../res/toolbar.glade</file>
     <file alias="res/main_menu.glade" preprocess="xml-stripblanks">../res/main_menu.glade</file>
-    <file alias="res/test.glade" preprocess="xml-stripblanks">../res/test.glade</file>
     <file alias="res/window_new_connection.glade" preprocess="xml-stripblanks">../res/window_new_connection.glade</file>
     <file alias="res/window_table_info.glade" preprocess="xml-stripblanks">../res/window_table_info.glade</file>
     <file alias="res/window_preferences.glade" preprocess="xml-stripblanks">../res/window_preferences.glade</file>
