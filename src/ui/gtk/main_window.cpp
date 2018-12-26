@@ -896,6 +896,11 @@ void MainWindow::on_browser_row_activated(const Gtk::TreeModel::Path &path,
         sigc::mem_fun(*this, &MainWindow::on_table_info_clicked),
         window));
 
+    // Middle button click to close
+      tab->event_box.signal_button_release_event().connect(
+        sigc::bind<Gtk::ScrolledWindow *>(
+            sigc::mem_fun(*this, &MainWindow::on_tab_button_released), window));
+
     // Just Table
 
     if (list_view_type == sancho::ui::gtk::ListViewType::Table) {
@@ -929,10 +934,6 @@ void MainWindow::on_browser_row_activated(const Gtk::TreeModel::Path &path,
         sigc::bind<sancho::ui::gtk::SimpleTab *, sancho::db::SimpleTabModel *>(
             sigc::mem_fun(*this, &MainWindow::on_btn_accept_changes_clicked),
             simple_tab, simple_tab_model));
-
-      tab->event_box.signal_button_release_event().connect(
-        sigc::bind<Gtk::ScrolledWindow *>(
-            sigc::mem_fun(*this, &MainWindow::on_tab_button_released), window));
 
       tab->btn_insert->signal_clicked().connect(sigc::bind<Gtk::ScrolledWindow *>(
         sigc::mem_fun(*this, &MainWindow::on_insert_row_clicked), window));
