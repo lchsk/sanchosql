@@ -95,11 +95,16 @@ void AbstractTab::show() const {
     btn_save_file_as->set_icon_name("document-save-as");
     btn_save_file_as->set_tooltip_text("Save file as...");
 
+    btn_explain = Gtk::manage(new Gtk::ToolButton);
+    btn_explain->set_icon_name("utilities-system-monitor");
+    btn_explain->set_tooltip_text("Explain query plan");
+
     toolbar->append(*btn_execute_editor_query);
     toolbar->append(*btn_execute_all_editor_queries);
     toolbar->append(*btn_open_file);
     toolbar->append(*btn_save_file);
     toolbar->append(*btn_save_file_as);
+    toolbar->append(*btn_explain);
 
     btn_open_file->signal_clicked().connect(sigc::bind<QueryTab *>(
         sigc::mem_fun(*this, &QueryTab::on_btn_open_file_clicked),

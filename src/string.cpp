@@ -99,6 +99,24 @@ Glib::ustring trim(const Glib::ustring &input) {
 
 bool is_empty(const Glib::ustring &input) { return trim(input) == ""; }
 
+  Glib::ustring remove_comments(const Glib::ustring& input_text)
+  {
+    // TODO: Remove block comments as well
+
+    std::vector<std::string> split_text = split(input_text, "\n");
+
+    Glib::ustring text;
+
+    for (const auto& line: split_text) {
+      // Ignore comments
+      if (line.substr(0, 2) != "--") {
+        text += line + "\n";
+      }
+    }
+
+    return trim(text);
+  }
+
 Glib::ustring get_query(const Glib::ustring &text,
                         const Glib::ustring::size_type point) {
     if (point == Glib::ustring::npos)

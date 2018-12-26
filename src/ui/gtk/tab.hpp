@@ -96,6 +96,7 @@ class QueryTab : public AbstractTab {
     Gtk::ToolButton *btn_open_file;
     Gtk::ToolButton *btn_save_file;
     Gtk::ToolButton *btn_save_file_as;
+    Gtk::ToolButton *btn_explain;
 private:
   const std::string read_file(const std::string& path);
   void save_file(const std::string& path);

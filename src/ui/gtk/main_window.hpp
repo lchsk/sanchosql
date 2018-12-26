@@ -190,6 +190,8 @@ class MainWindow : public Gtk::Window {
     Glib::RefPtr<Gtk::AccelGroup> group;
     MainMenu main_menu;
 
+  Glib::ustring get_selected_query(const Glib::RefPtr<Gsv::Buffer> &buffer);
+
   sancho::db::SimpleTabModel &get_simple_tab_model(sancho::ui::gtk::TabWindow*);
     sancho::db::QueryTabModel &get_query_tab_model(sancho::ui::gtk::TabWindow*);
 
@@ -263,6 +265,7 @@ class MainWindow : public Gtk::Window {
                                  Glib::RefPtr<Gsv::Buffer> &);
     void on_submit_query_all_clicked(Gtk::ScrolledWindow *,
                                      Glib::RefPtr<Gsv::Buffer> &);
+  void on_explain_query_clicked(Gtk::ScrolledWindow *, Glib::RefPtr<Gsv::Buffer> &);
 
     void on_btn_accept_changes_clicked(sancho::ui::gtk::SimpleTab *tab,
                                        sancho::db::SimpleTabModel *model);

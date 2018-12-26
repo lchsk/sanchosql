@@ -25,7 +25,7 @@ bool contains_only_numbers(const Glib::ustring &text);
 Glib::ustring trim(const Glib::ustring &input);
 
 bool is_empty(const Glib::ustring &input);
-
+  Glib::ustring remove_comments(const Glib::ustring& text);
 Glib::ustring get_query(const Glib::ustring &text,
                         const Glib::ustring::size_type point);
 } // namespace string

@@ -806,6 +806,10 @@ void MainWindow::on_open_sql_editor_clicked() {
         sigc::bind<Gtk::ScrolledWindow *, Glib::RefPtr<Gsv::Buffer>>(
             sigc::mem_fun(*this, &MainWindow::on_submit_query_all_clicked), window,
             tab->buffer));
+    tab->btn_explain->signal_clicked().connect(
+        sigc::bind<Gtk::ScrolledWindow *, Glib::RefPtr<Gsv::Buffer>>(
+            sigc::mem_fun(*this, &MainWindow::on_explain_query_clicked), window,
+            tab->buffer));
 
     tabs[window] = tab;
 
@@ -980,35 +984,62 @@ void MainWindow::on_browser_row_activated(const Gtk::TreeModel::Path &path,
     }
 }
 
-void MainWindow::on_submit_query_all_clicked(Gtk::ScrolledWindow * tree_scrolled_window,
-                                             Glib::RefPtr<Gsv::Buffer> &buffer)
+Glib::ustring MainWindow::get_selected_query(const Glib::RefPtr<Gsv::Buffer> &buffer)
 {
-  const auto query = buffer->get_text();
-
-  auto &model = get_query_tab_model(tree_scrolled_window);
-  model.query = query;
-
-  load_query_results(tree_scrolled_window);
-}
-
-void MainWindow::on_submit_query_clicked(
-    Gtk::ScrolledWindow *tree_scrolled_window,
-    Glib::RefPtr<Gsv::Buffer> &buffer) {
-    Glib::ustring query;
-
     if (buffer->get_has_selection()) {
         Glib::RefPtr<Gtk::TextBuffer::Mark> insert = buffer->get_insert();
         Glib::RefPtr<Gtk::TextBuffer::Mark> end = buffer->get_selection_bound();
 
-        query = buffer->get_text(insert->get_iter(), end->get_iter());
+        return buffer->get_text(insert->get_iter(), end->get_iter());
     } else {
         Glib::RefPtr<Gtk::TextBuffer::Mark> insert = buffer->get_insert();
 
-        query = sancho::string::get_query(buffer->get_text(),
+        const auto sql = sancho::string::get_query(buffer->get_text(),
                                           insert->get_iter().get_offset());
+
+        return sancho::string::remove_comments(sql);
     }
 
+}
+
+void MainWindow::on_submit_query_all_clicked(Gtk::ScrolledWindow * tree_scrolled_window,
+                                             Glib::RefPtr<Gsv::Buffer> &buffer)
+{
+  auto &model = get_query_tab_model(tree_scrolled_window);
+  model.query = buffer->get_text();
+
+  load_query_results(tree_scrolled_window);
+}
+
+void MainWindow::on_explain_query_clicked(
+    Gtk::ScrolledWindow *tree_scrolled_window,
+    Glib::RefPtr<Gsv::Buffer> &buffer)
+{
+  auto &model = get_query_tab_model(tree_scrolled_window);
+
+  const auto query = get_selected_query(buffer);
+
+  if (query.empty()) {
+    return;
+  }
+
+    model.query = "explain analyze " + query;
+
+    load_query_results(tree_scrolled_window);
+}
+
+void MainWindow::on_submit_query_clicked(
+    Gtk::ScrolledWindow *tree_scrolled_window,
+    Glib::RefPtr<Gsv::Buffer> &buffer)
+{
     auto &model = get_query_tab_model(tree_scrolled_window);
+
+    const auto query = get_selected_query(buffer);
+
+    if (query.empty()) {
+      return;
+    }
+
     model.query = query;
 
     load_query_results(tree_scrolled_window);
