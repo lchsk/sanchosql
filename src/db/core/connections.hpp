@@ -64,7 +64,7 @@ class Connections {
     void init_connections();
     void save_connections();
 
-    Glib::ustring CONN_PATH = "connections";
+    Glib::ustring CONN_PATH = "";
 
     std::shared_ptr<sancho::db::ConnectionDetails> current_connection;
 
