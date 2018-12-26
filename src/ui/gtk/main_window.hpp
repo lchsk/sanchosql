@@ -281,7 +281,7 @@ class MainWindow : public Gtk::Window {
     void on_action_file_about();
 
     void refresh_connections_list();
-    void refresh_browser(const std::shared_ptr<sancho::db::PostgresConnection> &);
+  void refresh_browser(const std::shared_ptr<sancho::db::PostgresConnection> &, const std::string& filter = "");
     void on_show_table_info_clicked();
     void on_show_function_definition_clicked();
     void refresh_tree_connections();

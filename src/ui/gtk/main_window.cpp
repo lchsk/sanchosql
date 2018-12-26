@@ -1141,7 +1141,8 @@ void MainWindow::refresh_tree_connections() {
 }
 
 void MainWindow::refresh_browser(
-    const std::shared_ptr<sancho::db::PostgresConnection> &pc) {
+                                 const std::shared_ptr<sancho::db::PostgresConnection> &pc,
+                                 const std::string& filter) {
     browser_store->clear();
 
     const Glib::ustring schema_name = combo_schemas.get_active_text();
@@ -1153,10 +1154,11 @@ void MainWindow::refresh_browser(
     row_tables[browser_model.type] = BrowserItemType::Header;
 
     for (const std::string &table_name : tables) {
-        Gtk::TreeModel::Row table_row =
-            *(browser_store->append(row_tables.children()));
+      if (sancho::string::includes_icase(table_name, filter)) {
+        Gtk::TreeModel::Row table_row = *(browser_store->append(row_tables.children()));
         table_row[browser_model.object_name] = table_name;
         table_row[browser_model.type] = BrowserItemType::Table;
+        }
     }
 
     // Load views
@@ -1168,9 +1170,11 @@ void MainWindow::refresh_browser(
     row_views[browser_model.type] = BrowserItemType::Header;
 
     for (const std::string &view_name : views) {
+      if (sancho::string::includes_icase(view_name, filter)) {
         Gtk::TreeModel::Row view_row = *(browser_store->append(row_views.children()));
         view_row[browser_model.object_name] = view_name;
         view_row[browser_model.type] = BrowserItemType::View;
+      }
     }
 
     // Load triggers
@@ -1182,9 +1186,11 @@ void MainWindow::refresh_browser(
     row_triggers[browser_model.type] = BrowserItemType::Header;
 
     for (const std::string &trigger_name : triggers) {
+      if (sancho::string::includes_icase(trigger_name, filter)) {
         Gtk::TreeModel::Row trigger_row = *(browser_store->append(row_triggers.children()));
         trigger_row[browser_model.object_name] = trigger_name;
         trigger_row[browser_model.type] = BrowserItemType::Trigger;
+      }
     }
 
 	// Load functions
@@ -1196,9 +1202,11 @@ void MainWindow::refresh_browser(
     row_functions[browser_model.type] = BrowserItemType::Header;
 
     for (const std::string &function_name : functions) {
+      if (sancho::string::includes_icase(function_name, filter)) {
         Gtk::TreeModel::Row function_row = *(browser_store->append(row_functions.children()));
         function_row[browser_model.object_name] = function_name;
         function_row[browser_model.type] = BrowserItemType::Function;
+      }
     }
 
 	// Load sequences
@@ -1210,9 +1218,11 @@ void MainWindow::refresh_browser(
     row_sequences[browser_model.type] = BrowserItemType::Header;
 
     for (const std::string &sequence_name : sequences) {
+      if (sancho::string::includes_icase(sequence_name, filter)) {
         Gtk::TreeModel::Row sequence_row = *(browser_store->append(row_sequences.children()));
         sequence_row[browser_model.object_name] = sequence_name;
         sequence_row[browser_model.type] = BrowserItemType::Sequence;
+      }
     }
 
     browser.expand_all();
@@ -1442,6 +1452,19 @@ bool MainWindow::on_key_press_event(GdkEventKey *key_event) {
             on_reload_table_clicked(window);
             return true;
           }
+        }
+
+        if (entry_browser_filter.is_focus()) {
+          // Handle browser filtering
+          const auto pc = handle_connect();
+
+          if (!pc) return false;
+
+          const auto query = entry_browser_filter.get_text();
+
+          refresh_browser(pc, query);
+
+          return true;
         }
     }
 

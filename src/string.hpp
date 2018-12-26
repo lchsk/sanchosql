@@ -20,6 +20,8 @@ std::string escape_sql(std::string str);
 std::string escape_db_data(std::string str);
 std::string prepare_sql_value(std::string str, bool handle_strings = false);
 
+  bool includes_icase(const std::string&, const std::string&);
+
 bool contains_only_numbers(const Glib::ustring &text);
 
 Glib::ustring trim(const Glib::ustring &input);

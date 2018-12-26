@@ -1,6 +1,7 @@
 #include <ctime>
 #include <iostream>
 #include <string>
+#include <algorithm>
 
 #include "string.hpp"
 
@@ -160,6 +161,19 @@ Glib::ustring get_query(const Glib::ustring &text,
 
     return q;
 }
+  bool includes_icase(const std::string& text, const std::string& query)
+  {
+    // To simplify it, assume true if query is empty
+    if (query.empty()) return true;
+
+    std::string search_text = text;
+    std::string search_query = query;
+
+    std::transform(search_text.begin(), search_text.end(), search_text.begin(), ::tolower);
+    std::transform(search_query.begin(), search_query.end(), search_query.begin(), ::tolower);
+
+    return search_text.find(search_query) != std::string::npos;
+  }
 } // namespace string
 
 namespace date {
