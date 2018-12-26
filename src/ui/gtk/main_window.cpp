@@ -127,6 +127,7 @@ MainWindow::MainWindow()
         res_builder->add_from_resource("/res/toolbar.glade");
         res_builder->add_from_resource("/res/window_new_connection.glade");
         res_builder->add_from_resource("/res/window_table_info.glade");
+        res_builder->add_from_resource("/res/window_preferences.glade");
         res_builder->add_from_resource("/res/dashboard.glade");
     } catch (const Glib::Error &e) {
         g_critical("Building menus and toolbar failed: %s", e.what().c_str());
@@ -159,6 +160,9 @@ MainWindow::MainWindow()
 
     main_menu.menu_item_sql_editor->signal_activate().connect(
         sigc::mem_fun(*this, &MainWindow::on_open_sql_editor_clicked));
+
+    main_menu.menu_item_preferences->signal_activate().connect(
+        sigc::mem_fun(*this, &MainWindow::on_action_preferences));
 
     main_menu.menu_item_quit->signal_activate().connect(
         sigc::mem_fun(*this, &MainWindow::on_action_file_quit));
@@ -220,6 +224,13 @@ MainWindow::MainWindow()
         win_table_info->set_modal();
     }
 
+    res_builder->get_widget_derived("win_preferences", win_preferences);
+
+    if (win_preferences) {
+        win_preferences->set_transient_for(*this);
+        win_preferences->set_modal();
+    }
+
     add_events(Gdk::KEY_PRESS_MASK);
 
     show_all_children();
@@ -232,6 +243,13 @@ MainWindow::MainWindow()
 }
 
 void MainWindow::on_action_file_quit() { hide(); }
+
+void MainWindow::on_action_preferences()
+{
+    if (win_preferences) {
+        win_preferences->show();
+    }
+}
 
 void MainWindow::on_action_file_new() {
     if (win_connections) {

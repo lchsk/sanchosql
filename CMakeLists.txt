@@ -137,6 +137,7 @@ add_executable(${EXECUTABLE_NAME}
     src/ui/gtk/number_entry.hpp
     src/ui/gtk/win_new_connection.cpp
     src/ui/gtk/win_table_info.cpp
+    src/ui/gtk/win_preferences.cpp
     src/ui/gtk/main_window.cpp
     )
 

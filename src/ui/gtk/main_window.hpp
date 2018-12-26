@@ -11,6 +11,7 @@
 #include "tab.hpp"
 #include "win_new_connection.hpp"
 #include "win_table_info.hpp"
+#include "win_preferences.hpp"
 #include "common_ui.hpp"
 
 namespace sancho {
@@ -28,8 +29,7 @@ class MainMenu {
 
         void set_icon(const std::string &icon_name) {
             i1 = Gtk::manage(new Gtk::Image);
-            i1->set_from_icon_name(icon_name,
-                                   Gtk::BuiltinIconSize::ICON_SIZE_MENU);
+            i1->set_from_icon_name(icon_name, Gtk::BuiltinIconSize::ICON_SIZE_MENU);
         }
 
         void set_text(const std::string &text) {
@@ -79,13 +79,26 @@ class MainMenu {
 
         connections_mi = std::make_unique<ImageMenuItem>();
         connections_mi->set_text("_Connections");
-        connections_mi->set_icon("network-server");
+        connections_mi->set_icon("system-file-manager");
         connections_mi->finish();
 
         editor_mi = std::make_unique<ImageMenuItem>();
         editor_mi->set_text("_SQL Editor");
         editor_mi->set_icon("accessories-text-editor");
         editor_mi->finish();
+
+        preferences_mi = std::make_unique<ImageMenuItem>();
+        preferences_mi->set_text("_Preferences");
+        preferences_mi->finish();
+
+        menu_item_preferences =
+            Gtk::manage(new Gtk::MenuItem(*preferences_mi->b1));
+
+        menu_item_preferences->add_accelerator("activate", group, GDK_KEY_p,
+                                               Gdk::ModifierType::CONTROL_MASK,
+                                               Gtk::ACCEL_VISIBLE);
+
+        preferences_mi->l1->set_accel_widget(*menu_item_preferences);
 
         menu_item_connections =
             Gtk::manage(new Gtk::MenuItem(*connections_mi->b1));
@@ -105,6 +118,8 @@ class MainMenu {
                                               Gtk::ACCEL_VISIBLE);
 
         editor_mi->l1->set_accel_widget(*menu_item_sql_editor);
+
+        menu_file->append(*menu_item_preferences);
 
         menu_item_separator = Gtk::manage(new Gtk::SeparatorMenuItem);
         menu_file->append(*menu_item_separator);
@@ -134,6 +149,7 @@ class MainMenu {
 
     std::unique_ptr<ImageMenuItem> connections_mi;
     std::unique_ptr<ImageMenuItem> editor_mi;
+    std::unique_ptr<ImageMenuItem> preferences_mi;
     std::unique_ptr<ImageMenuItem> quit_mi;
     std::unique_ptr<ImageMenuItem> about_mi;
 
@@ -144,6 +160,7 @@ class MainMenu {
     Gtk::Menu *menu_help;
     Gtk::MenuItem *menu_item_about;
     Gtk::MenuItem *menu_item_connections;
+    Gtk::MenuItem *menu_item_preferences;
     Gtk::MenuItem *menu_item_sql_editor;
     Gtk::SeparatorMenuItem *menu_item_separator;
     Gtk::MenuItem *menu_item_quit;
@@ -186,6 +203,7 @@ class MainWindow : public Gtk::Window {
     ConnectionsModel connections_model;
     sancho::ui::gtk::NewConnectionWindow *win_connections;
     sancho::ui::gtk::TableInfoWindow *win_table_info;
+    sancho::ui::gtk::PreferencesWindow *win_preferences;
 
     Glib::RefPtr<Gtk::AccelGroup> group;
     MainMenu main_menu;
@@ -277,6 +295,7 @@ class MainWindow : public Gtk::Window {
                              Gtk::TreeViewColumn *sorted_col);
 
     void on_action_file_new();
+    void on_action_preferences();
     void on_action_file_quit();
     void on_action_file_about();
 
