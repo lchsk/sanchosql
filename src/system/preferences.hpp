@@ -12,6 +12,7 @@ namespace system {
     Preferences();
 
     void init();
+    void save_values_to_file();
 
     // Settings
 

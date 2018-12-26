@@ -46,6 +46,8 @@ void PreferencesWindow::on_btn_apply_clicked()
 {
   preferences->show_line_numbers = check_set_line_numbers->get_active();
 
+  preferences->save_values_to_file();
+
   hide();
 }
 
