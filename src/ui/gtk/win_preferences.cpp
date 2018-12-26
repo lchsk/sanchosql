@@ -12,6 +12,10 @@ PreferencesWindow::PreferencesWindow(BaseObjectType *cobject,
     builder->get_widget("btn_apply", btn_apply);
     builder->get_widget("btn_close", btn_close);
 
+    // Settings
+
+    builder->get_widget("check_set_line_numbers", check_set_line_numbers);
+
     signal_show().connect(sigc::mem_fun(*this, &PreferencesWindow::on_win_show));
     signal_hide().connect(sigc::mem_fun(*this, &PreferencesWindow::on_win_hide));
     btn_close->signal_clicked().connect(
@@ -20,6 +24,16 @@ PreferencesWindow::PreferencesWindow(BaseObjectType *cobject,
 
     show_all_children();
 }
+
+  void PreferencesWindow::set_preferences(sancho::system::Preferences* pref)
+  {
+    preferences = pref;
+  }
+
+  void PreferencesWindow::init()
+  {
+    check_set_line_numbers->set_active(preferences->show_line_numbers);
+  }
 
 void PreferencesWindow::on_win_show() { notebook_tabs->set_current_page(0); }
 

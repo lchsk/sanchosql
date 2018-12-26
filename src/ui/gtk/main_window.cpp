@@ -231,6 +231,7 @@ MainWindow::MainWindow()
     if (win_preferences) {
         win_preferences->set_transient_for(*this);
         win_preferences->set_modal();
+        win_preferences->set_preferences(preferences.get());
     }
 
     add_events(Gdk::KEY_PRESS_MASK);
@@ -250,6 +251,7 @@ void MainWindow::on_action_preferences()
 {
     if (win_preferences) {
         win_preferences->show();
+        win_preferences->init();
     }
 }
 
