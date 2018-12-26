@@ -15,6 +15,7 @@ PreferencesWindow::PreferencesWindow(BaseObjectType *cobject,
     // Settings
 
     builder->get_widget("check_set_line_numbers", check_set_line_numbers);
+    builder->get_widget("check_add_default_comment", check_add_default_comment);
 
     signal_show().connect(sigc::mem_fun(*this, &PreferencesWindow::on_win_show));
     signal_hide().connect(sigc::mem_fun(*this, &PreferencesWindow::on_win_hide));
@@ -35,6 +36,7 @@ PreferencesWindow::PreferencesWindow(BaseObjectType *cobject,
   void PreferencesWindow::init()
   {
     check_set_line_numbers->set_active(preferences->show_line_numbers);
+    check_add_default_comment->set_active(preferences->add_default_comment);
   }
 
 void PreferencesWindow::on_win_show() { notebook_tabs->set_current_page(0); }
@@ -45,6 +47,7 @@ void PreferencesWindow::on_btn_close_clicked() { hide(); }
 void PreferencesWindow::on_btn_apply_clicked()
 {
   preferences->show_line_numbers = check_set_line_numbers->get_active();
+  preferences->add_default_comment = check_add_default_comment->get_active();
 
   preferences->save_values_to_file();
 

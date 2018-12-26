@@ -17,6 +17,7 @@ namespace system {
     // Settings
 
     bool show_line_numbers = true;
+    bool add_default_comment = true;
 
   private:
     bool open_preferences_file();

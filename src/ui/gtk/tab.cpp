@@ -158,12 +158,15 @@ void AbstractTab::show() const {
     buffer->set_language(lang);
     buffer->set_style_scheme(style);
 
-    const Glib::ustring default_text = Glib::ustring::compose(
+	if (preferences->add_default_comment) {
+	  const Glib::ustring default_text = Glib::ustring::compose(
         "-- Opened %1 by %2\n-- Code executed in this editor is "
         "automatically committed\n\n",
         sancho::date::get_current_datetime(), sancho::user::get_user_name());
 
-    buffer->set_text(default_text);
+	  buffer->set_text(default_text);
+	}
+
     auto slot_buffer_changed = sigc::mem_fun(*this, &QueryTab::on_buffer_changed);
     buffer->signal_changed().connect(slot_buffer_changed);
 

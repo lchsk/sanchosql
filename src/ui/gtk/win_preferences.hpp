@@ -34,6 +34,7 @@ class PreferencesWindow : public Gtk::Window {
 
   // Settings
   Gtk::CheckButton *check_set_line_numbers;
+  Gtk::CheckButton *check_add_default_comment;
 };
 } // namespace sancho
 }
