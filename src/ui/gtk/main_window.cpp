@@ -31,6 +31,7 @@ MainWindow::MainWindow()
     add(main_box);
 
     preferences = std::make_unique<sancho::system::Preferences>();
+    preferences->init();
 
     refresh_connections_list();
 

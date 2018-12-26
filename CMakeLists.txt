@@ -118,6 +118,7 @@ add_executable(${EXECUTABLE_NAME}
 
   add_library(sancho-system
     src/system/files.cpp
+    src/system/preferences.cpp
     )
   add_library(sancho-db-core
     src/db/core/conn_util.cpp
