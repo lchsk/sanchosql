@@ -18,6 +18,7 @@ namespace system {
     bool show_line_numbers = true;
     bool add_default_comment = true;
     bool show_whitespace = false;
+    bool highlight_current_line = true;
 
   private:
     bool open_preferences_file();

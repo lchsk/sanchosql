@@ -145,7 +145,7 @@ void AbstractTab::show() const {
     buffer->connect_property_changed("cursor-position", slot);
 
     source_view->set_show_line_numbers(preferences->show_line_numbers);
-    source_view->set_highlight_current_line();
+    source_view->set_highlight_current_line(preferences->highlight_current_line);
 
 	if (preferences->show_whitespace) {
 	  source_view->property_draw_spaces() = Gsv::DrawSpacesFlags::DRAW_SPACES_ALL;

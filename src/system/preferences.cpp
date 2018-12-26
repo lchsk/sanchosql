@@ -36,6 +36,7 @@ namespace sancho{
       file.set_boolean("editor", "show_line_numbers", show_line_numbers);
       file.set_boolean("editor", "add_default_comment", add_default_comment);
       file.set_boolean("editor", "show_whitespace", show_whitespace);
+      file.set_boolean("editor", "highlight_current_line", highlight_current_line);
 
       file.save_to_file(PREFERENCES_PATH);
     }
@@ -71,6 +72,7 @@ bool Preferences::open_preferences_file()
         show_line_numbers = file.get_boolean(group, "show_line_numbers");
         add_default_comment = file.get_boolean(group, "add_default_comment");
         show_whitespace = file.get_boolean(group, "show_whitespace");
+        highlight_current_line = file.get_boolean(group, "highlight_current_line");
       } catch (const Glib::KeyFileError &e) {
         g_warning("Cannot find key in group %s", group);
       }
