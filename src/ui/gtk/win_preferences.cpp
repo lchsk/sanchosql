@@ -16,6 +16,7 @@ PreferencesWindow::PreferencesWindow(BaseObjectType *cobject,
 
     builder->get_widget("check_set_line_numbers", check_set_line_numbers);
     builder->get_widget("check_add_default_comment", check_add_default_comment);
+    builder->get_widget("check_show_whitespace", check_show_whitespace);
 
     signal_show().connect(sigc::mem_fun(*this, &PreferencesWindow::on_win_show));
     signal_hide().connect(sigc::mem_fun(*this, &PreferencesWindow::on_win_hide));
@@ -37,6 +38,7 @@ PreferencesWindow::PreferencesWindow(BaseObjectType *cobject,
   {
     check_set_line_numbers->set_active(preferences->show_line_numbers);
     check_add_default_comment->set_active(preferences->add_default_comment);
+    check_show_whitespace->set_active(preferences->show_whitespace);
   }
 
 void PreferencesWindow::on_win_show() { notebook_tabs->set_current_page(0); }
@@ -48,6 +50,7 @@ void PreferencesWindow::on_btn_apply_clicked()
 {
   preferences->show_line_numbers = check_set_line_numbers->get_active();
   preferences->add_default_comment = check_add_default_comment->get_active();
+  preferences->show_whitespace = check_show_whitespace->get_active();
 
   preferences->save_values_to_file();
 

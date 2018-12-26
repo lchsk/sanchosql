@@ -146,7 +146,10 @@ void AbstractTab::show() const {
 
     source_view->set_show_line_numbers(preferences->show_line_numbers);
     source_view->set_highlight_current_line();
-    source_view->property_draw_spaces() = Gsv::DrawSpacesFlags::DRAW_SPACES_ALL;
+
+	if (preferences->show_whitespace) {
+	  source_view->property_draw_spaces() = Gsv::DrawSpacesFlags::DRAW_SPACES_ALL;
+	}
 
     Glib::RefPtr<Gsv::LanguageManager> lm = Gsv::LanguageManager::get_default();
     Glib::RefPtr<Gsv::Language> lang = lm->get_language("sql");

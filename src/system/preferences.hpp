@@ -14,10 +14,10 @@ namespace system {
     void init();
     void save_values_to_file();
 
-    // Settings
-
+    // Settings - editor
     bool show_line_numbers = true;
     bool add_default_comment = true;
+    bool show_whitespace = false;
 
   private:
     bool open_preferences_file();

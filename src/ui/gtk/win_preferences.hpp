@@ -35,6 +35,7 @@ class PreferencesWindow : public Gtk::Window {
   // Settings
   Gtk::CheckButton *check_set_line_numbers;
   Gtk::CheckButton *check_add_default_comment;
+  Gtk::CheckButton *check_show_whitespace;
 };
 } // namespace sancho
 }
