@@ -30,6 +30,8 @@ MainWindow::MainWindow()
 
     add(main_box);
 
+    preferences = std::make_unique<sancho::system::Preferences>();
+
     refresh_connections_list();
 
     combo_connections.signal_changed().connect(
@@ -807,7 +809,7 @@ void MainWindow::on_open_sql_editor_clicked() {
 
     const Glib::ustring tab_name = current_connection->name + " (editor)";
 
-    auto tab = std::make_shared<sancho::ui::gtk::QueryTab>(tab_name, this);
+    auto tab = std::make_shared<sancho::ui::gtk::QueryTab>(preferences.get(), tab_name, this);
 
     Gtk::ScrolledWindow *window = tab->tree_scrolled_window;
 
@@ -891,7 +893,7 @@ void MainWindow::on_browser_row_activated(const Gtk::TreeModel::Path &path,
     auto shared_tab_model = std::make_shared<sancho::db::SimpleTabModel>(
         current_connection, object_name, schema_name);
 
-    auto tab = std::make_shared<sancho::ui::gtk::SimpleTab>(object_name,
+    auto tab = std::make_shared<sancho::ui::gtk::SimpleTab>(preferences.get(), object_name,
                                                             shared_tab_model,
                                                             list_view_type);
 

@@ -8,6 +8,7 @@
 #include <gtksourceviewmm.h>
 
 #include "../../db/model/list_tab_model.hpp"
+#include "../../system/preferences.hpp"
 #include "number_entry.hpp"
 
 namespace sancho {
@@ -34,7 +35,7 @@ enum class TabType { List, Query, Invalid };
 
 class AbstractTab {
   public:
-    AbstractTab(const Glib::ustring &tab_name, TabType type);
+  AbstractTab(const sancho::system::Preferences* preferences, const Glib::ustring &tab_name, TabType type);
 
     void show() const;
     virtual bool was_modified() const = 0;
@@ -60,6 +61,7 @@ class AbstractTab {
 
     Gtk::Box *box;
 
+  const sancho::system::Preferences* preferences;
     const Glib::ustring tab_name;
 
     const TabType type;
@@ -67,7 +69,7 @@ class AbstractTab {
 
 class QueryTab : public AbstractTab {
   public:
-  QueryTab(const Glib::ustring &tab_name, Gtk::Window* window);
+  QueryTab(const sancho::system::Preferences* preferences, const Glib::ustring &tab_name, Gtk::Window* window);
 
     void on_btn_open_file_clicked(QueryTab* tab);
     void on_btn_save_file_clicked(QueryTab* tab);
@@ -109,7 +111,7 @@ private:
 
 class SimpleTab : public AbstractTab {
   public:
-    SimpleTab(const Glib::ustring &tab_name,
+  SimpleTab(const sancho::system::Preferences* preferences, const Glib::ustring &tab_name,
               std::shared_ptr<sancho::db::SimpleTabModel> &model,
               sancho::ui::gtk::ListViewType list_view_type);
   bool was_modified() const;

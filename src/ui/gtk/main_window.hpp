@@ -8,6 +8,7 @@
 #include "../../db/model/list_tab_model.hpp"
 #include "../../db/model/query_tab_model.hpp"
 #include "../../db/pg/pg_conn.hpp"
+#include "../../system/preferences.hpp"
 #include "tab.hpp"
 #include "win_new_connection.hpp"
 #include "win_table_info.hpp"
@@ -204,6 +205,8 @@ class MainWindow : public Gtk::Window {
     sancho::ui::gtk::NewConnectionWindow *win_connections;
     sancho::ui::gtk::TableInfoWindow *win_table_info;
     sancho::ui::gtk::PreferencesWindow *win_preferences;
+
+  std::unique_ptr<sancho::system::Preferences> preferences;
 
     Glib::RefPtr<Gtk::AccelGroup> group;
     MainMenu main_menu;

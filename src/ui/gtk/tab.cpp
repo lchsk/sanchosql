@@ -33,8 +33,8 @@ void insert_log_message(Glib::RefPtr<Gsv::Buffer> &log_buffer,
       return dialog.run();
 }
 
-AbstractTab::AbstractTab(const Glib::ustring &tab_name, TabType type)
-    : tab_name(tab_name), type(type) {
+  AbstractTab::AbstractTab(const sancho::system::Preferences* preferences, const Glib::ustring &tab_name, TabType type)
+    : preferences(preferences), tab_name(tab_name), type(type) {
     hb = Gtk::manage(new Gtk::HBox);
     b = Gtk::manage(new Gtk::Button);
     l = Gtk::manage(new Gtk::Label);
@@ -67,8 +67,8 @@ void AbstractTab::show() const {
     hb->show_all_children();
 }
 
-  QueryTab::QueryTab(const Glib::ustring &tab_name, Gtk::Window* window)
-    : AbstractTab(tab_name, TabType::Query), parent_window(window),
+  QueryTab::QueryTab(const sancho::system::Preferences* preferences, const Glib::ustring &tab_name, Gtk::Window* window)
+    : AbstractTab(preferences, tab_name, TabType::Query), parent_window(window),
       file_status("", false, false)
   {
     tv = Gtk::manage(new Gtk::TextView);
@@ -144,8 +144,9 @@ void AbstractTab::show() const {
     auto slot = sigc::mem_fun(*this, &QueryTab::on_cursor_position_changed);
     buffer->connect_property_changed("cursor-position", slot);
 
-    source_view->set_show_line_numbers();
+    source_view->set_show_line_numbers(preferences->show_line_numbers);
     source_view->set_highlight_current_line();
+    source_view->property_draw_spaces() = Gsv::DrawSpacesFlags::DRAW_SPACES_ALL;
 
     Glib::RefPtr<Gsv::LanguageManager> lm = Gsv::LanguageManager::get_default();
     Glib::RefPtr<Gsv::Language> lang = lm->get_language("sql");
@@ -425,10 +426,10 @@ void QueryTab::on_cursor_position_changed()
       }
   }
 
-SimpleTab::SimpleTab(const Glib::ustring &tab_name,
+SimpleTab::SimpleTab(const sancho::system::Preferences* preferences, const Glib::ustring &tab_name,
                      std::shared_ptr<sancho::db::SimpleTabModel> &model,
                      sancho::ui::gtk::ListViewType list_view_type)
-    : AbstractTab(tab_name, TabType::List),
+  : AbstractTab(preferences, tab_name, TabType::List),
       tree(Gtk::manage(new Gtk::TreeView)), model(model) {
     tv = Gtk::manage(new Gtk::TextView);
 
