@@ -292,6 +292,8 @@ class MainWindow : public Gtk::Window {
 
     Gtk::Box main_box;
     Gtk::TreeView browser;
+  Gtk::Box box_browser_filter;
+  Gtk::Entry entry_browser_filter;
 
   // Browser - header popup
     Gtk::Menu popup_browser_header;

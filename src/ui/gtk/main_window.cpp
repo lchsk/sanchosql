@@ -39,6 +39,8 @@ MainWindow::MainWindow()
 
     Gsv::init();
 
+    entry_browser_filter.set_placeholder_text("Filter database objects");
+    box_browser_filter.pack_start(entry_browser_filter);
     browser_scrolled_window.add(browser);
 
 	// Setup popup menu - functions
@@ -90,6 +92,7 @@ MainWindow::MainWindow()
     box_browser.pack_start(label_schemas, false, false, 0);
     box_browser.pack_start(combo_schemas, false, false, 4);
     box_browser.pack_start(browser_scrolled_window);
+    box_browser.pack_end(box_browser_filter, false, false, 0);
 
     paned.pack1(box_browser);
 
