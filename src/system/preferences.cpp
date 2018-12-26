@@ -34,11 +34,21 @@ bool Preferences::open_preferences_file()
 
     void Preferences::load_values_from_file()
     {
-      const auto group_editor = "editor";
-
-      if (file.has_group(group_editor)) {
-        show_line_numbers = file.get_boolean(group_editor, "show_line_numbers");
-      }
+      load_editor_settings();
     }
 
+    void Preferences::load_editor_settings()
+    {
+      const auto group = "editor";
+
+      if (!file.has_group(group)) {
+        return;
+      }
+
+      try {
+        show_line_numbers = file.get_boolean(group, "show_line_numbers");
+      } catch (const Glib::KeyFileError &e) {
+        g_warning("Cannot find key in group %s", group);
+      }
+    }
   }}

@@ -20,6 +20,9 @@ namespace system {
   private:
     bool open_preferences_file();
     void load_values_from_file();
+
+    void load_editor_settings();
+
     Glib::KeyFile file;
 
     const std::string PREFERENCES_PATH;
