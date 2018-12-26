@@ -20,6 +20,8 @@ PreferencesWindow::PreferencesWindow(BaseObjectType *cobject,
     signal_hide().connect(sigc::mem_fun(*this, &PreferencesWindow::on_win_hide));
     btn_close->signal_clicked().connect(
         sigc::mem_fun(*this, &PreferencesWindow::on_btn_close_clicked));
+    btn_apply->signal_clicked().connect(
+        sigc::mem_fun(*this, &PreferencesWindow::on_btn_apply_clicked));
     set_title("SanchoSQL - preferences");
 
     show_all_children();
@@ -40,6 +42,12 @@ void PreferencesWindow::on_win_show() { notebook_tabs->set_current_page(0); }
 void PreferencesWindow::on_win_hide() {}
 
 void PreferencesWindow::on_btn_close_clicked() { hide(); }
+void PreferencesWindow::on_btn_apply_clicked()
+{
+  preferences->show_line_numbers = check_set_line_numbers->get_active();
+
+  hide();
+}
 
 } // namespace sancho
 }

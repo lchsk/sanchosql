@@ -21,6 +21,7 @@ class PreferencesWindow : public Gtk::Window {
     void on_win_show();
     void on_win_hide();
     void on_btn_close_clicked();
+    void on_btn_apply_clicked();
 
     Glib::RefPtr<Gtk::Builder> builder;
 
