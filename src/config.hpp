@@ -33,7 +33,7 @@
 
 namespace sancho {
 namespace config {
-const std::string current_version = "0.0.1";
+const std::string current_version = "0.1";
 }
 } // namespace sancho
 

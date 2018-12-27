@@ -29,7 +29,7 @@ endif ()
 
 project(sanchosql)
 
-set(PROJECT_VERSION "0.0.1")
+set(PROJECT_VERSION "0.1")
 
 # cpack
 set(CPACK_PACKAGE_CONTACT "sanchosql.com")
