@@ -20,6 +20,8 @@ namespace system {
     bool show_whitespace = false;
     bool highlight_current_line = true;
     std::string color_scheme = "oblivion";
+    int tab_width = 4;
+    bool indent_with_spaces = true;
 
   private:
     bool open_preferences_file();

@@ -19,6 +19,8 @@ PreferencesWindow::PreferencesWindow(BaseObjectType *cobject,
     builder->get_widget("check_show_whitespace", check_show_whitespace);
     builder->get_widget("check_highlight_current_line", check_highlight_current_line);
     builder->get_widget("combo_color_scheme", combo_color_scheme);
+    builder->get_widget("check_indent_with_spaces", check_indent_with_spaces);
+    builder->get_widget("spin_tab_width", spin_tab_width);
 
     signal_show().connect(sigc::mem_fun(*this, &PreferencesWindow::on_win_show));
     signal_hide().connect(sigc::mem_fun(*this, &PreferencesWindow::on_win_hide));
@@ -51,6 +53,9 @@ PreferencesWindow::PreferencesWindow(BaseObjectType *cobject,
     check_highlight_current_line->set_active(preferences->highlight_current_line);
 
     combo_color_scheme->set_active_text(preferences->color_scheme);
+
+    check_indent_with_spaces->set_active(preferences->indent_with_spaces);
+    spin_tab_width->set_value(preferences->tab_width);
   }
 
 void PreferencesWindow::on_win_show() { notebook_tabs->set_current_page(0); }
@@ -66,6 +71,9 @@ void PreferencesWindow::on_btn_apply_clicked()
   preferences->highlight_current_line = check_highlight_current_line->get_active();
 
   preferences->color_scheme = combo_color_scheme->get_active_text();
+
+  preferences->indent_with_spaces = check_indent_with_spaces->get_active();
+  preferences->tab_width = spin_tab_width->get_value();
 
   preferences->save_values_to_file();
 

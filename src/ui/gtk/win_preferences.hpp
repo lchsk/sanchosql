@@ -39,6 +39,9 @@ class PreferencesWindow : public Gtk::Window {
   Gtk::CheckButton *check_show_whitespace;
   Gtk::CheckButton *check_highlight_current_line;
   Gtk::ComboBoxText *combo_color_scheme;
+
+  Gtk::CheckButton *check_indent_with_spaces;
+  Gtk::SpinButton *spin_tab_width;
 };
 } // namespace sancho
 }

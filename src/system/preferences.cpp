@@ -39,6 +39,9 @@ namespace sancho{
       file.set_boolean("editor", "highlight_current_line", highlight_current_line);
       file.set_string("editor", "color_scheme", color_scheme);
 
+      file.set_boolean("editor", "indent_with_spaces", indent_with_spaces);
+      file.set_integer("editor", "tab_width", tab_width);
+
       file.save_to_file(PREFERENCES_PATH);
     }
 
@@ -75,6 +78,9 @@ bool Preferences::open_preferences_file()
         show_whitespace = file.get_boolean(group, "show_whitespace");
         highlight_current_line = file.get_boolean(group, "highlight_current_line");
         color_scheme = file.get_string(group, "color_scheme");
+
+        indent_with_spaces = file.get_boolean(group, "indent_with_spaces");
+        tab_width = file.get_integer(group, "tab_width");
       } catch (const Glib::KeyFileError &e) {
         g_warning("Cannot find key in group %s", group);
       }

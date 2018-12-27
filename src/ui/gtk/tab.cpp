@@ -146,6 +146,9 @@ void AbstractTab::show() const {
 
     source_view->set_show_line_numbers(preferences->show_line_numbers);
     source_view->set_highlight_current_line(preferences->highlight_current_line);
+    source_view->property_tab_width() = preferences->tab_width;
+	source_view->property_insert_spaces_instead_of_tabs() = preferences->indent_with_spaces;
+
 
 	if (preferences->show_whitespace) {
 	  source_view->property_draw_spaces() = Gsv::DrawSpacesFlags::DRAW_SPACES_ALL;
