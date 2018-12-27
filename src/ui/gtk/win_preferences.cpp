@@ -18,6 +18,7 @@ PreferencesWindow::PreferencesWindow(BaseObjectType *cobject,
     builder->get_widget("check_add_default_comment", check_add_default_comment);
     builder->get_widget("check_show_whitespace", check_show_whitespace);
     builder->get_widget("check_highlight_current_line", check_highlight_current_line);
+    builder->get_widget("combo_color_scheme", combo_color_scheme);
 
     signal_show().connect(sigc::mem_fun(*this, &PreferencesWindow::on_win_show));
     signal_hide().connect(sigc::mem_fun(*this, &PreferencesWindow::on_win_hide));
@@ -35,12 +36,21 @@ PreferencesWindow::PreferencesWindow(BaseObjectType *cobject,
     preferences = pref;
   }
 
+  void PreferencesWindow::set_color_schemes(const std::vector<std::string>& schemes)
+  {
+    for (const auto& scheme : schemes) {
+      combo_color_scheme->append(scheme);
+    }
+  }
+
   void PreferencesWindow::init()
   {
     check_set_line_numbers->set_active(preferences->show_line_numbers);
     check_add_default_comment->set_active(preferences->add_default_comment);
     check_show_whitespace->set_active(preferences->show_whitespace);
     check_highlight_current_line->set_active(preferences->highlight_current_line);
+
+    combo_color_scheme->set_active_text(preferences->color_scheme);
   }
 
 void PreferencesWindow::on_win_show() { notebook_tabs->set_current_page(0); }
@@ -54,6 +64,8 @@ void PreferencesWindow::on_btn_apply_clicked()
   preferences->add_default_comment = check_add_default_comment->get_active();
   preferences->show_whitespace = check_show_whitespace->get_active();
   preferences->highlight_current_line = check_highlight_current_line->get_active();
+
+  preferences->color_scheme = combo_color_scheme->get_active_text();
 
   preferences->save_values_to_file();
 

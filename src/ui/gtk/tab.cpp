@@ -156,7 +156,7 @@ void AbstractTab::show() const {
 
     Glib::RefPtr<Gsv::StyleSchemeManager> sm =
         Gsv::StyleSchemeManager::get_default();
-    Glib::RefPtr<Gsv::StyleScheme> style = sm->get_scheme("cobalt");
+    Glib::RefPtr<Gsv::StyleScheme> style = sm->get_scheme(preferences->color_scheme);
 
     buffer->set_language(lang);
     buffer->set_style_scheme(style);

@@ -16,6 +16,7 @@ class PreferencesWindow : public Gtk::Window {
 
   void init();
   void set_preferences(sancho::system::Preferences*);
+  void set_color_schemes(const std::vector<std::string>& schemes);
 
   private:
     void on_win_show();
@@ -37,6 +38,7 @@ class PreferencesWindow : public Gtk::Window {
   Gtk::CheckButton *check_add_default_comment;
   Gtk::CheckButton *check_show_whitespace;
   Gtk::CheckButton *check_highlight_current_line;
+  Gtk::ComboBoxText *combo_color_scheme;
 };
 } // namespace sancho
 }

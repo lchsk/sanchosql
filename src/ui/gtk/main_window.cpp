@@ -30,6 +30,8 @@ MainWindow::MainWindow()
 
     add(main_box);
 
+    Gsv::init();
+
     preferences = std::make_unique<sancho::system::Preferences>();
     preferences->init();
 
@@ -39,8 +41,6 @@ MainWindow::MainWindow()
         sigc::mem_fun(*this, &MainWindow::on_connection_changed));
     combo_schemas.signal_changed().connect(
         sigc::mem_fun(*this, &MainWindow::on_schema_changed));
-
-    Gsv::init();
 
     entry_browser_filter.set_placeholder_text("Filter database objects");
     box_browser_filter.pack_start(entry_browser_filter);
@@ -233,6 +233,11 @@ MainWindow::MainWindow()
         win_preferences->set_transient_for(*this);
         win_preferences->set_modal();
         win_preferences->set_preferences(preferences.get());
+
+        const Glib::RefPtr<Gsv::StyleSchemeManager> gsv_style_manager = Gsv::StyleSchemeManager::get_default();
+        const std::vector<std::string> color_schemes(gsv_style_manager->get_scheme_ids());
+
+        win_preferences->set_color_schemes(color_schemes);
     }
 
     add_events(Gdk::KEY_PRESS_MASK);

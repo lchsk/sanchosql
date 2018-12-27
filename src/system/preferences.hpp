@@ -19,6 +19,7 @@ namespace system {
     bool add_default_comment = true;
     bool show_whitespace = false;
     bool highlight_current_line = true;
+    std::string color_scheme = "oblivion";
 
   private:
     bool open_preferences_file();
