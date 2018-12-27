@@ -9,16 +9,16 @@
 #include "../../db/model/query_tab_model.hpp"
 #include "../../db/pg/pg_conn.hpp"
 #include "../../system/preferences.hpp"
+#include "common_ui.hpp"
 #include "tab.hpp"
 #include "win_new_connection.hpp"
-#include "win_table_info.hpp"
 #include "win_preferences.hpp"
-#include "common_ui.hpp"
+#include "win_table_info.hpp"
 
 namespace sancho {
 namespace ui {
 namespace gtk {
-  enum class BrowserItemType { Header, Table, View, Trigger, Function, Sequence };
+enum class BrowserItemType { Header, Table, View, Trigger, Function, Sequence };
 
 class MainMenu {
     class ImageMenuItem {
@@ -28,12 +28,13 @@ class MainMenu {
             l1 = Gtk::manage(new Gtk::AccelLabel);
         }
 
-        void set_icon(const std::string &icon_name) {
+        void set_icon(const std::string& icon_name) {
             i1 = Gtk::manage(new Gtk::Image);
-            i1->set_from_icon_name(icon_name, Gtk::BuiltinIconSize::ICON_SIZE_MENU);
+            i1->set_from_icon_name(icon_name,
+                                   Gtk::BuiltinIconSize::ICON_SIZE_MENU);
         }
 
-        void set_text(const std::string &text) {
+        void set_text(const std::string& text) {
             l1->set_text(text);
             l1->set_use_underline();
             l1->set_xalign(0.0);
@@ -47,9 +48,9 @@ class MainMenu {
             b1->pack_end(*l1, true, true, 0);
         }
 
-        Gtk::Box *b1;
-        Gtk::AccelLabel *l1;
-        Gtk::Image *i1;
+        Gtk::Box* b1;
+        Gtk::AccelLabel* l1;
+        Gtk::Image* i1;
     };
 
   public:
@@ -154,17 +155,17 @@ class MainMenu {
     std::unique_ptr<ImageMenuItem> quit_mi;
     std::unique_ptr<ImageMenuItem> about_mi;
 
-    Gtk::MenuBar *menu;
-    Gtk::MenuItem *menu_item_file;
-    Gtk::MenuItem *menu_item_help;
-    Gtk::Menu *menu_file;
-    Gtk::Menu *menu_help;
-    Gtk::MenuItem *menu_item_about;
-    Gtk::MenuItem *menu_item_connections;
-    Gtk::MenuItem *menu_item_preferences;
-    Gtk::MenuItem *menu_item_sql_editor;
-    Gtk::SeparatorMenuItem *menu_item_separator;
-    Gtk::MenuItem *menu_item_quit;
+    Gtk::MenuBar* menu;
+    Gtk::MenuItem* menu_item_file;
+    Gtk::MenuItem* menu_item_help;
+    Gtk::Menu* menu_file;
+    Gtk::Menu* menu_help;
+    Gtk::MenuItem* menu_item_about;
+    Gtk::MenuItem* menu_item_connections;
+    Gtk::MenuItem* menu_item_preferences;
+    Gtk::MenuItem* menu_item_sql_editor;
+    Gtk::SeparatorMenuItem* menu_item_separator;
+    Gtk::MenuItem* menu_item_quit;
 };
 
 class MainWindow : public Gtk::Window {
@@ -202,36 +203,37 @@ class MainWindow : public Gtk::Window {
   private:
     BrowserModel browser_model;
     ConnectionsModel connections_model;
-    sancho::ui::gtk::NewConnectionWindow *win_connections;
-    sancho::ui::gtk::TableInfoWindow *win_table_info;
-    sancho::ui::gtk::PreferencesWindow *win_preferences;
+    sancho::ui::gtk::NewConnectionWindow* win_connections;
+    sancho::ui::gtk::TableInfoWindow* win_table_info;
+    sancho::ui::gtk::PreferencesWindow* win_preferences;
 
-  std::unique_ptr<sancho::system::Preferences> preferences;
+    std::unique_ptr<sancho::system::Preferences> preferences;
 
     Glib::RefPtr<Gtk::AccelGroup> group;
     MainMenu main_menu;
 
-  Glib::ustring get_selected_query(const Glib::RefPtr<Gsv::Buffer> &buffer);
+    Glib::ustring get_selected_query(const Glib::RefPtr<Gsv::Buffer>& buffer);
 
-  sancho::db::SimpleTabModel &get_simple_tab_model(sancho::ui::gtk::TabWindow*);
-    sancho::db::QueryTabModel &get_query_tab_model(sancho::ui::gtk::TabWindow*);
+    sancho::db::SimpleTabModel&
+    get_simple_tab_model(sancho::ui::gtk::TabWindow*);
+    sancho::db::QueryTabModel& get_query_tab_model(sancho::ui::gtk::TabWindow*);
 
-    sancho::ui::gtk::SimpleTab &get_simple_tab(sancho::ui::gtk::TabWindow *);
-    sancho::ui::gtk::QueryTab &get_query_tab(sancho::ui::gtk::TabWindow *);
+    sancho::ui::gtk::SimpleTab& get_simple_tab(sancho::ui::gtk::TabWindow*);
+    sancho::ui::gtk::QueryTab& get_query_tab(sancho::ui::gtk::TabWindow*);
 
-    Gtk::ScrolledWindow *get_current_swindow();
+    Gtk::ScrolledWindow* get_current_swindow();
 
-    sancho::ui::gtk::TabType get_tab_type(sancho::ui::gtk::TabWindow *win);
+    sancho::ui::gtk::TabType get_tab_type(sancho::ui::gtk::TabWindow* win);
 
-    void cellrenderer_validated_on_edited(const Glib::ustring &path_string,
-                                          const Glib::ustring &new_text,
-                                          sancho::ui::gtk::SimpleTab *tab,
-                                          sancho::db::SimpleTabModel *model,
-                                          const std::string &column_name);
+    void cellrenderer_validated_on_edited(const Glib::ustring& path_string,
+                                          const Glib::ustring& new_text,
+                                          sancho::ui::gtk::SimpleTab* tab,
+                                          sancho::db::SimpleTabModel* model,
+                                          const std::string& column_name);
     void cellrenderer_validated_on_editing_started(
-        Gtk::CellEditable *cell_editable, const Glib::ustring &path_string,
-        sancho::ui::gtk::SimpleTab *tab, sancho::db::SimpleTabModel *model,
-        const std::string &column_name);
+        Gtk::CellEditable* cell_editable, const Glib::ustring& path_string,
+        sancho::ui::gtk::SimpleTab* tab, sancho::db::SimpleTabModel* model,
+        const std::string& column_name);
 
     void on_connection_changed();
     void on_schema_changed();
@@ -239,63 +241,64 @@ class MainWindow : public Gtk::Window {
 
     typedef guint GdkKeyCode;
 
-    bool check_mod_binding(GdkEventKey *key_event, GdkKeyCode mod_key,
+    bool check_mod_binding(GdkEventKey* key_event, GdkKeyCode mod_key,
                            GdkKeyCode key);
 
-    bool on_key_press_event(GdkEventKey *key_event);
+    bool on_key_press_event(GdkEventKey* key_event);
 
     std::shared_ptr<sancho::db::PostgresConnection>
-    connect(const std::shared_ptr<sancho::db::ConnectionDetails> &conn_details);
+    connect(const std::shared_ptr<sancho::db::ConnectionDetails>& conn_details);
 
     void on_primary_key_warning_clicked(const Glib::ustring table_name);
 
-    void show_warning(const Glib::ustring &primary,
-                      const Glib::ustring &secondary = Glib::ustring());
+    void show_warning(const Glib::ustring& primary,
+                      const Glib::ustring& secondary = Glib::ustring());
 
-    void on_menu_file_popup_generic(Gtk::ScrolledWindow *window,
-                                    sancho::ui::gtk::SimpleTab *tab,
-                                    sancho::db::SimpleTabModel *model);
+    void on_menu_file_popup_generic(Gtk::ScrolledWindow* window,
+                                    sancho::ui::gtk::SimpleTab* tab,
+                                    sancho::db::SimpleTabModel* model);
 
-    bool on_list_press(GdkEventButton *button_event, sancho::ui::gtk::SimpleTab *tab,
-                       sancho::db::SimpleTabModel *model);
+    bool on_list_press(GdkEventButton* button_event,
+                       sancho::ui::gtk::SimpleTab* tab,
+                       sancho::db::SimpleTabModel* model);
 
     void on_browser_refresh_clicked();
 
-    std::shared_ptr<sancho::db::ConnectionDetails> &find_current_connection();
+    std::shared_ptr<sancho::db::ConnectionDetails>& find_current_connection();
 
     std::shared_ptr<sancho::db::PostgresConnection> handle_connect();
 
-    bool on_browser_button_released(GdkEventButton *button_event);
+    bool on_browser_button_released(GdkEventButton* button_event);
 
-    void on_results_column_clicked(Gtk::ScrolledWindow *,
-                                   Gtk::TreeViewColumn *);
-    void on_tab_close_button_clicked(Gtk::ScrolledWindow *);
-    bool on_tab_button_released(GdkEventButton *button_event,
-                                Gtk::ScrolledWindow *);
-    void on_reload_table_clicked(Gtk::ScrolledWindow *);
+    void on_results_column_clicked(Gtk::ScrolledWindow*, Gtk::TreeViewColumn*);
+    void on_tab_close_button_clicked(Gtk::ScrolledWindow*);
+    bool on_tab_button_released(GdkEventButton* button_event,
+                                Gtk::ScrolledWindow*);
+    void on_reload_table_clicked(Gtk::ScrolledWindow*);
     void on_reset_filtering_clicked(sancho::ui::gtk::TabWindow*);
     void on_table_info_clicked(sancho::ui::gtk::TabWindow*);
-    void on_insert_row_clicked(Gtk::ScrolledWindow *);
-    void on_prev_results_page_clicked(Gtk::ScrolledWindow *);
-    void on_next_results_page_clicked(Gtk::ScrolledWindow *);
-    void on_browser_row_activated(const Gtk::TreeModel::Path &path,
-                                  Gtk::TreeViewColumn *column);
+    void on_insert_row_clicked(Gtk::ScrolledWindow*);
+    void on_prev_results_page_clicked(Gtk::ScrolledWindow*);
+    void on_next_results_page_clicked(Gtk::ScrolledWindow*);
+    void on_browser_row_activated(const Gtk::TreeModel::Path& path,
+                                  Gtk::TreeViewColumn* column);
     void on_open_sql_editor_clicked();
     void on_show_view_query_clicked(sancho::ui::gtk::SimpleTab*);
-    void on_submit_query_clicked(Gtk::ScrolledWindow *,
-                                 Glib::RefPtr<Gsv::Buffer> &);
-    void on_submit_query_all_clicked(Gtk::ScrolledWindow *,
-                                     Glib::RefPtr<Gsv::Buffer> &);
-  void on_explain_query_clicked(Gtk::ScrolledWindow *, Glib::RefPtr<Gsv::Buffer> &);
+    void on_submit_query_clicked(Gtk::ScrolledWindow*,
+                                 Glib::RefPtr<Gsv::Buffer>&);
+    void on_submit_query_all_clicked(Gtk::ScrolledWindow*,
+                                     Glib::RefPtr<Gsv::Buffer>&);
+    void on_explain_query_clicked(Gtk::ScrolledWindow*,
+                                  Glib::RefPtr<Gsv::Buffer>&);
 
-    void on_btn_accept_changes_clicked(sancho::ui::gtk::SimpleTab *tab,
-                                       sancho::db::SimpleTabModel *model);
+    void on_btn_accept_changes_clicked(sancho::ui::gtk::SimpleTab* tab,
+                                       sancho::db::SimpleTabModel* model);
 
-    void load_list_results(Gtk::ScrolledWindow *);
-    void load_query_results(Gtk::ScrolledWindow *);
+    void load_list_results(Gtk::ScrolledWindow*);
+    void load_query_results(Gtk::ScrolledWindow*);
 
-    void handle_results_sort(const sancho::db::SimpleTabModel *model,
-                             Gtk::TreeViewColumn *sorted_col);
+    void handle_results_sort(const sancho::db::SimpleTabModel* model,
+                             Gtk::TreeViewColumn* sorted_col);
 
     void on_action_file_new();
     void on_action_preferences();
@@ -303,7 +306,8 @@ class MainWindow : public Gtk::Window {
     void on_action_file_about();
 
     void refresh_connections_list();
-  void refresh_browser(const std::shared_ptr<sancho::db::PostgresConnection> &, const std::string& filter = "");
+    void refresh_browser(const std::shared_ptr<sancho::db::PostgresConnection>&,
+                         const std::string& filter = "");
     void on_show_table_info_clicked();
     void on_show_function_definition_clicked();
     void refresh_tree_connections();
@@ -314,28 +318,28 @@ class MainWindow : public Gtk::Window {
 
     Gtk::Box main_box;
     Gtk::TreeView browser;
-  Gtk::Box box_browser_filter;
-  Gtk::Entry entry_browser_filter;
+    Gtk::Box box_browser_filter;
+    Gtk::Entry entry_browser_filter;
 
-  // Browser - header popup
+    // Browser - header popup
     Gtk::Menu popup_browser_header;
-    Gtk::MenuItem *popup_item_table_info;
+    Gtk::MenuItem* popup_item_table_info;
     Glib::ustring selected_object_name;
 
-  // Browser - functions
+    // Browser - functions
     Gtk::Menu popup_function;
-    Gtk::MenuItem *popup_item_show_function_definition;
+    Gtk::MenuItem* popup_item_show_function_definition;
 
-  // List view popup
+    // List view popup
     Gtk::Menu popup_browser_table;
-    Gtk::MenuItem *popup_item_refresh_browser;
+    Gtk::MenuItem* popup_item_refresh_browser;
 
     Gtk::Box box_main_pane;
 
-    Gtk::Box *box_dashboard;
-    Gtk::TreeView *tree_connections;
+    Gtk::Box* box_dashboard;
+    Gtk::TreeView* tree_connections;
     Glib::RefPtr<Gtk::ListStore> store_connections;
-    Gtk::Button *btn_dashboard_connections;
+    Gtk::Button* btn_dashboard_connections;
 
     Glib::RefPtr<Gtk::TreeStore> browser_store;
     Gtk::ScrolledWindow browser_scrolled_window;
@@ -350,10 +354,11 @@ class MainWindow : public Gtk::Window {
     Gtk::Label label_connections;
     Gtk::Label label_schemas;
 
-    std::unordered_map<Gtk::ScrolledWindow *, std::shared_ptr<sancho::db::AbstractTabModel>>
+    std::unordered_map<Gtk::ScrolledWindow*,
+                       std::shared_ptr<sancho::db::AbstractTabModel>>
         tab_models;
 
-    std::unordered_map<Gtk::ScrolledWindow *,
+    std::unordered_map<Gtk::ScrolledWindow*,
                        std::shared_ptr<sancho::ui::gtk::AbstractTab>>
         tabs;
 };

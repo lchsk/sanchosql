@@ -6,7 +6,7 @@ namespace sancho {
 namespace db {
 
 const std::string get_columns_query(const std::string& schema_name,
-									const std::string& table_name) {
+                                    const std::string& table_name) {
     std::stringstream query;
 
     query << "select * from information_schema.columns where table_name = "
@@ -23,8 +23,7 @@ const std::string get_columns_query(const std::string& schema_name,
 }
 
 const std::string get_check_constraints_query(const std::string& schema_name,
-                                              const std::string& table_name)
-{
+                                              const std::string& table_name) {
     std::stringstream query;
 
     query << R"(
@@ -45,9 +44,8 @@ const std::string get_check_constraints_query(const std::string& schema_name,
     return query.str();
 }
 
-  const std::string get_indexes_query(const std::string& schema_name,
-                                      const std::string& table_name)
-  {
+const std::string get_indexes_query(const std::string& schema_name,
+                                    const std::string& table_name) {
     std::stringstream query;
 
     query << R"(
@@ -63,11 +61,10 @@ const std::string get_check_constraints_query(const std::string& schema_name,
           << " and tablename = '" << table_name << "';";
 
     return query.str();
-  }
+}
 
-  const std::string get_table_stats_query(const std::string& schema_name,
-                                          const std::string& table_name)
-  {
+const std::string get_table_stats_query(const std::string& schema_name,
+                                        const std::string& table_name) {
     std::stringstream query;
 
     query << R"(
@@ -81,8 +78,7 @@ const std::string get_check_constraints_query(const std::string& schema_name,
     query << "schemaname = '" << schema_name << "'"
           << " and relname = '" << table_name << "';";
 
-      return query.str();
-  }
-
+    return query.str();
+}
 }
 } // namespace sancho

@@ -4,10 +4,10 @@
 
 namespace sancho {
 namespace db {
-    sancho::db::Connections sancho::db::Connections::ins;
+sancho::db::Connections sancho::db::Connections::ins;
 
 PostgresConnection::PostgresConnection(
-                                       const std::shared_ptr<sancho::db::ConnectionDetails> &conn_details)
+    const std::shared_ptr<sancho::db::ConnectionDetails>& conn_details)
     : conn_details(conn_details), is_open_(false), error_message_(""),
       oid_names(std::make_shared<
                 std::unordered_map<pqxx::oid, sancho::OidMapping>>()) {}
@@ -19,15 +19,15 @@ PostgresConnection::~PostgresConnection() {
     try {
         if (conn->is_open())
             conn->disconnect();
-    } catch (const std::exception &e) {
+    } catch (const std::exception& e) {
         std::cerr << "Error when disconnecting: " << e.what() << std::endl;
     }
 }
 
 std::shared_ptr<sancho::QueryResult>
-PostgresConnection::run_query(const sancho::QueryType &query_type,
-                              const std::string &query,
-                              const std::string &columns_query) {
+PostgresConnection::run_query(const sancho::QueryType& query_type,
+                              const std::string& query,
+                              const std::string& columns_query) {
     g_debug("Executing query: %s", query.c_str());
 
     if (!columns_query.empty()) {
@@ -39,13 +39,13 @@ PostgresConnection::run_query(const sancho::QueryType &query_type,
 }
 
 std::shared_ptr<sancho::QueryResult>
-PostgresConnection::run_query(const sancho::QueryType &query_type,
-                              const std::string &query) {
+PostgresConnection::run_query(const sancho::QueryType& query_type,
+                              const std::string& query) {
     return run_query(query_type, query, "");
 }
 
 std::vector<std::string>
-PostgresConnection::get_db_tables(const Glib::ustring &schema_name) const
+PostgresConnection::get_db_tables(const Glib::ustring& schema_name) const
     noexcept {
     std::vector<std::string> tables;
 
@@ -67,7 +67,7 @@ PostgresConnection::get_db_tables(const Glib::ustring &schema_name) const
     if (!query_result->success)
         return tables;
 
-    for (auto &row : query_result->as_map()) {
+    for (auto& row : query_result->as_map()) {
         tables.push_back(row["table_name"]);
     }
 
@@ -75,8 +75,7 @@ PostgresConnection::get_db_tables(const Glib::ustring &schema_name) const
 }
 
 std::vector<std::string>
-PostgresConnection::get_db_views(const Glib::ustring &schema_name) noexcept
-{
+PostgresConnection::get_db_views(const Glib::ustring& schema_name) noexcept {
     std::vector<std::string> views;
 
     const std::string sql_template = R"(
@@ -92,21 +91,22 @@ PostgresConnection::get_db_views(const Glib::ustring &schema_name) noexcept
 
     const auto sql = Glib::ustring::compose(sql_template, schema_name);
 
-    const std::shared_ptr<sancho::QueryResult> result = run_query(sancho::QueryType::NonTransaction, sql);
+    const std::shared_ptr<sancho::QueryResult> result =
+        run_query(sancho::QueryType::NonTransaction, sql);
 
     if (!result->success)
         return views;
 
-    for (auto &row : result->as_map()) {
+    for (auto& row : result->as_map()) {
         views.push_back(row["table_name"]);
     }
 
     return views;
 }
 
-  const std::string
-  PostgresConnection::get_db_view_query(const Glib::ustring &schema_name, const Glib::ustring &table_name) noexcept
-  {
+const std::string PostgresConnection::get_db_view_query(
+    const Glib::ustring& schema_name,
+    const Glib::ustring& table_name) noexcept {
     const std::string sql_template = R"(
             SELECT
                 view_definition
@@ -117,25 +117,26 @@ PostgresConnection::get_db_views(const Glib::ustring &schema_name) noexcept
                 AND table_name = '%2'
             )";
 
-    const auto sql = Glib::ustring::compose(sql_template, schema_name, table_name);
+    const auto sql =
+        Glib::ustring::compose(sql_template, schema_name, table_name);
 
-    const std::shared_ptr<sancho::QueryResult> result = run_query(sancho::QueryType::NonTransaction, sql);
+    const std::shared_ptr<sancho::QueryResult> result =
+        run_query(sancho::QueryType::NonTransaction, sql);
 
     if (!result->success)
         return "";
 
     if (result->size != 1) {
-      return "";
+        return "";
     }
 
     const auto data = result->as_map();
 
     return data[0].at("view_definition");
-  }
+}
 
-    std::vector<std::string>
-    PostgresConnection::get_db_triggers(const Glib::ustring &schema_name) noexcept
-    {
+std::vector<std::string>
+PostgresConnection::get_db_triggers(const Glib::ustring& schema_name) noexcept {
     std::vector<std::string> triggers;
 
     const std::string sql_template = R"(
@@ -151,21 +152,21 @@ PostgresConnection::get_db_views(const Glib::ustring &schema_name) noexcept
 
     const auto sql = Glib::ustring::compose(sql_template, schema_name);
 
-    const std::shared_ptr<sancho::QueryResult> result = run_query(sancho::QueryType::NonTransaction, sql);
+    const std::shared_ptr<sancho::QueryResult> result =
+        run_query(sancho::QueryType::NonTransaction, sql);
 
     if (!result->success)
         return triggers;
 
-    for (auto &row : result->as_map()) {
+    for (auto& row : result->as_map()) {
         triggers.push_back(row["trigger_name"]);
     }
 
     return triggers;
-    }
+}
 
-    std::vector<std::string>
-    PostgresConnection::get_db_functions(const Glib::ustring &schema_name) noexcept
-    {
+std::vector<std::string> PostgresConnection::get_db_functions(
+    const Glib::ustring& schema_name) noexcept {
     std::vector<std::string> functions;
 
     const std::string sql_template = R"(
@@ -181,21 +182,21 @@ PostgresConnection::get_db_views(const Glib::ustring &schema_name) noexcept
 
     const auto sql = Glib::ustring::compose(sql_template, schema_name);
 
-    const std::shared_ptr<sancho::QueryResult> result = run_query(sancho::QueryType::NonTransaction, sql);
+    const std::shared_ptr<sancho::QueryResult> result =
+        run_query(sancho::QueryType::NonTransaction, sql);
 
     if (!result->success)
         return functions;
 
-    for (auto &row : result->as_map()) {
+    for (auto& row : result->as_map()) {
         functions.push_back(row["routine_name"]);
     }
 
     return functions;
-    }
+}
 
-    std::vector<std::string>
-    PostgresConnection::get_db_sequences(const Glib::ustring &schema_name) noexcept
-    {
+std::vector<std::string> PostgresConnection::get_db_sequences(
+    const Glib::ustring& schema_name) noexcept {
     std::vector<std::string> sequences;
 
     const std::string sql_template = R"(
@@ -211,21 +212,22 @@ PostgresConnection::get_db_views(const Glib::ustring &schema_name) noexcept
 
     const auto sql = Glib::ustring::compose(sql_template, schema_name);
 
-    const std::shared_ptr<sancho::QueryResult> result = run_query(sancho::QueryType::NonTransaction, sql);
+    const std::shared_ptr<sancho::QueryResult> result =
+        run_query(sancho::QueryType::NonTransaction, sql);
 
     if (!result->success)
         return sequences;
 
-    for (auto &row : result->as_map()) {
+    for (auto& row : result->as_map()) {
         sequences.push_back(row["sequence_name"]);
     }
 
     return sequences;
-    }
+}
 
-    const std::string
-    PostgresConnection::get_db_function_definition(const Glib::ustring &schema_name, const Glib::ustring &routine_name) noexcept
-    {
+const std::string PostgresConnection::get_db_function_definition(
+    const Glib::ustring& schema_name,
+    const Glib::ustring& routine_name) noexcept {
     const std::string sql_template = R"(
             SELECT
                 routine_definition
@@ -236,21 +238,23 @@ PostgresConnection::get_db_views(const Glib::ustring &schema_name) noexcept
                 AND routine_name = '%2'
             )";
 
-    const auto sql = Glib::ustring::compose(sql_template, schema_name, routine_name);
+    const auto sql =
+        Glib::ustring::compose(sql_template, schema_name, routine_name);
 
-    const std::shared_ptr<sancho::QueryResult> result = run_query(sancho::QueryType::NonTransaction, sql);
+    const std::shared_ptr<sancho::QueryResult> result =
+        run_query(sancho::QueryType::NonTransaction, sql);
 
     if (!result->success)
         return "";
 
     if (result->size != 1) {
-      return "";
+        return "";
     }
 
     const auto data = result->as_map();
 
     return data[0].at("routine_definition");
-    }
+}
 
 std::unique_ptr<std::vector<Glib::ustring>> PostgresConnection::get_schemas() {
     std::unique_ptr<std::vector<Glib::ustring>> schemas =
@@ -265,7 +269,7 @@ std::unique_ptr<std::vector<Glib::ustring>> PostgresConnection::get_schemas() {
     if (!query_result->success)
         return std::move(schemas);
 
-    for (auto &row : query_result->as_map()) {
+    for (auto& row : query_result->as_map()) {
         schemas->push_back(row["nspname"]);
     }
 
@@ -275,8 +279,8 @@ std::unique_ptr<std::vector<Glib::ustring>> PostgresConnection::get_schemas() {
 }
 
 const std::vector<PrimaryKey>
-PostgresConnection::get_primary_key(const std::string &table_name,
-                                    const std::string &schema_name) const
+PostgresConnection::get_primary_key(const std::string& table_name,
+                                    const std::string& schema_name) const
     noexcept {
     std::vector<PrimaryKey> data;
 
@@ -298,7 +302,7 @@ PostgresConnection::get_primary_key(const std::string &table_name,
     if (!query_result->success)
         return data;
 
-    for (auto &row : query_result->as_map()) {
+    for (auto& row : query_result->as_map()) {
         data.push_back(PrimaryKey(row["column_name"], row["data_type"]));
     }
 
@@ -317,7 +321,7 @@ void PostgresConnection::init_connection() {
         is_open_ = conn->is_open();
 
         load_oids();
-    } catch (const std::exception &e) {
+    } catch (const std::exception& e) {
         g_warning("Postgres connection failed: %s", e.what());
 
         error_message_ = e.what();
@@ -343,10 +347,11 @@ void PostgresConnection::load_oids() {
     if (!query_result->success)
         return;
 
-    for (auto &row : query_result->as_map()) {
+    for (auto& row : query_result->as_map()) {
         const pqxx::oid oid = std::atoi(row["oid"].c_str());
 
-        oid_names->emplace(oid, sancho::OidMapping(oid, row["udt_name"], row["data_type"]));
+        oid_names->emplace(
+            oid, sancho::OidMapping(oid, row["udt_name"], row["data_type"]));
     }
 }
 } // namespace sancho

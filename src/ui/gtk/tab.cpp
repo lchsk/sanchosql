@@ -1,15 +1,15 @@
 #include <fstream>
 
-#include "tab.hpp"
 #include "../../string.hpp"
+#include "tab.hpp"
 
 namespace sancho {
 namespace ui {
 namespace gtk {
 const int LOG_BUFFER_MAX_SIZE = 2000; // characters
 
-void insert_log_message(Glib::RefPtr<Gsv::Buffer> &log_buffer,
-                        const Glib::ustring &message) {
+void insert_log_message(Glib::RefPtr<Gsv::Buffer>& log_buffer,
+                        const Glib::ustring& message) {
     // Limit the size of the buffer
     if (log_buffer->get_char_count() > LOG_BUFFER_MAX_SIZE) {
         log_buffer->set_text(
@@ -23,17 +23,17 @@ void insert_log_message(Glib::RefPtr<Gsv::Buffer> &log_buffer,
     log_buffer->insert(log_buffer->begin(), dated_message);
 }
 
-  int run_yes_no_question(Gtk::Window* window, const std::string& question, const std::string& secondary)
-{
-      Gtk::MessageDialog dialog(*window, question,
-          false /* use_markup */, Gtk::MESSAGE_QUESTION,
-          Gtk::BUTTONS_YES_NO);
-      dialog.set_secondary_text(secondary);
+int run_yes_no_question(Gtk::Window* window, const std::string& question,
+                        const std::string& secondary) {
+    Gtk::MessageDialog dialog(*window, question, false /* use_markup */,
+                              Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO);
+    dialog.set_secondary_text(secondary);
 
-      return dialog.run();
+    return dialog.run();
 }
 
-  AbstractTab::AbstractTab(const sancho::system::Preferences* preferences, const Glib::ustring &tab_name, TabType type)
+AbstractTab::AbstractTab(const sancho::system::Preferences* preferences,
+                         const Glib::ustring& tab_name, TabType type)
     : preferences(preferences), tab_name(tab_name), type(type) {
     hb = Gtk::manage(new Gtk::HBox);
     b = Gtk::manage(new Gtk::Button);
@@ -56,9 +56,8 @@ void insert_log_message(Glib::RefPtr<Gsv::Buffer> &log_buffer,
     set_header_label_text(tab_name);
 }
 
-void AbstractTab::set_header_label_text(const Glib::ustring& label)
-{
-  l->set_text(label);
+void AbstractTab::set_header_label_text(const Glib::ustring& label) {
+    l->set_text(label);
 }
 
 void AbstractTab::show() const {
@@ -67,10 +66,10 @@ void AbstractTab::show() const {
     hb->show_all_children();
 }
 
-  QueryTab::QueryTab(const sancho::system::Preferences* preferences, const Glib::ustring &tab_name, Gtk::Window* window)
+QueryTab::QueryTab(const sancho::system::Preferences* preferences,
+                   const Glib::ustring& tab_name, Gtk::Window* window)
     : AbstractTab(preferences, tab_name, TabType::Query), parent_window(window),
-      file_status("", false, false)
-  {
+      file_status("", false, false) {
     tv = Gtk::manage(new Gtk::TextView);
 
     toolbar = Gtk::manage(new Gtk::Toolbar);
@@ -81,7 +80,8 @@ void AbstractTab::show() const {
 
     btn_execute_all_editor_queries = Gtk::manage(new Gtk::ToolButton);
     btn_execute_all_editor_queries->set_icon_name("media-seek-forward");
-    btn_execute_all_editor_queries->set_tooltip_text("Execute all code in editor");
+    btn_execute_all_editor_queries->set_tooltip_text(
+        "Execute all code in editor");
 
     btn_open_file = Gtk::manage(new Gtk::ToolButton);
     btn_open_file->set_icon_name("document-open");
@@ -106,15 +106,12 @@ void AbstractTab::show() const {
     toolbar->append(*btn_save_file_as);
     toolbar->append(*btn_explain);
 
-    btn_open_file->signal_clicked().connect(sigc::bind<QueryTab *>(
-        sigc::mem_fun(*this, &QueryTab::on_btn_open_file_clicked),
-        this));
-    btn_save_file->signal_clicked().connect(sigc::bind<QueryTab *>(
-        sigc::mem_fun(*this, &QueryTab::on_btn_save_file_clicked),
-        this));
-    btn_save_file_as->signal_clicked().connect(sigc::bind<QueryTab *>(
-                                                                   sigc::mem_fun(*this, &QueryTab::on_btn_save_file_as_clicked),
-        this));
+    btn_open_file->signal_clicked().connect(sigc::bind<QueryTab*>(
+        sigc::mem_fun(*this, &QueryTab::on_btn_open_file_clicked), this));
+    btn_save_file->signal_clicked().connect(sigc::bind<QueryTab*>(
+        sigc::mem_fun(*this, &QueryTab::on_btn_save_file_clicked), this));
+    btn_save_file_as->signal_clicked().connect(sigc::bind<QueryTab*>(
+        sigc::mem_fun(*this, &QueryTab::on_btn_save_file_as_clicked), this));
 
     tree = Gtk::manage(new Gtk::TreeView);
 
@@ -123,11 +120,11 @@ void AbstractTab::show() const {
     log_scrolled_window = Gtk::manage(new Gtk::ScrolledWindow);
     data_scrolled_window = Gtk::manage(new Gtk::ScrolledWindow);
 
-	box_editor = Gtk::manage(new Gtk::Box);
+    box_editor = Gtk::manage(new Gtk::Box);
     box_editor->set_halign(Gtk::ALIGN_START);
     box_editor->set_spacing(10);
-	label_cursor_position = Gtk::manage(new Gtk::Label);
-	label_filename = Gtk::manage(new Gtk::Label);
+    label_cursor_position = Gtk::manage(new Gtk::Label);
+    label_filename = Gtk::manage(new Gtk::Label);
 
     box_editor->pack_start(*label_cursor_position);
     box_editor->pack_start(*label_filename);
@@ -145,35 +142,40 @@ void AbstractTab::show() const {
     buffer->connect_property_changed("cursor-position", slot);
 
     source_view->set_show_line_numbers(preferences->show_line_numbers);
-    source_view->set_highlight_current_line(preferences->highlight_current_line);
+    source_view->set_highlight_current_line(
+        preferences->highlight_current_line);
     source_view->property_tab_width() = preferences->tab_width;
-	source_view->property_insert_spaces_instead_of_tabs() = preferences->indent_with_spaces;
+    source_view->property_insert_spaces_instead_of_tabs() =
+        preferences->indent_with_spaces;
 
-
-	if (preferences->show_whitespace) {
-	  source_view->property_draw_spaces() = Gsv::DrawSpacesFlags::DRAW_SPACES_ALL;
-	}
+    if (preferences->show_whitespace) {
+        source_view->property_draw_spaces() =
+            Gsv::DrawSpacesFlags::DRAW_SPACES_ALL;
+    }
 
     Glib::RefPtr<Gsv::LanguageManager> lm = Gsv::LanguageManager::get_default();
     Glib::RefPtr<Gsv::Language> lang = lm->get_language("sql");
 
     Glib::RefPtr<Gsv::StyleSchemeManager> sm =
         Gsv::StyleSchemeManager::get_default();
-    Glib::RefPtr<Gsv::StyleScheme> style = sm->get_scheme(preferences->color_scheme);
+    Glib::RefPtr<Gsv::StyleScheme> style =
+        sm->get_scheme(preferences->color_scheme);
 
     buffer->set_language(lang);
     buffer->set_style_scheme(style);
 
-	if (preferences->add_default_comment) {
-	  const Glib::ustring default_text = Glib::ustring::compose(
-        "-- Opened %1 by %2\n-- Code executed in this editor is "
-        "automatically committed\n\n",
-        sancho::date::get_current_datetime(), sancho::user::get_user_name());
+    if (preferences->add_default_comment) {
+        const Glib::ustring default_text = Glib::ustring::compose(
+            "-- Opened %1 by %2\n-- Code executed in this editor is "
+            "automatically committed\n\n",
+            sancho::date::get_current_datetime(),
+            sancho::user::get_user_name());
 
-	  buffer->set_text(default_text);
-	}
+        buffer->set_text(default_text);
+    }
 
-    auto slot_buffer_changed = sigc::mem_fun(*this, &QueryTab::on_buffer_changed);
+    auto slot_buffer_changed =
+        sigc::mem_fun(*this, &QueryTab::on_buffer_changed);
     buffer->signal_changed().connect(slot_buffer_changed);
 
     source_view->set_monospace();
@@ -237,8 +239,7 @@ void AbstractTab::show() const {
     update_file_buttons();
 }
 
-void QueryTab::on_cursor_position_changed()
-{
+void QueryTab::on_cursor_position_changed() {
     const auto mark = buffer->get_insert();
     const auto iter = buffer->get_iter_at_mark(mark);
 
@@ -250,147 +251,137 @@ void QueryTab::on_cursor_position_changed()
     label_cursor_position->set_text(pos);
 }
 
-  bool QueryTab::was_modified() const {
-    return file_status.modified;
-  }
+bool QueryTab::was_modified() const { return file_status.modified; }
 
-  bool SimpleTab::was_modified() const {
-    return false;
-  }
+bool SimpleTab::was_modified() const { return false; }
 
-  void QueryTab::on_buffer_changed()
-{
-  file_status.modified = true;
-  update_file_buttons();
+void QueryTab::on_buffer_changed() {
+    file_status.modified = true;
+    update_file_buttons();
 }
 
-  void QueryTab::update_file_buttons()
-{
-  btn_save_file->set_sensitive(file_status.modified);
-  label_filename->set_text(file_status.path);
+void QueryTab::update_file_buttons() {
+    btn_save_file->set_sensitive(file_status.modified);
+    label_filename->set_text(file_status.path);
 }
 
-  void QueryTab::on_btn_open_file_clicked(QueryTab* tab)
-  {
+void QueryTab::on_btn_open_file_clicked(QueryTab* tab) {
     if (file_status.modified) {
-      const auto confirmation = sancho::ui::gtk::run_yes_no_question(
-                                                                   parent_window,
-                                                                   "Are you sure?",
-                                                                   "Changes to this file will be lost"
-                                                                   );
-      if (confirmation == Gtk::RESPONSE_NO) {
-        return;
-      }
+        const auto confirmation = sancho::ui::gtk::run_yes_no_question(
+            parent_window, "Are you sure?",
+            "Changes to this file will be lost");
+        if (confirmation == Gtk::RESPONSE_NO) {
+            return;
+        }
     }
 
-    Gtk::FileChooserDialog dialog("Please choose a file", Gtk::FILE_CHOOSER_ACTION_OPEN);
+    Gtk::FileChooserDialog dialog("Please choose a file",
+                                  Gtk::FILE_CHOOSER_ACTION_OPEN);
     dialog.set_transient_for(*parent_window);
 
-  dialog.add_button("_Cancel", Gtk::RESPONSE_CANCEL);
-  dialog.add_button("_Open", Gtk::RESPONSE_OK);
+    dialog.add_button("_Cancel", Gtk::RESPONSE_CANCEL);
+    dialog.add_button("_Open", Gtk::RESPONSE_OK);
 
-  auto filter_sql = Gtk::FileFilter::create();
-  filter_sql->set_name("SQL files");
-  filter_sql->add_pattern("*.sql");
-  dialog.add_filter(filter_sql);
+    auto filter_sql = Gtk::FileFilter::create();
+    filter_sql->set_name("SQL files");
+    filter_sql->add_pattern("*.sql");
+    dialog.add_filter(filter_sql);
 
-  auto filter_any = Gtk::FileFilter::create();
-  filter_any->set_name("Any files");
-  filter_any->add_pattern("*");
-  dialog.add_filter(filter_any);
+    auto filter_any = Gtk::FileFilter::create();
+    filter_any->set_name("Any files");
+    filter_any->add_pattern("*");
+    dialog.add_filter(filter_any);
 
-  int result = dialog.run();
+    int result = dialog.run();
 
-  switch (result)
-  {
-    case Gtk::RESPONSE_OK:
-    {
-      const std::string path = dialog.get_filename();
-      std::string contents;
+    switch (result) {
+    case Gtk::RESPONSE_OK: {
+        const std::string path = dialog.get_filename();
+        std::string contents;
 
-      try {
-        contents = read_file(path);
+        try {
+            contents = read_file(path);
 
-      } catch (const std::invalid_argument &e) {
-        insert_log_message(log_buffer, Glib::ustring::compose("Unable to open '%1'\n", path));
-        return;
-      }
+        } catch (const std::invalid_argument& e) {
+            insert_log_message(log_buffer, Glib::ustring::compose(
+                                               "Unable to open '%1'\n", path));
+            return;
+        }
 
-      buffer->set_text(contents);
+        buffer->set_text(contents);
 
-      insert_log_message(log_buffer, Glib::ustring::compose("File '%1' was opened\n", path));
+        insert_log_message(
+            log_buffer, Glib::ustring::compose("File '%1' was opened\n", path));
 
-      file_status.modified = false;
-      file_status.file_loaded = true;
-      file_status.path = path;
+        file_status.modified = false;
+        file_status.file_loaded = true;
+        file_status.path = path;
 
-      update_file_buttons();
+        update_file_buttons();
 
-      break;
+        break;
     }
-  }
-  }
+    }
+}
 
-  const std::string QueryTab::read_file(const std::string& path)
-  {
+const std::string QueryTab::read_file(const std::string& path) {
     std::ifstream sql_file(path);
 
     if (!sql_file.is_open()) {
-      throw std::invalid_argument("unable to open file");
+        throw std::invalid_argument("unable to open file");
     }
 
     std::stringstream contents;
     std::string line;
 
-    while (std::getline(sql_file, line))
-      {
+    while (std::getline(sql_file, line)) {
         std::istringstream iss(line);
 
         contents << line << "\n";
-      }
+    }
 
     sql_file.close();
 
-      return contents.str();
-  }
+    return contents.str();
+}
 
-  void QueryTab::save_file(const std::string& path)
-  {
+void QueryTab::save_file(const std::string& path) {
     std::ofstream sql_file(path);
 
     if (!sql_file.is_open()) {
-      throw std::runtime_error("unable to open file");
+        throw std::runtime_error("unable to open file");
     }
 
     sql_file << buffer->get_text();
 
     sql_file.close();
-  }
+}
 
-  void QueryTab::on_btn_save_file_clicked(QueryTab* tab)
-  {
+void QueryTab::on_btn_save_file_clicked(QueryTab* tab) {
     if (!file_status.modified) {
-      return;
+        return;
     }
 
     if (file_status.file_loaded) {
-      try {
-        save_file(file_status.path);
-      } catch (std::runtime_error &e) {
-        insert_log_message(log_buffer, Glib::ustring::compose("File '%1' could not be saved\n", file_status.path));
-        return;
-      }
+        try {
+            save_file(file_status.path);
+        } catch (std::runtime_error& e) {
+            insert_log_message(log_buffer, Glib::ustring::compose(
+                                               "File '%1' could not be saved\n",
+                                               file_status.path));
+            return;
+        }
     } else {
-      on_btn_save_file_as_clicked(this);
+        on_btn_save_file_as_clicked(this);
     }
 
     file_status.modified = false;
     update_file_buttons();
-  }
+}
 
-  void QueryTab::on_btn_save_file_as_clicked(QueryTab* tab)
-  {
-    Gtk::FileChooserDialog dialog("Save file as...", Gtk::FILE_CHOOSER_ACTION_SAVE);
+void QueryTab::on_btn_save_file_as_clicked(QueryTab* tab) {
+    Gtk::FileChooserDialog dialog("Save file as...",
+                                  Gtk::FILE_CHOOSER_ACTION_SAVE);
     dialog.set_transient_for(*parent_window);
     dialog.set_do_overwrite_confirmation(true);
 
@@ -409,36 +400,38 @@ void QueryTab::on_cursor_position_changed()
 
     int result = dialog.run();
 
-    switch (result)
-      {
-      case Gtk::RESPONSE_ACCEPT:
-        {
-      const std::string path = dialog.get_filename();
+    switch (result) {
+    case Gtk::RESPONSE_ACCEPT: {
+        const std::string path = dialog.get_filename();
 
-      try {
-        save_file(path);
-      } catch (std::runtime_error &e) {
-        insert_log_message(log_buffer, Glib::ustring::compose("File '%1' could not be saved\n", path));
-        return;
-      }
-
-      insert_log_message(log_buffer, Glib::ustring::compose("File '%1' was saved\n", path));
-
-      file_status.modified = false;
-      file_status.file_loaded = true;
-      file_status.path = path;
-
-      update_file_buttons();
-
-      break;
+        try {
+            save_file(path);
+        } catch (std::runtime_error& e) {
+            insert_log_message(
+                log_buffer,
+                Glib::ustring::compose("File '%1' could not be saved\n", path));
+            return;
         }
-      }
-  }
 
-SimpleTab::SimpleTab(const sancho::system::Preferences* preferences, const Glib::ustring &tab_name,
-                     std::shared_ptr<sancho::db::SimpleTabModel> &model,
+        insert_log_message(
+            log_buffer, Glib::ustring::compose("File '%1' was saved\n", path));
+
+        file_status.modified = false;
+        file_status.file_loaded = true;
+        file_status.path = path;
+
+        update_file_buttons();
+
+        break;
+    }
+    }
+}
+
+SimpleTab::SimpleTab(const sancho::system::Preferences* preferences,
+                     const Glib::ustring& tab_name,
+                     std::shared_ptr<sancho::db::SimpleTabModel>& model,
                      sancho::ui::gtk::ListViewType list_view_type)
-  : AbstractTab(preferences, tab_name, TabType::List),
+    : AbstractTab(preferences, tab_name, TabType::List),
       tree(Gtk::manage(new Gtk::TreeView)), model(model) {
     tv = Gtk::manage(new Gtk::TextView);
 
@@ -485,7 +478,7 @@ SimpleTab::SimpleTab(const sancho::system::Preferences* preferences, const Glib:
     entry_filter->set_tooltip_text("Apply SQL filtering to the results");
     entry_filter->set_placeholder_text("Apply SQL filtering to the results");
 
-	// TODO: Split it up for table and view separately
+    // TODO: Split it up for table and view separately
 
     if (list_view_type == sancho::ui::gtk::ListViewType::Table) {
         toolbar->append(*btn_refresh);
@@ -498,7 +491,8 @@ SimpleTab::SimpleTab(const sancho::system::Preferences* preferences, const Glib:
         toolbar->append(*btn_primary_key_warning);
 
         set_header_label_text(Glib::ustring::compose("%1 (table)", tab_name));
-    } if (list_view_type == sancho::ui::gtk::ListViewType::View) {
+    }
+    if (list_view_type == sancho::ui::gtk::ListViewType::View) {
         btn_show_view_query = Gtk::manage(new Gtk::ToolButton);
         btn_show_view_query->set_icon_name("edit-copy");
         btn_show_view_query->set_tooltip_text("Show view query");

@@ -19,64 +19,67 @@ class PrimaryKey {
     std::string column_name;
     std::string data_type;
 
-    PrimaryKey(const std::string &column_name, const std::string &data_type)
+    PrimaryKey(const std::string& column_name, const std::string& data_type)
         : column_name(column_name), data_type(data_type) {}
 };
 
 class NoConnection : public std::runtime_error {
   public:
-    NoConnection(const std::string &what) : std::runtime_error(what) {}
+    NoConnection(const std::string& what) : std::runtime_error(what) {}
 };
 
 class PostgresConnection {
   public:
     explicit PostgresConnection(
-                                const std::shared_ptr<sancho::db::ConnectionDetails> &conn_details);
+        const std::shared_ptr<sancho::db::ConnectionDetails>& conn_details);
     virtual ~PostgresConnection();
 
     virtual std::shared_ptr<sancho::QueryResult>
-    run_query(const sancho::QueryType &query_type, const std::string &query,
-              const std::string &columns_query);
+    run_query(const sancho::QueryType& query_type, const std::string& query,
+              const std::string& columns_query);
     virtual std::shared_ptr<sancho::QueryResult>
-    run_query(const sancho::QueryType &query_type, const std::string &query);
+    run_query(const sancho::QueryType& query_type, const std::string& query);
 
     std::vector<std::string>
-    get_db_tables(const Glib::ustring &schema_name) const noexcept;
+    get_db_tables(const Glib::ustring& schema_name) const noexcept;
 
     std::vector<std::string>
-    get_db_views(const Glib::ustring &schema_name) noexcept;
+    get_db_views(const Glib::ustring& schema_name) noexcept;
     const std::string
-    get_db_view_query(const Glib::ustring &schema_name, const Glib::ustring &table_name) noexcept;
+    get_db_view_query(const Glib::ustring& schema_name,
+                      const Glib::ustring& table_name) noexcept;
     std::vector<std::string>
-    get_db_triggers(const Glib::ustring &schema_name) noexcept;
+    get_db_triggers(const Glib::ustring& schema_name) noexcept;
     std::vector<std::string>
-    get_db_functions(const Glib::ustring &schema_name) noexcept;
+    get_db_functions(const Glib::ustring& schema_name) noexcept;
     std::vector<std::string>
-    get_db_sequences(const Glib::ustring &schema_name) noexcept;
+    get_db_sequences(const Glib::ustring& schema_name) noexcept;
     const std::string
-    get_db_function_definition(const Glib::ustring &schema_name, const Glib::ustring &routine_name) noexcept;
+    get_db_function_definition(const Glib::ustring& schema_name,
+                               const Glib::ustring& routine_name) noexcept;
 
     virtual const std::vector<PrimaryKey>
-    get_primary_key(const std::string &table_name,
-                    const std::string &schema_name) const noexcept;
+    get_primary_key(const std::string& table_name,
+                    const std::string& schema_name) const noexcept;
     const std::string get_columns_query(const std::string& schema_name,
                                         const std::string& table_name) {
-      return sancho::db::get_columns_query(schema_name, table_name);
+        return sancho::db::get_columns_query(schema_name, table_name);
     }
-    const std::string get_check_constraints_query(const std::string& schema_name,
-                                                  const std::string& table_name) {
-      return sancho::db::get_check_constraints_query(schema_name, table_name);
+    const std::string
+    get_check_constraints_query(const std::string& schema_name,
+                                const std::string& table_name) {
+        return sancho::db::get_check_constraints_query(schema_name, table_name);
     }
 
     const std::string get_indexes_query(const std::string& schema_name,
-										const std::string& table_name) {
-      return sancho::db::get_indexes_query(schema_name, table_name);
-	}
+                                        const std::string& table_name) {
+        return sancho::db::get_indexes_query(schema_name, table_name);
+    }
 
     const std::string get_table_stats_query(const std::string& schema_name,
-											const std::string& table_name) {
-      return sancho::db::get_table_stats_query(schema_name, table_name);
-	}
+                                            const std::string& table_name) {
+        return sancho::db::get_table_stats_query(schema_name, table_name);
+    }
 
     std::unique_ptr<std::vector<Glib::ustring>> get_schemas();
 
@@ -84,7 +87,7 @@ class PostgresConnection {
 
     bool is_open() const { return is_open_; };
 
-    const std::string &error_message() const { return error_message_; };
+    const std::string& error_message() const { return error_message_; };
 
   private:
     void load_oids();

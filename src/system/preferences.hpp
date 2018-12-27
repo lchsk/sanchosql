@@ -8,7 +8,7 @@
 namespace sancho {
 namespace system {
 
-  struct Preferences {
+struct Preferences {
     Preferences();
 
     void init();
@@ -32,8 +32,7 @@ namespace system {
     Glib::KeyFile file;
 
     const std::string PREFERENCES_PATH;
-  };
-
+};
 }
 } // namespace sancho
 

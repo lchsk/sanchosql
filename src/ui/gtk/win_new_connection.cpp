@@ -1,5 +1,5 @@
-#include <iostream>
 #include <cassert>
+#include <iostream>
 
 #include "win_new_connection.hpp"
 
@@ -9,7 +9,7 @@ namespace sancho {
 namespace ui {
 namespace gtk {
 NewConnectionWindow::NewConnectionWindow(
-    BaseObjectType *cobject, const Glib::RefPtr<Gtk::Builder> &builder)
+    BaseObjectType* cobject, const Glib::RefPtr<Gtk::Builder>& builder)
     : Gtk::Window(cobject), builder(builder) {
     builder->get_widget("box_left", box_left);
     builder->get_widget("paned_new_connections", paned_new_connections);
@@ -97,7 +97,7 @@ NewConnectionWindow::NewConnectionWindow(
                                    connection_columns.col_name);
 
     for (const auto& sslmode : sslmode_values) {
-      combo_sslmode->append(sslmode);
+        combo_sslmode->append(sslmode);
     }
 
     show_all_children();
@@ -148,7 +148,7 @@ void NewConnectionWindow::on_btn_test_connection_clicked() {
     try {
         pg_conn.init_connection();
         g_debug("Test connection OK: %s", conn->postgres_string_safe().c_str());
-    } catch (const sancho::db::NoConnection &e) {
+    } catch (const sancho::db::NoConnection& e) {
         g_debug("Test connection failed: %s",
                 conn->postgres_string_safe().c_str());
     }
@@ -161,7 +161,7 @@ void NewConnectionWindow::reset_connection_status() {
 }
 
 void NewConnectionWindow::update_connection_status(
-                                                   const sancho::db::PostgresConnection &pg_conn) {
+    const sancho::db::PostgresConnection& pg_conn) {
     if (pg_conn.is_open()) {
         label_connection_status->set_text("Success");
         label_connection_status->override_color(Gdk::RGBA("green"),
@@ -205,8 +205,8 @@ void NewConnectionWindow::on_btn_del_connection_clicked() {
 void NewConnectionWindow::on_win_show() {
     connections_model->clear();
 
-    for (const auto &conn :
-             sancho::db::Connections::instance()->get_connections()) {
+    for (const auto& conn :
+         sancho::db::Connections::instance()->get_connections()) {
         Gtk::TreeModel::Row row = *(connections_model->append());
         row[connection_columns.col_name] = conn.first;
     }
@@ -241,7 +241,8 @@ void NewConnectionWindow::on_selected_connection_changed() {
     const std::string conn_name = row.get_value(connection_columns.col_name);
     edited_conn_name = conn_name;
 
-    auto &connection_details = sancho::db::Connections::instance()->get(conn_name);
+    auto& connection_details =
+        sancho::db::Connections::instance()->get(conn_name);
 
     text_connection_name->set_text(connection_details->name);
     text_host->set_text(connection_details->host);
@@ -253,13 +254,11 @@ void NewConnectionWindow::on_selected_connection_changed() {
     std::string sslmode = connection_details->sslmode;
 
     if (sslmode.empty())
-      sslmode = "prefer";
+        sslmode = "prefer";
 
-    const auto sslmode_id = std::distance(sslmode_values.cbegin(),
-                                          std::find(sslmode_values.cbegin(),
-                                                    sslmode_values.cend(),
-                                                    sslmode)
-                                          );
+    const auto sslmode_id = std::distance(
+        sslmode_values.cbegin(),
+        std::find(sslmode_values.cbegin(), sslmode_values.cend(), sslmode));
     combo_sslmode->set_active(sslmode_id);
 
     checkbox_save_password->set_active(connection_details->save_password);
@@ -295,8 +294,7 @@ bool NewConnectionWindow::can_save_edited_connection() const {
         text_host->get_text(), text_user->get_text(), text_password->get_text(),
         // get_password(),
         text_db->get_text(), text_port->get_text(),
-        combo_sslmode->get_active_text(),
-        checkbox_save_password->get_active());
+        combo_sslmode->get_active_text(), checkbox_save_password->get_active());
 }
 
 bool NewConnectionWindow::can_add_new_connection() const {

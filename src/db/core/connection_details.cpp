@@ -1,8 +1,8 @@
 #include "connection_details.hpp"
 
 namespace sancho {
-    namespace db{
-void ConnectionDetails::set_host(const std::string &hostname) {
+namespace db {
+void ConnectionDetails::set_host(const std::string& hostname) {
     host = hostname;
 }
 
@@ -25,7 +25,8 @@ const std::string ConnectionDetails::postgres_string_(bool include_password) {
         conn << "****";
     }
 
-    conn << " dbname = " << dbname << " port = " << port << " sslmode = " << sslmode;
+    conn << " dbname = " << dbname << " port = " << port
+         << " sslmode = " << sslmode;
 
     return conn.str();
 }

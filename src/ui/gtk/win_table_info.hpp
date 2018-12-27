@@ -11,38 +11,38 @@ namespace gtk {
 
 class TableInfoWindow : public Gtk::Window {
   public:
-    TableInfoWindow(BaseObjectType *cobject,
-                    const Glib::RefPtr<Gtk::Builder> &builder);
+    TableInfoWindow(BaseObjectType* cobject,
+                    const Glib::RefPtr<Gtk::Builder>& builder);
     virtual ~TableInfoWindow(){};
 
-    void init(sancho::db::PostgresConnection &conn,
-              const std::string &schema_name, const std::string &table_name);
+    void init(sancho::db::PostgresConnection& conn,
+              const std::string& schema_name, const std::string& table_name);
 
   private:
     void on_win_show();
     void on_win_hide();
     void on_btn_close_clicked();
-    void load_columns_data(sancho::db::PostgresConnection &conn,
-                           const std::string &schema_name,
-                           const std::string &table_name);
-    void load_constraints_data(sancho::db::PostgresConnection &conn,
-                               const std::string &schema_name,
-                               const std::string &table_name);
-    void load_indexes_data(sancho::db::PostgresConnection &conn,
-                           const std::string &schema_name,
-                           const std::string &table_name);
-    void load_stats_data(sancho::db::PostgresConnection &conn,
-                         const std::string &schema_name,
-                         const std::string &table_name);
+    void load_columns_data(sancho::db::PostgresConnection& conn,
+                           const std::string& schema_name,
+                           const std::string& table_name);
+    void load_constraints_data(sancho::db::PostgresConnection& conn,
+                               const std::string& schema_name,
+                               const std::string& table_name);
+    void load_indexes_data(sancho::db::PostgresConnection& conn,
+                           const std::string& schema_name,
+                           const std::string& table_name);
+    void load_stats_data(sancho::db::PostgresConnection& conn,
+                         const std::string& schema_name,
+                         const std::string& table_name);
 
     Glib::RefPtr<Gtk::Builder> builder;
 
-    Gtk::Notebook *notebook_tabs;
-    Gtk::Box *box_columns;
-    Gtk::Box *box_constraints;
-    Gtk::Box *box_indexes;
-    Gtk::Box *box_stats;
-    Gtk::Button *btn_close;
+    Gtk::Notebook* notebook_tabs;
+    Gtk::Box* box_columns;
+    Gtk::Box* box_constraints;
+    Gtk::Box* box_indexes;
+    Gtk::Box* box_stats;
+    Gtk::Button* btn_close;
 
     // Schema tab
     class SchemaColumns : public Gtk::TreeModel::ColumnRecord {

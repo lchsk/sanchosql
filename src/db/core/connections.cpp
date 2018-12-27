@@ -3,7 +3,7 @@
 #include "connections.hpp"
 
 namespace sancho {
-    namespace db{
+namespace db {
 Connections::Connections() {
     conn_end = std::make_shared<sancho::db::ConnectionDetails>();
 
@@ -20,7 +20,7 @@ void Connections::init_connections() { open_conn_file(); }
 void Connections::open_conn_file() {
     try {
         conn_file.load_from_file(CONN_PATH);
-    } catch (const Glib::Error &ex) {
+    } catch (const Glib::Error& ex) {
         g_info("File %s not found", CONN_PATH.c_str());
 
         return;
@@ -30,22 +30,22 @@ void Connections::open_conn_file() {
 }
 
 const Glib::ustring
-Connections::get_conn_value(const Glib::ustring &group,
-                            const Glib::ustring &key) const {
+Connections::get_conn_value(const Glib::ustring& group,
+                            const Glib::ustring& key) const {
     try {
         return conn_file.get_value(group, key);
-    } catch (const Glib::KeyFileError &ex) {
+    } catch (const Glib::KeyFileError& ex) {
         g_warning("Cannot find %s.%s", group.c_str(), key.c_str());
     }
 
     return "";
 }
 
-const bool Connections::get_conn_value_bool(const Glib::ustring &group,
-                                            const Glib::ustring &key) const {
+const bool Connections::get_conn_value_bool(const Glib::ustring& group,
+                                            const Glib::ustring& key) const {
     try {
         return conn_file.get_boolean(group, key);
-    } catch (const Glib::KeyFileError &ex) {
+    } catch (const Glib::KeyFileError& ex) {
         g_warning("Cannot find %s.%s", group.c_str(), key.c_str());
     }
 
@@ -103,7 +103,7 @@ void Connections::save_connections() {
 
     int i = 1;
 
-    for (const auto &conn_details : connections) {
+    for (const auto& conn_details : connections) {
         const Glib::ustring group = Glib::ustring::compose("conn_%1", i);
         const Glib::ustring password = conn_details.second->save_password
                                            ? conn_details.second->password
@@ -125,11 +125,10 @@ void Connections::save_connections() {
     conn_file.save_to_file(CONN_PATH);
 }
 
-void Connections::add(const Glib::ustring &name, const std::string &host,
-                      const std::string &user, const std::string &password,
-                      const std::string &dbname, const std::string &port,
-                      const std::string &sslmode,
-                      bool save_password) {
+void Connections::add(const Glib::ustring& name, const std::string& host,
+                      const std::string& user, const std::string& password,
+                      const std::string& dbname, const std::string& port,
+                      const std::string& sslmode, bool save_password) {
     auto conn = std::make_shared<sancho::db::ConnectionDetails>();
 
     conn->name = name;
@@ -144,12 +143,13 @@ void Connections::add(const Glib::ustring &name, const std::string &host,
     connections[name] = conn;
 }
 
-void Connections::update_conn(const Glib::ustring &old_conn_name,
-                              const Glib::ustring &new_conn_name,
-                              const std::string &host, const std::string &user,
-                              const std::string &password,
-                              const std::string &dbname,
-                              const std::string &port, const std::string &sslmode, bool save_password) {
+void Connections::update_conn(const Glib::ustring& old_conn_name,
+                              const Glib::ustring& new_conn_name,
+                              const std::string& host, const std::string& user,
+                              const std::string& password,
+                              const std::string& dbname,
+                              const std::string& port,
+                              const std::string& sslmode, bool save_password) {
     if (!exists(old_conn_name))
         return;
 
@@ -169,11 +169,11 @@ void Connections::update_conn(const Glib::ustring &old_conn_name,
     connections[new_conn_name] = conn;
 }
 
-bool Connections::any_fields_empty(const Glib::ustring &host,
-                                   const Glib::ustring &port,
-                                   const Glib::ustring &db,
-                                   const Glib::ustring &user,
-                                   const Glib::ustring &connection_name) const {
+bool Connections::any_fields_empty(const Glib::ustring& host,
+                                   const Glib::ustring& port,
+                                   const Glib::ustring& db,
+                                   const Glib::ustring& user,
+                                   const Glib::ustring& connection_name) const {
     if (sancho::string::is_empty(host) || sancho::string::is_empty(port) ||
         sancho::string::is_empty(db) || sancho::string::is_empty(user) ||
         sancho::string::is_empty(connection_name))
@@ -183,16 +183,16 @@ bool Connections::any_fields_empty(const Glib::ustring &host,
     return false;
 }
 
-    std::shared_ptr<sancho::db::ConnectionDetails> &
-Connections::get(const Glib::ustring &conn_name) {
+std::shared_ptr<sancho::db::ConnectionDetails>&
+Connections::get(const Glib::ustring& conn_name) {
     return connections.at(conn_name);
 }
 
 bool Connections::can_update_conn_details(
-    const Glib::ustring &old_conn_name, const Glib::ustring &new_conn_name,
-    const std::string &host, const std::string &user,
-    const std::string &password, const std::string &dbname,
-    const std::string &port, const std::string &sslmode, bool save_password) {
+    const Glib::ustring& old_conn_name, const Glib::ustring& new_conn_name,
+    const std::string& host, const std::string& user,
+    const std::string& password, const std::string& dbname,
+    const std::string& port, const std::string& sslmode, bool save_password) {
     if (any_fields_empty(host, port, dbname, user, new_conn_name))
         return false;
 
@@ -202,28 +202,29 @@ bool Connections::can_update_conn_details(
     if (old_conn_name != new_conn_name && exists(new_conn_name))
         return false;
 
-    const auto &conn = connections[old_conn_name];
+    const auto& conn = connections[old_conn_name];
 
     if (old_conn_name != new_conn_name)
         return true;
 
     if (conn->host != host || conn->user != user ||
         conn->password != password || conn->save_password != save_password ||
-        conn->dbname != dbname || conn->port != port || conn->sslmode != sslmode)
+        conn->dbname != dbname || conn->port != port ||
+        conn->sslmode != sslmode)
         return true;
 
     return false;
 }
 
-    std::shared_ptr<sancho::db::ConnectionDetails> &
-Connections::find_connection(const Glib::ustring &connection_name) {
+std::shared_ptr<sancho::db::ConnectionDetails>&
+Connections::find_connection(const Glib::ustring& connection_name) {
     if (!exists(connection_name))
         return end();
 
     return connections[connection_name];
 }
 
-void Connections::remove(const Glib::ustring &conn_name) {
+void Connections::remove(const Glib::ustring& conn_name) {
     if (!exists(conn_name))
         return;
 

@@ -8,7 +8,7 @@ namespace db {
 class QueryTabModel : public AbstractTabModel {
   public:
     QueryTabModel(
-				  const std::shared_ptr<sancho::db::ConnectionDetails> &conn_details)
+        const std::shared_ptr<sancho::db::ConnectionDetails>& conn_details)
         : AbstractTabModel(conn_details) {}
 
     std::string query;

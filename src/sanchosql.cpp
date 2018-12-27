@@ -6,18 +6,18 @@
 #include <pqxx/pqxx>
 
 #include "config.hpp"
-#include "ui/gtk/main_window.hpp"
 #include "db/pg/pg_conn.hpp"
+#include "ui/gtk/main_window.hpp"
 
 template <typename T_ArgType>
-static bool get_arg_value(const Glib::RefPtr<Glib::VariantDict> &options,
-                          const Glib::ustring &arg_name, T_ArgType &arg_value) {
+static bool get_arg_value(const Glib::RefPtr<Glib::VariantDict>& options,
+                          const Glib::ustring& arg_name, T_ArgType& arg_value) {
     arg_value = T_ArgType();
 
     return options->lookup_value(arg_name, arg_value);
 }
 
-int on_handle_local_options(const Glib::RefPtr<Glib::VariantDict> &options) {
+int on_handle_local_options(const Glib::RefPtr<Glib::VariantDict>& options) {
     bool flag_version = false;
     get_arg_value(options, "version", flag_version);
 
@@ -34,7 +34,7 @@ int on_handle_local_options(const Glib::RefPtr<Glib::VariantDict> &options) {
     return -1;
 }
 
-int main(int argc, char *argv[]) {
+int main(int argc, char* argv[]) {
     g_debug("Detected system: %s", SANCHO_OS);
 
 // If pqxx breaks the connection we might get a SIGPIPE signal

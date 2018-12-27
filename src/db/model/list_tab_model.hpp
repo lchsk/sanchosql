@@ -15,13 +15,13 @@ class SimpleTabModel : public AbstractTabModel {
     enum class ColumnSortType { None, Asc, Desc };
 
     SimpleTabModel(
-                   const std::shared_ptr<sancho::db::ConnectionDetails> &conn_details,
-        const Glib::ustring &p_table_name, const Glib::ustring &p_schema_name);
+        const std::shared_ptr<sancho::db::ConnectionDetails>& conn_details,
+        const Glib::ustring& p_table_name, const Glib::ustring& p_schema_name);
 
-    void set_limit(const std::string &p_limit);
-    void set_offset(const std::string &p_offset);
-    void set_sort(const std::string &p_sort_column);
-    void set_filter(const std::string &p_filter);
+    void set_limit(const std::string& p_limit);
+    void set_offset(const std::string& p_offset);
+    void set_sort(const std::string& p_sort_column);
+    void set_filter(const std::string& p_filter);
 
     Gtk::SortType get_sort_type() const;
 
@@ -34,7 +34,7 @@ class SimpleTabModel : public AbstractTabModel {
     unsigned get_limit() const { return limit; }
     unsigned get_offset() const { return offset; }
 
-    const std::string &get_sort_column() const { return sort_column; }
+    const std::string& get_sort_column() const { return sort_column; }
 
     const bool has_primary_key() const { return primary_key.size(); }
 
@@ -42,27 +42,23 @@ class SimpleTabModel : public AbstractTabModel {
         return primary_key;
     }
 
-    const bool is_part_of_pk(const Glib::ustring &column_name);
+    const bool is_part_of_pk(const Glib::ustring& column_name);
 
     // Run UPDATE query to save pending changes in the DB
     // Doesn't include changes to Primary Key
     std::shared_ptr<sancho::QueryResult> accept_changes();
     std::shared_ptr<sancho::QueryResult> accept_pk_change();
     std::shared_ptr<sancho::QueryResult> delete_rows(
-        const std::vector<std::vector<std::pair<Glib::ustring, Glib::ustring>>>
-            &rows_to_delete);
+        const std::vector<std::vector<std::pair<Glib::ustring, Glib::ustring>>>&
+            rows_to_delete);
     std::shared_ptr<sancho::QueryResult>
-    insert_row(const Gtk::TreeModel::Row &row);
+    insert_row(const Gtk::TreeModel::Row& row);
 
     unsigned db_rows_cnt;
 
-	const std::string get_query() const;
-  const Glib::ustring& get_table_name() const {
-    return table_name;
-  }
-  const Glib::ustring& get_schema_name() const {
-    return schema_name;
-  }
+    const std::string get_query() const;
+    const Glib::ustring& get_table_name() const { return table_name; }
+    const Glib::ustring& get_schema_name() const { return schema_name; }
 
     // PK currently being edited
     // Column name -> Current Value (before commiting to DB)

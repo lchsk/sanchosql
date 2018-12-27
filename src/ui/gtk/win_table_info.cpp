@@ -3,8 +3,8 @@
 namespace sancho {
 namespace ui {
 namespace gtk {
-TableInfoWindow::TableInfoWindow(BaseObjectType *cobject,
-                                 const Glib::RefPtr<Gtk::Builder> &builder)
+TableInfoWindow::TableInfoWindow(BaseObjectType* cobject,
+                                 const Glib::RefPtr<Gtk::Builder>& builder)
     : Gtk::Window(cobject), builder(builder) {
 
     builder->get_widget("notebook_tabs", notebook_tabs);
@@ -83,9 +83,9 @@ TableInfoWindow::TableInfoWindow(BaseObjectType *cobject,
     show_all_children();
 }
 
-void TableInfoWindow::init(sancho::db::PostgresConnection &conn,
-                           const std::string &schema_name,
-                           const std::string &table_name) {
+void TableInfoWindow::init(sancho::db::PostgresConnection& conn,
+                           const std::string& schema_name,
+                           const std::string& table_name) {
     set_title("Table Information for " + schema_name + "." + table_name +
               " - SanchoSQL");
 
@@ -94,9 +94,9 @@ void TableInfoWindow::init(sancho::db::PostgresConnection &conn,
     load_indexes_data(conn, schema_name, table_name);
     load_stats_data(conn, schema_name, table_name);
 }
-void TableInfoWindow::load_columns_data(sancho::db::PostgresConnection &conn,
-                                        const std::string &schema_name,
-                                        const std::string &table_name) {
+void TableInfoWindow::load_columns_data(sancho::db::PostgresConnection& conn,
+                                        const std::string& schema_name,
+                                        const std::string& table_name) {
     schema_model->clear();
 
     std::shared_ptr<sancho::QueryResult> result =
@@ -108,17 +108,17 @@ void TableInfoWindow::load_columns_data(sancho::db::PostgresConnection &conn,
         return;
     }
 
-    const auto &data = result->as_map();
+    const auto& data = result->as_map();
 
-    for (const auto &row_data : data) {
+    for (const auto& row_data : data) {
         Gtk::TreeModel::Row row = *(schema_model->append());
 
         std::string data_type = "";
         std::string char_len = "";
 
-        for (const auto &pair : row_data) {
-            const std::string &key = pair.first;
-            const std::string &value = pair.second;
+        for (const auto& pair : row_data) {
+            const std::string& key = pair.first;
+            const std::string& value = pair.second;
 
             if (key == "ordinal_position") {
                 row[schema_columns.col_pos] = value;
@@ -145,8 +145,8 @@ void TableInfoWindow::load_columns_data(sancho::db::PostgresConnection &conn,
 }
 
 void TableInfoWindow::load_constraints_data(
-    sancho::db::PostgresConnection &conn, const std::string &schema_name,
-    const std::string &table_name) {
+    sancho::db::PostgresConnection& conn, const std::string& schema_name,
+    const std::string& table_name) {
     constraints_model->clear();
 
     std::shared_ptr<sancho::QueryResult> result = conn.run_query(
@@ -158,14 +158,14 @@ void TableInfoWindow::load_constraints_data(
         return;
     }
 
-    const auto &data = result->as_map();
+    const auto& data = result->as_map();
 
-    for (const auto &row_data : data) {
+    for (const auto& row_data : data) {
         Gtk::TreeModel::Row row = *(constraints_model->append());
 
-        for (const auto &pair : row_data) {
-            const std::string &key = pair.first;
-            const std::string &value = pair.second;
+        for (const auto& pair : row_data) {
+            const std::string& key = pair.first;
+            const std::string& value = pair.second;
 
             if (key == "check_name") {
                 row[constraints_columns.col_name] = value;
@@ -176,9 +176,9 @@ void TableInfoWindow::load_constraints_data(
     }
 }
 
-void TableInfoWindow::load_indexes_data(sancho::db::PostgresConnection &conn,
-                                        const std::string &schema_name,
-                                        const std::string &table_name) {
+void TableInfoWindow::load_indexes_data(sancho::db::PostgresConnection& conn,
+                                        const std::string& schema_name,
+                                        const std::string& table_name) {
     indexes_model->clear();
 
     std::shared_ptr<sancho::QueryResult> result =
@@ -190,14 +190,14 @@ void TableInfoWindow::load_indexes_data(sancho::db::PostgresConnection &conn,
         return;
     }
 
-    const auto &data = result->as_map();
+    const auto& data = result->as_map();
 
-    for (const auto &row_data : data) {
+    for (const auto& row_data : data) {
         Gtk::TreeModel::Row row = *(indexes_model->append());
 
-        for (const auto &pair : row_data) {
-            const std::string &key = pair.first;
-            const std::string &value = pair.second;
+        for (const auto& pair : row_data) {
+            const std::string& key = pair.first;
+            const std::string& value = pair.second;
 
             if (key == "index_name") {
                 row[indexes_columns.col_name] = value;
@@ -208,9 +208,9 @@ void TableInfoWindow::load_indexes_data(sancho::db::PostgresConnection &conn,
     }
 }
 
-void TableInfoWindow::load_stats_data(sancho::db::PostgresConnection &conn,
-                                      const std::string &schema_name,
-                                      const std::string &table_name) {
+void TableInfoWindow::load_stats_data(sancho::db::PostgresConnection& conn,
+                                      const std::string& schema_name,
+                                      const std::string& table_name) {
     stats_model->clear();
 
     std::shared_ptr<sancho::QueryResult> result =
@@ -222,14 +222,14 @@ void TableInfoWindow::load_stats_data(sancho::db::PostgresConnection &conn,
         return;
     }
 
-    const auto &data = result->as_map();
+    const auto& data = result->as_map();
 
-    for (const auto &row_data : data) {
-        for (const auto &pair : row_data) {
+    for (const auto& row_data : data) {
+        for (const auto& pair : row_data) {
             Gtk::TreeModel::Row row = *(stats_model->append());
 
-            const std::string &key = pair.first;
-            const std::string &value = pair.second;
+            const std::string& key = pair.first;
+            const std::string& value = pair.second;
 
             row[stats_columns.col_name] = key;
             row[stats_columns.col_value] = value;

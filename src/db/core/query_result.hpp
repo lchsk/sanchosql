@@ -5,13 +5,13 @@
 
 #include <pqxx/pqxx>
 
-#include "conn_util.hpp"
 #include "../../string.hpp"
+#include "conn_util.hpp"
 
 namespace sancho {
 struct QueryResult {
     QueryResult();
-    QueryResult(const sancho::QueryType &query_type) : query_type(query_type){};
+    QueryResult(const sancho::QueryType& query_type) : query_type(query_type){};
 
     ~QueryResult();
 
@@ -19,10 +19,10 @@ struct QueryResult {
     static std::shared_ptr<QueryResult> get(const bool success);
 
     static std::shared_ptr<QueryResult>
-    get(pqxx::connection &conn, const sancho::QueryType &query_type,
-        const std::string &query, const std::string &columns_query,
-        std::shared_ptr<std::unordered_map<pqxx::oid, sancho::OidMapping>>
-            &oid_names);
+    get(pqxx::connection& conn, const sancho::QueryType& query_type,
+        const std::string& query, const std::string& columns_query,
+        std::shared_ptr<std::unordered_map<pqxx::oid, sancho::OidMapping>>&
+            oid_names);
 
     std::vector<sancho::db::Column> columns;
     std::vector<std::vector<std::string>> data;
@@ -31,21 +31,21 @@ struct QueryResult {
     std::vector<std::map<std::string, std::string>> as_map() const;
 
     static std::shared_ptr<QueryResult>
-    get_prepared_stmt(pqxx::connection &conn, const std::string &name,
-                      const std::string &query, const std::string &arg);
+    get_prepared_stmt(pqxx::connection& conn, const std::string& name,
+                      const std::string& query, const std::string& arg);
 
-    void run_prepared_stmt(const pqxx::prepare::invocation &prepared_stmt);
+    void run_prepared_stmt(const pqxx::prepare::invocation& prepared_stmt);
 
-    void handle_results(const pqxx::result &);
+    void handle_results(const pqxx::result&);
 
-    void run(pqxx::connection &conn, const sancho::QueryType &query_type,
-             const std::string &query, const std::string &columns_query);
+    void run(pqxx::connection& conn, const sancho::QueryType& query_type,
+             const std::string& query, const std::string& columns_query);
 
     const std::map<std::string, sancho::db::ColumnMetadata>
-    get_columns_data(pqxx::connection &conn,
-                     const std::string &columns_query) const;
+    get_columns_data(pqxx::connection& conn,
+                     const std::string& columns_query) const;
 
-    void set_status(bool p_success, const Glib::ustring &p_error_message);
+    void set_status(bool p_success, const Glib::ustring& p_error_message);
 
     void commit() noexcept;
     void rollback() noexcept;

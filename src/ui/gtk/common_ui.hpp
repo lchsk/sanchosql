@@ -7,10 +7,9 @@ namespace sancho {
 namespace ui {
 namespace gtk {
 
-  using TabWindow = Gtk::ScrolledWindow;
+using TabWindow = Gtk::ScrolledWindow;
 }
 } // namespace sancho
 }
-
 
 #endif
