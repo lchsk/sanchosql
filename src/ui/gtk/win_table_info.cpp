@@ -12,7 +12,7 @@ TableInfoWindow::TableInfoWindow(BaseObjectType* cobject,
     builder->get_widget("box_constraints", box_constraints);
     builder->get_widget("box_indexes", box_indexes);
     builder->get_widget("box_stats", box_stats);
-    builder->get_widget("btn_close", btn_close);
+    builder->get_widget("btn_close_table_info", btn_close);
 
     signal_show().connect(sigc::mem_fun(*this, &TableInfoWindow::on_win_show));
     signal_hide().connect(sigc::mem_fun(*this, &TableInfoWindow::on_win_hide));

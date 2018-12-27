@@ -20,7 +20,7 @@
               <placeholder/>
             </child>
             <child>
-              <object class="GtkButton" id="btn_close">
+              <object class="GtkButton" id="btn_close_table_info">
                 <property name="label" translatable="yes">Close</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
