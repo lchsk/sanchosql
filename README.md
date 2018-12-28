@@ -1,4 +1,4 @@
-# Postgres desktop client for Linux
+# SanchoSQL - Postgres desktop client for Linux
 
 [SanchoSQL website](https://sanchosql.com)
 
