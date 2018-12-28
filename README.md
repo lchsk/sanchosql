@@ -1,5 +1,11 @@
 Master: [![Build Status](https://travis-ci.org/lchsk/sanchosql.svg?branch=master)](https://travis-ci.org/lchsk/sanchosql)
 
+## Postgres desktop client for Linux
+
+[SanchoSQL website](https://sanchosql.com)
+
+![SanchoSQL code editor](./sanchosql_editor_1.png)
+
 ## Dependencies
 
 - gtkmm >= 3.18
