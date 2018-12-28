@@ -202,7 +202,7 @@ std::shared_ptr<sancho::QueryResult> SimpleTabModel::delete_rows(
         return sancho::QueryResult::get(true);
     }
 
-    g_debug("Removing %d rows", rows_to_delete.size());
+    g_debug("Removing %zd rows", rows_to_delete.size());
 
     std::stringstream query;
 
@@ -308,7 +308,7 @@ SimpleTabModel::insert_row(const Gtk::TreeModel::Row& row) {
     // We're executing INSERT queries one by one so we can check if there's
     // exactly one affected row.
     if (result->affected_rows != 1) {
-        g_warning("There should be exactly 1 affected row, instead: %d",
+        g_warning("There should be exactly 1 affected row, instead: %zd",
                   result->affected_rows);
         result->set_status(false,
                            "There should be exactly 1 affected row, instead: " +
