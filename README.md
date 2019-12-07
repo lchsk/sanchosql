@@ -1,8 +1,8 @@
 # SanchoSQL - Postgres desktop client for Linux
 
-See [features](https://sanchosql.com/features.html)
+See [features](https://lchsk.com/sanchosql/features.html)
 
-[SanchoSQL website](https://sanchosql.com)
+[SanchoSQL website](https://lchsk.com/sanchosql)
 
 ![SanchoSQL code editor](./sanchosql_editor_1.png)
 
